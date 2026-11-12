@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:threadtrace_test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+logging:
+  structured:
+    format:
+      console: ""
+
+threadtrace:
+  security:
+    users:
+      - username: admin
+        password: "{noop}test-admin-pass"
+        roles: [ADMIN]
+      - username: operator
+        password: "{noop}test-operator-pass"
+        roles: [OPERATOR]
+      - username: auditor
+        password: "{noop}test-auditor-pass"
+        roles: [AUDITOR]
+      - username: brand_a
+        password: "{noop}test-branda-pass"
+        roles: [BRAND]
+        brand-code: BRAND_A
+      - username: brand_b
+        password: "{noop}test-brandb-pass"
+        roles: [BRAND]
+        brand-code: BRAND_B
