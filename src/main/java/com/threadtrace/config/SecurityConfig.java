@@ -45,11 +45,16 @@ public class SecurityConfig {
                     account.getUsername(), encoded, authorities, account.getBrandCode()));
         }
         return username -> {
-            UserDetails user = accounts.get(username);
+            BrandScopedUserDetails user = accounts.get(username);
             if (user == null) {
                 throw new UsernameNotFoundException("User not found: " + username);
             }
-            return user;
+            return new BrandScopedUserDetails(
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.getAuthorities(),
+                    user.getBrandCode()
+            );
         };
     }
 

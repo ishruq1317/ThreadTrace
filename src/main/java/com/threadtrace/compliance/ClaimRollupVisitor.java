@@ -76,7 +76,7 @@ public class ClaimRollupVisitor implements LineageVisitor {
                     violations.add("Lot " + lot.getLotCode() + " over-claims " + lot.getClaimedPct() + "% " + attr
                             + " (certificate supports max " + supportedPct + "%)");
                 }
-                BigDecimal certMass = leaf.getAllocatedMassKgFromParent()
+                BigDecimal certMass = lot.getMassKg()
                         .multiply(effectivePct)
                         .divide(HUNDRED, 4, RoundingMode.HALF_UP);
                 verifiedForLot.put(attr, certMass);
@@ -120,7 +120,7 @@ public class ClaimRollupVisitor implements LineageVisitor {
         if (lot.getClaimedAttribute() != null && !lot.getClaimedAttribute().isBlank()
                 && lot.getClaimedPct().compareTo(BigDecimal.ZERO) > 0) {
             String attr = lot.getClaimedAttribute().trim().toUpperCase();
-            BigDecimal targetMass = composite.getAllocatedMassKgFromParent()
+            BigDecimal targetMass = lot.getMassKg()
                     .multiply(lot.getClaimedPct())
                     .divide(HUNDRED, 4, RoundingMode.HALF_UP);
             BigDecimal availableMass = inputCertifiedByAttr.getOrDefault(attr, BigDecimal.ZERO);

@@ -39,9 +39,8 @@ public class ThreadTraceProperties {
     @NotNull
     private PassportProperties passport = new PassportProperties();
 
-    @Valid
     @NotEmpty
-    private Map<String, ProcessRuleProperties> processes = new HashMap<>();
+    private Map<String, @Valid ProcessRuleProperties> processes = new HashMap<>();
 
     public MassBalanceProperties getMassBalance() {
         return massBalance;

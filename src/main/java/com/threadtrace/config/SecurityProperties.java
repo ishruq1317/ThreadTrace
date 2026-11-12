@@ -13,8 +13,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "threadtrace.security")
 public class SecurityProperties {
 
-    @Valid
-    private List<UserAccount> users = new ArrayList<>();
+    private List<@Valid UserAccount> users = new ArrayList<>();
 
     public List<UserAccount> getUsers() {
         return users;

@@ -83,7 +83,7 @@ public final class LineageDtos {
             @Size(max = 64) String factoryCode,
             @Size(max = 64) String productionLineCode,
             @NotNull @DecimalMin("0.0001") BigDecimal inputQuantity,
-            @NotEmpty @Valid List<SplitOutputItem> outputs,
+            @NotEmpty List<@Valid SplitOutputItem> outputs,
             BigDecimal waterLiters,
             BigDecimal energyKwh,
             BigDecimal co2eKg,
@@ -101,7 +101,7 @@ public final class LineageDtos {
     }
 
     public record MergeLotRequest(
-            @NotEmpty @Valid List<MergeInputItem> inputs,
+            @NotEmpty List<@Valid MergeInputItem> inputs,
             @NotBlank @Size(max = 80) String outputLotCode,
             @NotNull LotType outputLotType,
             @NotBlank @Size(max = 100) String materialType,
