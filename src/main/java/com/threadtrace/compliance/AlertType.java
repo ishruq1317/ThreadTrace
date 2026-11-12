@@ -1,0 +1,10 @@
+package com.threadtrace.compliance;
+
+public enum AlertType {
+    MASS_BALANCE_VIOLATION,
+    OVER_CLAIMED_CONTENT,
+    ORPHAN_LOT,
+    CERTIFICATE_EXPIRING_SOON,
+    CERTIFICATE_EXPIRED,
+    HASH_CHAIN_TAMPERED
+}
