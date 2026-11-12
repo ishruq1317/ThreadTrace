@@ -2,6 +2,14 @@
 
 Spring Boot 4.1.2 (Java 21) implementation of **Project 4: ThreadTrace** for CSE 444.
 
+[![Live on Render](https://img.shields.io/badge/Render-Live%20Demo-brightgreen?logo=render)](https://threadtrace.onrender.com/swagger-ui.html)
+[![Java 21](https://img.shields.io/badge/Java-21-orange?logo=openjdk)](https://adoptium.net)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.2-green?logo=springboot)](https://spring.io)
+
+### Live Cloud Deployment
+- **Swagger UI (Interactive API Docs):** [https://threadtrace.onrender.com/swagger-ui.html](https://threadtrace.onrender.com/swagger-ui.html)
+- **Actuator Health Probe:** [https://threadtrace.onrender.com/actuator/health](https://threadtrace.onrender.com/actuator/health)
+
 ## Quick Start
 
 ### 1. Run Full Test Suite (Unit, ArchUnit, E2E Integration)
