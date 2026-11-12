@@ -52,7 +52,7 @@ Booted `target/threadtrace-0.0.1-SNAPSHOT.jar` (`dev` profile on port 18080) and
 ```text
 [1/6] Checking health endpoint...
 [2/6] Seeding 6-level supply chain & testing QA1 trace latency...
-    QA1 6-level backward trace completed in 105.4 ms
+    QA1 6-level backward trace completed in 64.1 ms
 [3/6] Testing QA2 planted problems (over-claim, cutting loss, orphan lot)...
 [4/6] Generating passport & testing QA3 confidentiality + QA4 delivery...
 [5/6] Testing QA5 config-driven adaptability (extra-fields & allowed certificate types)...
@@ -64,13 +64,13 @@ ALL QA CHECKS PASSED!
 
 ## 3. Structured Logging with Distributed Tracing (C4 Verification)
 
-Spring Boot 4 structured ECS JSON logging configured with Micrometer Tracing (Brave bridge) automatically propagates `traceId` and `spanId` across controller and domain service boundaries. Below are verbatim runtime log entries captured during a single HTTP request (`POST /api/v1/passports`) in `target/qa-stdout.log`:
+Spring Boot 4 structured ECS JSON logging configured with Micrometer Tracing (Brave bridge) automatically propagates `traceId` and `spanId` across controller and domain service boundaries. Below are verbatim runtime log entries captured during a single HTTP request (`POST /api/v1/passports`) in `target/qa-test-stdout.log`:
 
 ```json
-{"@timestamp":"2026-11-12T17:22:11.079302200Z","log":{"level":"INFO","logger":"com.threadtrace.passport.PassportService"},"process":{"pid":18056,"thread":{"name":"http-nio-18080-exec-6"}},"service":{"name":"threadtrace","version":"0.0.1-SNAPSHOT","node":{}},"message":"Generating passport code=QA-PP-1794504129 shipmentLot=QA-L6-1794504129 allocationMethod=BY_MASS","traceId":"6af5f5c2581d847256e009e772c16b73","spanId":"743750908632deb2","ecs":{"version":"8.11"}}
-{"@timestamp":"2026-11-12T17:22:11.094644200Z","log":{"level":"INFO","logger":"com.threadtrace.compliance.MassBalanceService"},"process":{"pid":18056,"thread":{"name":"http-nio-18080-exec-6"}},"service":{"name":"threadtrace","version":"0.0.1-SNAPSHOT","node":{}},"message":"Evaluated claim rollup lot=QA-L6-1794504129 asOfDate=2026-11-12 verifiedClaims=1 violations=5","traceId":"6af5f5c2581d847256e009e772c16b73","spanId":"743750908632deb2","ecs":{"version":"8.11"}}
-{"@timestamp":"2026-11-12T17:22:11.094644200Z","log":{"level":"INFO","logger":"com.threadtrace.footprint.FootprintService"},"process":{"pid":18056,"thread":{"name":"http-nio-18080-exec-6"}},"service":{"name":"threadtrace","version":"0.0.1-SNAPSHOT","node":{}},"message":"Calculated lineage footprint method=BY_MASS waterLiters=4156.8000 energyKwh=326.6000 co2eKg=204.5600","traceId":"6af5f5c2581d847256e009e772c16b73","spanId":"743750908632deb2","ecs":{"version":"8.11"}}
-{"@timestamp":"2026-11-12T17:22:11.101739100Z","log":{"level":"INFO","logger":"com.threadtrace.passport.PassportService"},"process":{"pid":18056,"thread":{"name":"http-nio-18080-exec-6"}},"service":{"name":"threadtrace","version":"0.0.1-SNAPSHOT","node":{}},"message":"Saved passport code=QA-PP-1794504129 version=1 status=CLAIMS_DOWNGRADED etag=\"fff5567e20c5cc0ccdb6fe9f\"","traceId":"6af5f5c2581d847256e009e772c16b73","spanId":"743750908632deb2","ecs":{"version":"8.11"}}
+{"@timestamp":"2026-11-12T19:44:24.780567700Z","log":{"level":"INFO","logger":"com.threadtrace.passport.PassportService"},"process":{"pid":8660,"thread":{"name":"http-nio-18080-exec-6"}},"service":{"name":"threadtrace","version":"0.0.1-SNAPSHOT","node":{}},"message":"Generating passport code=QA-PP-1794512663 shipmentLot=QA-L6-1794512663 allocationMethod=BY_MASS","traceId":"6af617184271993e52f3c619e1aa6425","spanId":"85e12ce6d3c65616","ecs":{"version":"8.11"}}
+{"@timestamp":"2026-11-12T19:44:24.804901900Z","log":{"level":"INFO","logger":"com.threadtrace.compliance.MassBalanceService"},"process":{"pid":8660,"thread":{"name":"http-nio-18080-exec-6"}},"service":{"name":"threadtrace","version":"0.0.1-SNAPSHOT","node":{}},"message":"Evaluated claim rollup lot=QA-L6-1794512663 asOfDate=2026-11-13 verifiedClaims=1 violations=5","traceId":"6af617184271993e52f3c619e1aa6425","spanId":"85e12ce6d3c65616","ecs":{"version":"8.11"}}
+{"@timestamp":"2026-11-12T19:44:24.808489200Z","log":{"level":"INFO","logger":"com.threadtrace.footprint.FootprintService"},"process":{"pid":8660,"thread":{"name":"http-nio-18080-exec-6"}},"service":{"name":"threadtrace","version":"0.0.1-SNAPSHOT","node":{}},"message":"Calculated lineage footprint method=BY_MASS waterLiters=4156.8000 energyKwh=326.6000 co2eKg=204.5600","traceId":"6af617184271993e52f3c619e1aa6425","spanId":"85e12ce6d3c65616","ecs":{"version":"8.11"}}
+{"@timestamp":"2026-11-12T19:44:24.851090300Z","log":{"level":"INFO","logger":"com.threadtrace.passport.PassportService"},"process":{"pid":8660,"thread":{"name":"http-nio-18080-exec-6"}},"service":{"name":"threadtrace","version":"0.0.1-SNAPSHOT","node":{}},"message":"Saved passport code=QA-PP-1794512663 version=1 status=CLAIMS_DOWNGRADED etag=\"bf719a1e1e4b0de385f1e165\"","traceId":"6af617184271993e52f3c619e1aa6425","spanId":"85e12ce6d3c65616","ecs":{"version":"8.11"}}
 ```
 
 Notice that across `PassportService` -> `MassBalanceService` -> `FootprintService` -> `PassportService`, the exact same correlation identifier (`traceId: "6af5f5c2581d847256e009e772c16b73"`) is preserved, satisfying the C4 structured observability requirement.
@@ -86,11 +86,11 @@ xychart-beta
     title "Measured Operation Latency vs 2000ms SLA Limit (ms)"
     x-axis ["Actuator Health", "6-Level Trace (QA1)", "Transform Event", "Passport Gen", "Public JSON (QA4)", "Public HTML", "QR PNG", "Integrity Verify (FR10)"]
     y-axis "Latency (ms)" 0 --> 2200
-    bar [12, 105, 18, 45, 14, 22, 16, 28]
+    bar [12, 64, 18, 45, 14, 22, 16, 28]
     line [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000]
 ```
 
-*Note: All measured operations execute well below the 2000 ms SLA threshold under test/local conditions (all under 120 ms).*
+*Note: All measured operations execute well below the 2000 ms SLA threshold under test/local conditions (all under 70 ms).*
 
 ---
 
@@ -103,6 +103,7 @@ xychart-beta
 | Run 3 (`PublicPassportWebSliceTest`) | `@WebMvcTest` failed with `NoSuchBeanDefinitionException: CacheManager` | `@EnableCaching` on `@SpringBootApplication` caused `@WebMvcTest` to require a `CacheManager` while disabling cache auto-configuration. | Extracted `@EnableCaching` and `@EnableScheduling` into `CacheAndSchedulingConfig`. |
 | Review Pass (Diamond DAG & Cross-Unit Mass Balance) | Split-then-merge diamond DAG inflated water footprint by 20% (`1200 L` vs `1000 L`); direct cross-unit `CUT` stored parent's full `massKg` on `LotEdge`; `LotEvent` hash ignored `water_liters`/`flagged`; cross-brand passport code hijack & lot-cert leak were unchecked. | Edge allocations were memoized on `LineageNode` instead of `ParentEdge`; `LineageService` checked output `req.unit()` instead of `inputLot.getUnit()`; `MassBalanceCheckPort` lacked `InputSlice`/`ClaimTarget`; `LotEvent.canonicalPayload` omitted footprint/flag fields. | Modeled `LotCompositeNode.ParentEdge`, added `InputSlice`/`ClaimTarget` to `MassBalanceCheckPort`, expanded `LotEvent.canonicalPayload`, added style trace & brand scoping on passports/lot-certs, and moved Spring Batch DDL into idempotent Flyway `V2__spring_batch_schema.sql`. |
 | QA5 Assertion Pass (`run_qa_checks.py`) | Script expected HTTP 400 for unconfigured `certificateType`, received HTTP 422 ProblemDetail. | `ProblemDetailExceptionHandler` maps `DomainValidationException` to RFC 9457 HTTP 422 Unprocessable Content. | Updated `run_qa_checks.py` to assert HTTP 422 with `"Unsupported certificateType"` message body. |
+| Run 6 (Dev Credentials, QA Script Syntax & Seeder Idempotency) | Booting fat JAR in `dev` profile without 15 env vars failed authentication with `401 Unauthorized`; re-running `seed_qa1_dataset.sql` crashed on duplicate lot codes; `run_qa_checks.py` silently ignored setup HTTP failures and had a syntax error. | `application-dev.yml` omitted dev users; `seed_qa1_dataset.sql` lacked idempotency cleanup; `run_qa_checks.py` had a stray `}, auth=op)` and did not assert `st == 201` on setup calls. | Added dev security users & `CUSTOM_MILL_CERT` to `application-dev.yml`, pre-cleanup cascading deletes to `seed_qa1_dataset.sql`, explicit status assertions, positive custom certificate registration, and brand-B passport 403 assertions to `run_qa_checks.py`. |
 
 ---
 

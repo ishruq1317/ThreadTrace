@@ -36,3 +36,6 @@ Thumbs.db
 .env
 data/
 storage/
+__pycache__/
+*.pyc
+

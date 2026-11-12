@@ -38,6 +38,10 @@ jobs:
           THREADTRACE_SECURITY_USERS_3_PASSWORD: change_me_branda_pw
           THREADTRACE_SECURITY_USERS_3_ROLES_0: BRAND
           THREADTRACE_SECURITY_USERS_3_BRAND_CODE: BRAND_A
+          THREADTRACE_SECURITY_USERS_4_USERNAME: brand_b
+          THREADTRACE_SECURITY_USERS_4_PASSWORD: change_me_brandb_pw
+          THREADTRACE_SECURITY_USERS_4_ROLES_0: BRAND
+          THREADTRACE_SECURITY_USERS_4_BRAND_CODE: BRAND_B
         run: |
           set -euo pipefail
           JAR_PATH=$(ls target/threadtrace-*.jar | grep -v '\.original$' | head -n 1)
@@ -63,4 +67,10 @@ jobs:
           curl -fsS http://localhost:8080/actuator/health >/dev/null
           python3 scripts/qa/run_qa_checks.py \
             --base-url http://localhost:8080 \
-            --expect-extra-field qa5-runtime-check=verified-without-code-change
+            --expect-extra-field qa5-runtime-check=verified-without-code-change || {
+              echo "=== Application stdout log on failure ==="
+              cat target/ci-stdout.log
+              echo "=== Application stderr log on failure ==="
+              cat target/ci-stderr.log
+              exit 1
+            }

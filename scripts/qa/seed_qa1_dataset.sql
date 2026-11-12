@@ -12,6 +12,15 @@ VALUES
     ('QA1-BRAND-A', 'QA1 Brand A', 'BRAND', 'Sweden', 'Stockholm', 'QA1 Confidential Brand HQ', 120, NULL, NOW())
 ON CONFLICT (code) DO NOTHING;
 
+-- Clean up any prior QA1 seeded dataset for repeatable, idempotent execution
+DELETE FROM compliance_alerts WHERE lot_id IN (SELECT id FROM lots WHERE style_code LIKE 'QA1-CHAIN-%' OR lot_code IN ('LOT-FAB-A1', 'LOT-SHIP-A1'));
+DELETE FROM product_passports WHERE shipment_lot_id IN (SELECT id FROM lots WHERE style_code LIKE 'QA1-CHAIN-%' OR lot_code IN ('LOT-FAB-A1', 'LOT-SHIP-A1'));
+DELETE FROM lot_edges WHERE parent_lot_id IN (SELECT id FROM lots WHERE style_code LIKE 'QA1-CHAIN-%' OR lot_code IN ('LOT-FAB-A1', 'LOT-SHIP-A1'))
+   OR child_lot_id IN (SELECT id FROM lots WHERE style_code LIKE 'QA1-CHAIN-%' OR lot_code IN ('LOT-FAB-A1', 'LOT-SHIP-A1'));
+DELETE FROM lot_events WHERE lot_id IN (SELECT id FROM lots WHERE style_code LIKE 'QA1-CHAIN-%' OR lot_code IN ('LOT-FAB-A1', 'LOT-SHIP-A1'));
+DELETE FROM lots WHERE style_code LIKE 'QA1-CHAIN-%' OR lot_code IN ('LOT-FAB-A1', 'LOT-SHIP-A1');
+
+
 -- 25,000 supply-chain lineages x 8 lots per chain = 200,000 lots
 -- Levels 1..7 represent 6 downstream process transitions from FABRIC (LOT-FAB-A1) to SHIPMENT (LOT-SHIP-A1):
 --   RAW_FIBER -> FABRIC (LOT-FAB-A1) -> CUT_BUNDLE -> SEWN_GARMENT -> WASHED_GARMENT -> FINISHED_GARMENT -> CARTON -> SHIPMENT (LOT-SHIP-A1)

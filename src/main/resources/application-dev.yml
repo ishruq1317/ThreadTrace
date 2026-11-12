@@ -16,3 +16,34 @@ logging:
   structured:
     format:
       console: ecs
+
+threadtrace:
+  evidence:
+    allowed-certificate-types:
+      - GOTS
+      - GRS
+      - OEKO_TEX_100
+      - ISO_14001
+      - ZDHC_MRSL
+      - LAB_TEST_REPORT
+      - CUSTOM_MILL_CERT
+  security:
+    users:
+      - username: ${DEV_ADMIN_USER:admin}
+        password: ${DEV_ADMIN_PASSWORD:{noop}change_me_admin_pw}
+        roles: [ADMIN]
+      - username: ${DEV_OPERATOR_USER:operator}
+        password: ${DEV_OPERATOR_PASSWORD:{noop}change_me_operator_pw}
+        roles: [OPERATOR]
+      - username: ${DEV_AUDITOR_USER:auditor}
+        password: ${DEV_AUDITOR_PASSWORD:{noop}change_me_auditor_pw}
+        roles: [AUDITOR]
+      - username: ${DEV_BRANDA_USER:brand_a}
+        password: ${DEV_BRANDA_PASSWORD:{noop}change_me_branda_pw}
+        roles: [BRAND]
+        brand-code: BRAND_A
+      - username: ${DEV_BRANDB_USER:brand_b}
+        password: ${DEV_BRANDB_PASSWORD:{noop}change_me_brandb_pw}
+        roles: [BRAND]
+        brand-code: BRAND_B
+

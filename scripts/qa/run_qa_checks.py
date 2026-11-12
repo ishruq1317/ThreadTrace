@@ -46,6 +46,8 @@ def main():
     parser.add_argument("--auditor-pass", default="change_me_auditor_pw")
     parser.add_argument("--branda-user", default="brand_a")
     parser.add_argument("--branda-pass", default="change_me_branda_pw")
+    parser.add_argument("--brandb-user", default="brand_b")
+    parser.add_argument("--brandb-pass", default="change_me_brandb_pw")
     parser.add_argument(
         "--expect-extra-field",
         action="append",
@@ -58,6 +60,7 @@ def main():
     op = (args.operator_user, args.operator_pass)
     aud = (args.auditor_user, args.auditor_pass)
     brand_a = (args.branda_user, args.branda_pass)
+    brand_b = (args.brandb_user, args.brandb_pass)
     suffix = str(int(time.time()))
 
     print("[1/6] Checking health endpoint...")
@@ -67,20 +70,23 @@ def main():
     print("[2/6] Seeding 6-level supply chain & testing QA1 trace latency...")
     mill = f"QA-MILL-{suffix}"
     fac = f"QA-FAC-{suffix}"
-    request("POST", f"{base}/api/v1/parties", {
+    st, _, b = request("POST", f"{base}/api/v1/parties", {
         "code": mill, "name": "QA Mill", "partyType": "FABRIC_MILL",
         "country": "Bangladesh", "region": "Gazipur",
         "exactAddress": "CONFIDENTIAL-ADDR-123", "workerCount": 999, "unitPriceUsd": 12.34
     }, auth=op)
-    request("POST", f"{base}/api/v1/parties", {
+    assert_true(st == 201, f"Create QA mill failed: {st} {b}")
+
+    st, _, b = request("POST", f"{base}/api/v1/parties", {
         "code": fac, "name": "QA Factory", "partyType": "FACTORY",
         "country": "Bangladesh", "region": "Savar",
         "exactAddress": "CONFIDENTIAL-FAC-456", "workerCount": 1500, "unitPriceUsd": 8.50
     }, auth=op)
+    assert_true(st == 201, f"Create QA factory failed: {st} {b}")
 
     valid_from = (date.today() - timedelta(days=30)).isoformat()
     valid_to = (date.today() + timedelta(days=15)).isoformat()
-    request("POST", f"{base}/api/v1/evidence/certificates", {
+    st, _, b = request("POST", f"{base}/api/v1/evidence/certificates", {
         "certificateNumber": f"QA-CERT-{suffix}",
         "certificateType": "GRS",
         "issuer": "Control Union",
@@ -91,14 +97,16 @@ def main():
         "validFrom": valid_from,
         "validTo": valid_to,
     }, auth=op)
+    assert_true(st == 201, f"Register GRS certificate failed: {st} {b}")
 
     l0 = f"QA-L0-{suffix}"
-    request("POST", f"{base}/api/v1/events/receive", {
+    st, _, b = request("POST", f"{base}/api/v1/events/receive", {
         "lotCode": l0, "lotType": "RAW_FIBER", "materialType": "Recycled Polyester",
         "styleCode": "QA-ST-1", "brandCode": "BRAND_A", "supplierCode": mill,
         "factoryCode": fac, "quantity": 100.0, "massKg": 100.0, "pieceCount": 0,
         "unit": "KG", "claimedAttribute": "RECYCLED", "claimedPct": 60.0
     }, auth=op)
+    assert_true(st == 201, f"Receive raw fiber event failed: {st} {b}")
 
     prev = l0
     steps = [
@@ -161,7 +169,10 @@ def main():
             pub_json = json.loads(pub_body)
 
     st, _, _ = request("GET", f"{base}/api/v1/lots/QA-ORPHAN-{suffix}", auth=brand_a)
-    assert_true(st == 403, f"Cross-brand access was not refused! Got {st}")
+    assert_true(st == 403, f"Cross-brand lot access was not refused! Got {st}")
+
+    st, _, _ = request("GET", f"{base}/api/v1/passports/{pp_code}", auth=brand_b)
+    assert_true(st == 403, f"Cross-brand passport access was not refused! Got {st}")
 
     print("[5/6] Testing QA5 config-driven adaptability (extra-fields & allowed certificate types)...")
     additional_fields = (pub_json or {}).get("additionalFields") or {}
@@ -178,6 +189,19 @@ def main():
             f"Expected configured extra-field {k}={v}, got {additional_fields.get(k)}",
         )
 
+    # QA5 Positive: Register custom configured certificate type (CUSTOM_MILL_CERT) without code modifications
+    st, _, b = request("POST", f"{base}/api/v1/evidence/certificates", {
+        "certificateNumber": f"QA-CUSTOM-CERT-{suffix}",
+        "certificateType": "CUSTOM_MILL_CERT",
+        "issuer": "Custom Audit Mill Body",
+        "scope": "QA5 Configured Type Test",
+        "supplierCode": mill,
+        "validFrom": valid_from,
+        "validTo": valid_to,
+    }, auth=op)
+    assert_true(st == 201, f"Expected 201 Created for configured custom certificateType, got {st}: {b}")
+
+    # QA5 Negative: Register unconfigured certificate type, asserting HTTP 422 Domain Rule Violation
     st, _, b = request("POST", f"{base}/api/v1/evidence/certificates", {
         "certificateNumber": f"QA-UNSUPPORTED-{suffix}",
         "certificateType": "UNCONFIGURED_TYPE_QA5",
