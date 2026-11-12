@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="'Digital Product Passport — ' + ${passport.styleName}">ThreadTrace Passport</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 16px; background: #f5f7f6; color: #1a2421; line-height: 1.5; }
+        .card { max-width: 720px; margin: 0 auto; background: #ffffff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        h1 { font-size: 1.4rem; margin: 0 0 4px 0; }
+        h2 { font-size: 1.05rem; margin-top: 20px; border-bottom: 1px solid #e2e8e5; padding-bottom: 4px; }
+        .meta { font-size: 0.88rem; color: #4b5c55; margin-bottom: 14px; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; font-weight: 600; background: #d9f2e6; color: #0b5d3b; }
+        .badge-warn { background: #fdebd0; color: #7e5109; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+        .metric { background: #f2f6f4; padding: 10px; border-radius: 6px; }
+        .metric-val { font-size: 1.15rem; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #eef2f0; }
+        .qr { text-align: center; margin-top: 16px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+            <h1 th:text="${passport.styleName}">Garment Style</h1>
+            <div class="meta">
+                <span>Passport: <strong th:text="${passport.passportCode}">PP-001</strong></span>
+                &middot; <span>v<span th:text="${passport.version}">1</span></span>
+                &middot; <span>Style: <span th:text="${passport.styleCode}">ST-01</span></span>
+                &middot; <span>Brand: <span th:text="${passport.brandCode}">BRAND</span></span>
+            </div>
+        </div>
+        <span class="badge"
+              th:classappend="${passport.status.name() != 'PUBLISHED'} ? ' badge-warn' : ''"
+              th:text="${passport.status}">PUBLISHED</span>
+    </div>
+
+    <div th:if="${servedFromFallbackCache}" class="meta" style="color:#7e5109;">
+        Served from resilient edge cache.
+    </div>
+
+    <h2>Fibre Composition &amp; Verified Claims</h2>
+    <table>
+        <thead><tr><th>Material</th><th>Verified Claim</th><th>Share (%)</th></tr></thead>
+        <tbody>
+        <tr th:each="f : ${passport.fibreComposition}">
+            <td th:text="${f.materialType}">Cotton</td>
+            <td th:text="${f.verifiedClaim}">ORGANIC</td>
+            <td th:text="${f.verifiedPercentage}">100</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Origin by Process Step</h2>
+    <table>
+        <thead><tr><th>Step</th><th>Facility</th><th>Role</th><th>Location</th></tr></thead>
+        <tbody>
+        <tr th:each="o : ${passport.originByProcessStep}">
+            <td th:text="${o.processStep}">cut</td>
+            <td th:text="${o.partyName}">Factory</td>
+            <td th:text="${o.partyType}">FACTORY</td>
+            <td th:text="${o.region} + ', ' + ${o.country}">Gazipur, Bangladesh</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Active Certifications</h2>
+    <p th:if="${#lists.isEmpty(passport.certifications)}" class="meta">No active certifications currently attached.</p>
+    <table th:if="${!#lists.isEmpty(passport.certifications)}">
+        <thead><tr><th>Certificate</th><th>Type</th><th>Issuer</th><th>Valid Until</th></tr></thead>
+        <tbody>
+        <tr th:each="c : ${passport.certifications}">
+            <td th:text="${c.certificateNumber}">CERT-1</td>
+            <td th:text="${c.certificateType}">GOTS</td>
+            <td th:text="${c.issuer}">Control Union</td>
+            <td th:text="${c.validTo}">2027-12-31</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Environmental Footprint (Per Piece)</h2>
+    <div class="grid" th:if="${passport.footprint != null}">
+        <div class="metric">
+            <div>Water</div>
+            <div class="metric-val" th:text="${passport.footprint.waterLitersPerPiece} + ' L'">0 L</div>
+        </div>
+        <div class="metric">
+            <div>Energy</div>
+            <div class="metric-val" th:text="${passport.footprint.energyKwhPerPiece} + ' kWh'">0 kWh</div>
+        </div>
+        <div class="metric">
+            <div>Carbon (CO2e)</div>
+            <div class="metric-val" th:text="${passport.footprint.co2eKgPerPiece} + ' kg'">0 kg</div>
+        </div>
+    </div>
+
+    <h2>Care, Repair &amp; End-of-Life</h2>
+    <p><strong>Care &amp; Repair:</strong> <span th:text="${passport.careAndRepair}">Wash cold</span></p>
+    <p><strong>End-of-Life Guidance:</strong> <span th:text="${passport.endOfLifeGuidance}">Recycle textile</span></p>
+
+    <div th:if="${!#maps.isEmpty(passport.additionalFields)}">
+        <h2>Additional Disclosures</h2>
+        <ul>
+            <li th:each="entry : ${passport.additionalFields}">
+                <strong th:text="${entry.key}">key</strong>: <span th:text="${entry.value}">val</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="qr">
+        <img th:src="@{'/api/v1/public/passports/' + ${passport.passportCode} + '/qr'}"
+             alt="Digital Product Passport QR Code" width="140" height="140"/>
+    </div>
+</div>
+</body>
+</html>
