@@ -7,6 +7,8 @@ import com.threadtrace.lineage.Lot;
 import com.threadtrace.lineage.LotRepository;
 import com.threadtrace.shared.AudienceAccessService;
 import com.threadtrace.shared.DomainExceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,8 @@ import java.util.Map;
 @Service
 @Transactional(readOnly = true)
 public class FootprintService {
+
+    private static final Logger log = LoggerFactory.getLogger(FootprintService.class);
 
     private final Map<ThreadTraceProperties.AllocationMethod, AllocationStrategy> strategies;
     private final ThreadTraceProperties properties;
@@ -46,6 +50,7 @@ public class FootprintService {
         Lot lot = lotRepository.findByLotCode(lotCode)
                 .orElseThrow(() -> new DomainExceptions.ResourceNotFoundException("Lot not found: " + lotCode));
         audienceAccessService.assertBrandAccess(lot.getBrandCode());
+        log.info("Calculating footprint for lot={} requestedMethod={}", lotCode, requestedMethod);
         LineageCompositeBuilder.LineageResult lineage = compositeBuilder.buildBackwardTree(lot);
         return calculateForLineageRoot(lineage.root(), requestedMethod);
     }
@@ -62,6 +67,9 @@ public class FootprintService {
         }
         FootprintRollupVisitor visitor = new FootprintRollupVisitor(strategy);
         root.accept(visitor);
-        return visitor.getSummary();
+        FootprintRollupVisitor.FootprintSummary summary = visitor.getSummary();
+        log.info("Calculated lineage footprint method={} waterLiters={} energyKwh={} co2eKg={}",
+                effective, summary.totalWaterLiters(), summary.totalEnergyKwh(), summary.totalCo2eKg());
+        return summary;
     }
 }

@@ -22,7 +22,16 @@ Services started (configured within 8 GB RAM budget):
 
 ### 3. Run QA Verification & Load Scripts (C5)
 ```bash
+# Functional & security verification (QA1-QA5 + FR10) against a running instance
 python scripts/qa/run_qa_checks.py --base-url http://localhost:8080
+
+# Seed PostgreSQL with 200,000 lots and 2,000,000 events across 6+ process levels for QA1 benchmarking
+# (Start Docker Compose postgres + threadtrace first so Flyway creates the schema)
+psql -h localhost -U threadtrace -d threadtrace -f scripts/qa/seed_qa1_dataset.sql
+# Or inside the running Compose postgres container:
+# docker compose exec -T postgres psql -U threadtrace -d threadtrace < scripts/qa/seed_qa1_dataset.sql
+
+# Run k6 load tests for QA1 (6-level trace <= 2s) and QA4 (public passport <= 2s under throttled mobile load)
 k6 run scripts/qa/qa1_trace_load.js
 k6 run scripts/qa/qa4_passport_load.js
 ```

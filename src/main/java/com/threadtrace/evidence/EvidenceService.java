@@ -8,6 +8,8 @@ import com.threadtrace.parties.PartyService;
 import com.threadtrace.shared.Audience;
 import com.threadtrace.shared.AudienceAccessService;
 import com.threadtrace.shared.DomainExceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,8 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class EvidenceService {
+
+    private static final Logger log = LoggerFactory.getLogger(EvidenceService.class);
 
     private final CertificateRepository certificateRepository;
     private final EvidenceStoragePort storagePort;
@@ -153,6 +157,8 @@ public class EvidenceService {
                     cert.getClaimedAttribute(), cert.getSupplierId(), cert.getLotId(), cert.getValidTo(), today));
         }
 
+        log.info("Registered certificate number={} type={} status={} storageKey={}",
+                cert.getCertificateNumber(), cert.getCertificateType(), initialStatus, storageKey);
         return toView(cert);
     }
 
@@ -183,6 +189,8 @@ public class EvidenceService {
                 }
             }
         }
+        log.info("Evaluated certificate expiry asOfDate={} expiringSoon={} expired={}",
+                effectiveDate, expiringSoonCount, expiredCount);
         return new EvidenceDtos.ExpiryEvaluationSummary(effectiveDate, expiringSoonCount, expiredCount);
     }
 

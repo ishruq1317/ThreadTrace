@@ -20,3 +20,47 @@ jobs:
         run: ./mvnw -B test
       - name: Package application artifact
         run: ./mvnw -B package -DskipTests
+      - name: Boot packaged JAR and run QA verification suite (QA1-QA5 + FR10)
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+          SERVER_PORT: 8080
+          THREADTRACE_STORAGE_DIR: ./target/ci-evidence
+          THREADTRACE_SECURITY_USERS_0_USERNAME: admin
+          THREADTRACE_SECURITY_USERS_0_PASSWORD: change_me_admin_pw
+          THREADTRACE_SECURITY_USERS_0_ROLES_0: ADMIN
+          THREADTRACE_SECURITY_USERS_1_USERNAME: operator
+          THREADTRACE_SECURITY_USERS_1_PASSWORD: change_me_operator_pw
+          THREADTRACE_SECURITY_USERS_1_ROLES_0: OPERATOR
+          THREADTRACE_SECURITY_USERS_2_USERNAME: auditor
+          THREADTRACE_SECURITY_USERS_2_PASSWORD: change_me_auditor_pw
+          THREADTRACE_SECURITY_USERS_2_ROLES_0: AUDITOR
+          THREADTRACE_SECURITY_USERS_3_USERNAME: brand_a
+          THREADTRACE_SECURITY_USERS_3_PASSWORD: change_me_branda_pw
+          THREADTRACE_SECURITY_USERS_3_ROLES_0: BRAND
+          THREADTRACE_SECURITY_USERS_3_BRAND_CODE: BRAND_A
+        run: |
+          set -euo pipefail
+          JAR_PATH=$(ls target/threadtrace-*.jar | grep -v '\.original$' | head -n 1)
+          java -jar "$JAR_PATH" \
+            --threadtrace.passport.extra-fields.qa5-runtime-check=verified-without-code-change \
+            > target/ci-stdout.log 2> target/ci-stderr.log &
+          APP_PID=$!
+          trap 'kill $APP_PID >/dev/null 2>&1 || true' EXIT
+
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8080/actuator/health >/dev/null 2>&1; then
+              echo "Application healthy after ${i}s"
+              break
+            fi
+            if ! kill -0 $APP_PID >/dev/null 2>&1; then
+              echo "Application exited prematurely"
+              cat target/ci-stdout.log target/ci-stderr.log
+              exit 1
+            fi
+            sleep 1
+          done
+
+          curl -fsS http://localhost:8080/actuator/health >/dev/null
+          python3 scripts/qa/run_qa_checks.py \
+            --base-url http://localhost:8080 \
+            --expect-extra-field qa5-runtime-check=verified-without-code-change

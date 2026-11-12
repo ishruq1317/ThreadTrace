@@ -2,6 +2,8 @@ package com.threadtrace.ingestion;
 
 import com.threadtrace.shared.AudienceAccessService;
 import com.threadtrace.shared.DomainExceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
@@ -21,6 +23,8 @@ import java.util.UUID;
 
 @Service
 public class ImportService {
+
+    private static final Logger log = LoggerFactory.getLogger(ImportService.class);
 
     private final List<ImportRowAdapter> adapters;
     private final ImportBatchRepository batchRepository;
@@ -79,6 +83,8 @@ public class ImportService {
         ));
 
         stagingStore.init(batchCode, rows);
+        log.info("Starting batch import batchCode={} type={} format={} rows={}",
+                batchCode, importType, fileFormat, rows.size());
         try {
             JobParameters params = new JobParametersBuilder()
                     .addLong("batchId", batch.getId())
@@ -92,6 +98,8 @@ public class ImportService {
             int rejected = stagingStore.rejectedCount(batchCode);
             batch.markCompleted(accepted, rejected, execution.getStatus().name());
             batch = batchRepository.save(batch);
+            log.info("Completed batch import batchCode={} status={} accepted={} rejected={}",
+                    batch.getBatchCode(), batch.getStatus(), accepted, rejected);
 
             List<RejectedRowView> rejectedViews = rejectedRowRepository
                     .findByBatchIdOrderByRowNumberAsc(batch.getId())

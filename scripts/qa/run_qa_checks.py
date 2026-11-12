@@ -46,6 +46,12 @@ def main():
     parser.add_argument("--auditor-pass", default="change_me_auditor_pw")
     parser.add_argument("--branda-user", default="brand_a")
     parser.add_argument("--branda-pass", default="change_me_branda_pw")
+    parser.add_argument(
+        "--expect-extra-field",
+        action="append",
+        default=[],
+        help="Optional KEY=VALUE pair expected in passport additionalFields (for CI QA5 override checks)",
+    )
     args = parser.parse_args()
 
     base = args.base_url.rstrip("/")
@@ -54,11 +60,11 @@ def main():
     brand_a = (args.branda_user, args.branda_pass)
     suffix = str(int(time.time()))
 
-    print("[1/5] Checking health endpoint...")
+    print("[1/6] Checking health endpoint...")
     st, _, body = request("GET", f"{base}/actuator/health")
     assert_true(st == 200, f"Health check failed: {st} {body}")
 
-    print("[2/5] Seeding 6-level supply chain & testing QA1 trace latency...")
+    print("[2/6] Seeding 6-level supply chain & testing QA1 trace latency...")
     mill = f"QA-MILL-{suffix}"
     fac = f"QA-FAC-{suffix}"
     request("POST", f"{base}/api/v1/parties", {
@@ -120,7 +126,7 @@ def main():
     assert_true(st == 200 and elapsed_ms < 2000, f"QA1 backward trace failed or slow: {st}, {elapsed_ms:.1f}ms")
     print(f"    QA1 6-level backward trace completed in {elapsed_ms:.1f} ms")
 
-    print("[3/5] Testing QA2 planted problems (over-claim, cutting loss, orphan lot)...")
+    print("[3/6] Testing QA2 planted problems (over-claim, cutting loss, orphan lot)...")
     st, _, b = request("POST", f"{base}/api/v1/events/transform", {
         "inputLotCode": l0, "outputLotCode": f"QA-OVERLOSS-{suffix}", "outputLotType": "CUT_BUNDLE",
         "eventType": "CUT", "processStep": "cut", "factoryCode": fac,
@@ -135,7 +141,7 @@ def main():
     }, auth=op)
     assert_true(st == 201 and json.loads(b)["orphan"] is True, f"Expected orphan=true: {b}")
 
-    print("[4/5] Generating passport & testing QA3 confidentiality + QA4 delivery...")
+    print("[4/6] Generating passport & testing QA3 confidentiality + QA4 delivery...")
     pp_code = f"QA-PP-{suffix}"
     st, _, b = request("POST", f"{base}/api/v1/passports", {
         "passportCode": pp_code, "shipmentLotCode": prev, "styleCode": "QA-ST-1",
@@ -143,6 +149,7 @@ def main():
     }, auth=op)
     assert_true(st == 201, f"Passport creation failed: {st} {b}")
 
+    pub_json = None
     for pub_url in (f"{base}/api/v1/public/passports/{pp_code}", f"{base}/p/{pp_code}"):
         t0 = time.perf_counter()
         st, hdrs, pub_body = request("GET", pub_url)
@@ -150,11 +157,42 @@ def main():
         assert_true(st == 200 and dt_ms < 2000, f"Public passport failed or slow ({dt_ms:.1f}ms): {pub_url}")
         for secret in ("CONFIDENTIAL-ADDR-123", "CONFIDENTIAL-FAC-456", "workerCount", "unitPriceUsd"):
             assert_true(secret not in pub_body, f"Confidential field leaked in {pub_url}: {secret}")
+        if pub_url.endswith(f"/api/v1/public/passports/{pp_code}"):
+            pub_json = json.loads(pub_body)
 
     st, _, _ = request("GET", f"{base}/api/v1/lots/QA-ORPHAN-{suffix}", auth=brand_a)
     assert_true(st == 403, f"Cross-brand access was not refused! Got {st}")
 
-    print("[5/5] Verifying FR10 hash-chain integrity...")
+    print("[5/6] Testing QA5 config-driven adaptability (extra-fields & allowed certificate types)...")
+    additional_fields = (pub_json or {}).get("additionalFields") or {}
+    assert_true(
+        additional_fields.get("eu-dpp-regulation") == "EU ESPR Textile DPP Draft"
+        and additional_fields.get("care-standard") == "ISO 3758 Care Labelling",
+        f"Expected configured extra-fields on passport, got: {additional_fields}",
+    )
+    for pair in args.expect_extra_field:
+        assert_true("=" in pair, f"Invalid --expect-extra-field '{pair}', expected KEY=VALUE")
+        k, v = pair.split("=", 1)
+        assert_true(
+            additional_fields.get(k) == v,
+            f"Expected configured extra-field {k}={v}, got {additional_fields.get(k)}",
+        )
+
+    st, _, b = request("POST", f"{base}/api/v1/evidence/certificates", {
+        "certificateNumber": f"QA-UNSUPPORTED-{suffix}",
+        "certificateType": "UNCONFIGURED_TYPE_QA5",
+        "issuer": "Unknown Body",
+        "scope": "QA5 Negative Test",
+        "supplierCode": mill,
+        "validFrom": valid_from,
+        "validTo": valid_to,
+    }, auth=op)
+    assert_true(
+        st == 422 and "Unsupported certificateType" in b,
+        f"Expected HTTP 422 Domain Rule Violation for unconfigured certificateType, got {st}: {b}",
+    )
+
+    print("[6/6] Verifying FR10 hash-chain integrity...")
     st, _, b = request("GET", f"{base}/api/v1/integrity/passports/{pp_code}/verify", auth=aud)
     assert_true(st == 200 and json.loads(b)["verified"] is True, f"Integrity check failed: {b}")
 

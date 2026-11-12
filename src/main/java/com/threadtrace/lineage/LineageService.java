@@ -7,6 +7,8 @@ import com.threadtrace.parties.ProductionLine;
 import com.threadtrace.shared.Audience;
 import com.threadtrace.shared.AudienceAccessService;
 import com.threadtrace.shared.DomainExceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,8 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 public class LineageService {
+
+    private static final Logger log = LoggerFactory.getLogger(LineageService.class);
 
     private final LotRepository lotRepository;
     private final LotEventRepository lotEventRepository;
@@ -137,6 +141,8 @@ public class LineageService {
                 lot.getId(), lot.getLotCode(), event.getId(), event.getEventCode(),
                 EventType.RECEIVE, lot.getBrandCode(), flagged, flagReason, orphan));
 
+        log.info("Recorded receive lot={} brand={} orphan={} flagged={}",
+                lot.getLotCode(), lot.getBrandCode(), orphan, flagged);
         return toLotView(lot);
     }
 
@@ -232,6 +238,8 @@ public class LineageService {
                 outputLot.getId(), outputLot.getLotCode(), event.getId(), event.getEventCode(),
                 req.eventType(), outputLot.getBrandCode(), decision.flagged(), decision.reason(), false));
 
+        log.info("Recorded transform eventType={} step={} inputLot={} outputLot={} flagged={}",
+                req.eventType(), processStep, inputLot.getLotCode(), outputLot.getLotCode(), decision.flagged());
         return toLotView(outputLot);
     }
 
@@ -356,6 +364,8 @@ public class LineageService {
             results.add(toLotView(child));
         }
 
+        log.info("Recorded split parentLot={} childCount={} flagged={}",
+                parentLot.getLotCode(), results.size(), decision.flagged());
         return results;
     }
 
@@ -458,6 +468,8 @@ public class LineageService {
                 outputLot.getId(), outputLot.getLotCode(), mergeEvent.getId(), mergeEvent.getEventCode(),
                 EventType.MERGE, outputLot.getBrandCode(), decision.flagged(), decision.reason(), false));
 
+        log.info("Recorded merge inputCount={} outputLot={} flagged={}",
+                parents.size(), outputLot.getLotCode(), decision.flagged());
         return toLotView(outputLot);
     }
 
@@ -509,6 +521,8 @@ public class LineageService {
                 lot.getId(), lot.getLotCode(), correction.getId(), correction.getEventCode(),
                 EventType.CORRECTION, lot.getBrandCode(), flagged, correction.getFlagReason(), lot.isOrphan()));
 
+        log.info("Recorded correction lot={} seq={} clearFlag={}",
+                lot.getLotCode(), correction.getSequenceNumber(), req.clearFlag());
         return toEventView(correction);
     }
 
@@ -543,6 +557,7 @@ public class LineageService {
         Lot target = requireLotByCode(lotCode);
         audienceAccessService.assertBrandAccess(target.getBrandCode());
         List<LineageQueryRepository.TraceStepRow> rows = lineageQueryRepository.traceBackward(target.getId(), maxDepth);
+        log.info("Executed backward trace lot={} maxDepth={} steps={}", lotCode, maxDepth, rows.size());
         return toTraceResponse(lotCode, "BACKWARD", target.getBrandCode(), rows);
     }
 
@@ -550,6 +565,7 @@ public class LineageService {
         Lot source = requireLotByCode(lotCode);
         audienceAccessService.assertBrandAccess(source.getBrandCode());
         List<LineageQueryRepository.TraceStepRow> rows = lineageQueryRepository.traceForward(source.getId(), maxDepth);
+        log.info("Executed forward trace lot={} maxDepth={} steps={}", lotCode, maxDepth, rows.size());
         return toTraceResponse(lotCode, "FORWARD", source.getBrandCode(), rows);
     }
 
@@ -578,6 +594,7 @@ public class LineageService {
                 uniqueSteps.putIfAbsent(key, row);
             }
         }
+        log.info("Executed style backward trace style={} maxDepth={} steps={}", styleCode, maxDepth, uniqueSteps.size());
         return toTraceResponse(styleCode, "BACKWARD_BY_STYLE", brandScope, new ArrayList<>(uniqueSteps.values()));
     }
 

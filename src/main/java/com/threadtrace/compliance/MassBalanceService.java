@@ -9,6 +9,8 @@ import com.threadtrace.lineage.LotUnit;
 import com.threadtrace.lineage.MassBalanceCheckPort;
 import com.threadtrace.shared.AudienceAccessService;
 import com.threadtrace.shared.DomainExceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import java.util.Set;
 @Transactional(readOnly = true)
 public class MassBalanceService implements MassBalanceCheckPort {
 
+    private static final Logger log = LoggerFactory.getLogger(MassBalanceService.class);
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
     private final ThreadTraceProperties properties;
@@ -135,9 +138,12 @@ public class MassBalanceService implements MassBalanceCheckPort {
         }
 
         if (issues.isEmpty()) {
+            log.info("Evaluated mass-balance step={} inputs={} flagged=false", processStep, inputSlices.size());
             return MassBalanceDecision.ok();
         }
         String joined = String.join("; ", issues);
+        log.info("Evaluated mass-balance step={} inputs={} flagged=true mode={}",
+                processStep, inputSlices.size(), properties.getMassBalance().getEnforcementMode());
         if (properties.getMassBalance().getEnforcementMode() == ThreadTraceProperties.EnforcementMode.BLOCK) {
             throw new DomainExceptions.MassBalanceViolationException(joined);
         }
@@ -165,6 +171,8 @@ public class MassBalanceService implements MassBalanceCheckPort {
 
         ClaimRollupVisitor visitor = new ClaimRollupVisitor(certs, asOfDate);
         lineage.root().accept(visitor);
+        log.info("Evaluated claim rollup lot={} asOfDate={} verifiedClaims={} violations={}",
+                targetLot.getLotCode(), asOfDate, visitor.getVerifiedClaimPercentages().size(), visitor.getViolations().size());
         return new ClaimRollupResult(
                 targetLot.getLotCode(),
                 visitor.getVerifiedClaimPercentages(),

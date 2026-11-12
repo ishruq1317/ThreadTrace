@@ -15,6 +15,8 @@ import com.threadtrace.parties.PartyRepository;
 import com.threadtrace.shared.AudienceAccessService;
 import com.threadtrace.shared.DomainExceptions;
 import com.threadtrace.shared.HashUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class PassportService {
+
+    private static final Logger log = LoggerFactory.getLogger(PassportService.class);
 
     private final ProductPassportRepository passportRepository;
     private final LotRepository lotRepository;
@@ -87,6 +91,8 @@ public class PassportService {
                 ? req.allocationMethod()
                 : properties.getFootprint().getDefaultAllocationMethod();
 
+        log.info("Generating passport code={} shipmentLot={} allocationMethod={}",
+                req.passportCode(), req.shipmentLotCode(), allocationMethod);
         return buildAndSaveVersion(
                 req.passportCode(),
                 shipmentLot,
@@ -102,6 +108,8 @@ public class PassportService {
 
     @Transactional
     public void recalculateAllForExpiredEvidence(Long expiredSupplierId, Long expiredLotId, LocalDate asOfDate) {
+        log.info("Recalculating passports for expired evidence supplierId={} lotId={} asOfDate={}",
+                expiredSupplierId, expiredLotId, asOfDate);
         List<ProductPassport> latestPassports = passportRepository.findByLatestVersionTrue();
         for (ProductPassport existing : latestPassports) {
             Lot shipmentLot = lotRepository.findById(existing.getShipmentLotId()).orElse(null);
@@ -294,6 +302,7 @@ public class PassportService {
         PassportDtos.PublicPassportView publicView = audienceProxy.toPublicView(payload);
         resilientCache.putLatest(passportCode, publicView, etag);
 
+        log.info("Saved passport code={} version={} status={} etag={}", passportCode, nextVersion, status, etag);
         return audienceProxy.toAuditorView(entity, payload);
     }
 
@@ -313,8 +322,11 @@ public class PassportService {
             } else {
                 resilientCache.putVersion(passportCode, version, publicView, entity.getEtag());
             }
+            log.info("Serving public passport code={} version={} source=ORIGIN", passportCode, entity.getVersion());
             return new PublicPassportResponse(publicView, entity.getEtag(), false);
         } catch (DataAccessException ex) {
+            log.warn("Database unavailable; serving public passport code={} version={} source=FALLBACK_CACHE",
+                    passportCode, version);
             return resilientCache.get(passportCode, version)
                     .map(cached -> new PublicPassportResponse(cached.view(), cached.etag(), true))
                     .orElseThrow(() -> ex);
@@ -351,6 +363,8 @@ public class PassportService {
         List<LineageDtos.LotChainVerificationResult> lotResults = integrityService.verifyLots(rollup.lineage().allLotsInLineage());
         boolean allVerified = lotResults.stream().allMatch(LineageDtos.LotChainVerificationResult::verified);
 
+        log.info("Verified passport integrity code={} version={} lotsChecked={} verified={}",
+                passport.getPassportCode(), passport.getVersion(), lotResults.size(), allVerified);
         return new PassportDtos.PassportIntegrityVerificationView(
                 passport.getPassportCode(),
                 passport.getVersion(),
