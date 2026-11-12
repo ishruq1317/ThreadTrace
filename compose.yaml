@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-threadtrace}
+      POSTGRES_USER: ${DB_USER:-threadtrace}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env or environment}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-threadtrace} -d ${POSTGRES_DB:-threadtrace}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    mem_limit: 512m
+
+  minio:
+    image: minio/minio:RELEASE.2025-02-28T09-55-16Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?Set MINIO_ACCESS_KEY in .env or environment}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?Set MINIO_SECRET_KEY in .env or environment}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    mem_limit: 512m
+
+  threadtrace:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-threadtrace}
+      DB_USER: ${DB_USER:-threadtrace}
+      DB_PASSWORD: ${DB_PASSWORD}
+      THREADTRACE_STORAGE_TYPE: ${THREADTRACE_STORAGE_TYPE:-local}
+      THREADTRACE_STORAGE_DIR: /app/storage/evidence
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_BUCKET: ${MINIO_BUCKET:-threadtrace-evidence}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      THREADTRACE_PUBLIC_BASE_URL: ${THREADTRACE_PUBLIC_BASE_URL:-http://localhost:8080}
+      THREADTRACE_SECURITY_USERS_0_USERNAME: ${ADMIN_USERNAME:-admin}
+      THREADTRACE_SECURITY_USERS_0_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD}
+      THREADTRACE_SECURITY_USERS_0_ROLES_0: ADMIN
+      THREADTRACE_SECURITY_USERS_1_USERNAME: ${OPERATOR_USERNAME:-operator}
+      THREADTRACE_SECURITY_USERS_1_PASSWORD: ${OPERATOR_PASSWORD:?Set OPERATOR_PASSWORD}
+      THREADTRACE_SECURITY_USERS_1_ROLES_0: OPERATOR
+      THREADTRACE_SECURITY_USERS_2_USERNAME: ${AUDITOR_USERNAME:-auditor}
+      THREADTRACE_SECURITY_USERS_2_PASSWORD: ${AUDITOR_PASSWORD:?Set AUDITOR_PASSWORD}
+      THREADTRACE_SECURITY_USERS_2_ROLES_0: AUDITOR
+      THREADTRACE_SECURITY_USERS_3_USERNAME: ${BRAND_A_USERNAME:-brand_a}
+      THREADTRACE_SECURITY_USERS_3_PASSWORD: ${BRAND_A_PASSWORD:?Set BRAND_A_PASSWORD}
+      THREADTRACE_SECURITY_USERS_3_ROLES_0: BRAND
+      THREADTRACE_SECURITY_USERS_3_BRAND_CODE: BRAND_A
+    ports:
+      - "8080:8080"
+    volumes:
+      - evidence_data:/app/storage/evidence
+    mem_limit: 1024m
+
+volumes:
+  pg_data:
+  minio_data:
+  evidence_data:
