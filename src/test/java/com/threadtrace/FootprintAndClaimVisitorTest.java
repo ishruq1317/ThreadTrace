@@ -75,6 +75,47 @@ class FootprintAndClaimVisitorTest {
         assertFalse(expiredVisitor.getViolations().isEmpty());
     }
 
+    @Test
+    void diamondSplitMergeDagDoesNotDoubleCountFootprintOrClaims() throws Exception {
+        Lot parent = createLotWithId(10L, "FAB-D", LotType.FABRIC, BigDecimal.valueOf(100), 0, "ORGANIC", BigDecimal.valueOf(80));
+        LotEvent parentEvt = new LotEvent("ED0", 10L, "FAB-D", EventType.RECEIVE, "receive", 1L, null,
+                BigDecimal.valueOf(100), BigDecimal.valueOf(100), LotUnit.KG,
+                BigDecimal.valueOf(1000), BigDecimal.valueOf(100), BigDecimal.valueOf(50),
+                null, 1L, "0".repeat(64), false, null, null, "op", Instant.now());
+
+        Lot s1 = createLotWithId(11L, "S1", LotType.FABRIC, BigDecimal.valueOf(60), 0, "ORGANIC", BigDecimal.valueOf(80));
+        Lot s2 = createLotWithId(12L, "S2", LotType.FABRIC, BigDecimal.valueOf(40), 0, "ORGANIC", BigDecimal.valueOf(80));
+        Lot merged = createLotWithId(13L, "MERGED", LotType.SEWN_GARMENT, BigDecimal.valueOf(100), 200, "ORGANIC", BigDecimal.valueOf(80));
+
+        // Shared parent node (same LotLeafNode instance as produced by memoization in LineageCompositeBuilder)
+        LotLeafNode sharedParentNode = new LotLeafNode(parent, List.of(parentEvt), BigDecimal.valueOf(60), 0);
+
+        LotCompositeNode n1 = new LotCompositeNode(s1, List.of(), BigDecimal.valueOf(60), 0);
+        n1.addParent(sharedParentNode, BigDecimal.valueOf(60), 0);
+
+        LotCompositeNode n2 = new LotCompositeNode(s2, List.of(), BigDecimal.valueOf(40), 0);
+        n2.addParent(sharedParentNode, BigDecimal.valueOf(40), 0);
+
+        LotCompositeNode root = new LotCompositeNode(merged, List.of(), BigDecimal.valueOf(100), 200);
+        root.addParent(n1, BigDecimal.valueOf(60), 0);
+        root.addParent(n2, BigDecimal.valueOf(40), 0);
+
+        FootprintRollupVisitor fp = new FootprintRollupVisitor(new MassAllocationStrategy());
+        root.accept(fp);
+        // Must equal 600 + 400 = 1000 L (NOT 600 + 600 = 1200 L)
+        assertEquals(0, fp.getSummary().totalWaterLiters().compareTo(BigDecimal.valueOf(1000)));
+        assertEquals(0, fp.getSummary().totalCo2eKg().compareTo(BigDecimal.valueOf(50)));
+
+        Certificate cert = new Certificate("CERT-D", "GOTS", "Control Union", "Organic",
+                "ORGANIC", BigDecimal.valueOf(80), 10L, null,
+                LocalDate.of(2025, 1, 1), LocalDate.of(2027, 1, 1),
+                CertificateStatus.ACTIVE, "k", "f.pdf", "application/pdf", 10);
+        ClaimRollupVisitor cv = new ClaimRollupVisitor(List.of(cert), LocalDate.of(2026, 6, 1));
+        root.accept(cv);
+        assertEquals(0, cv.getVerifiedClaimPercentages().get("ORGANIC").compareTo(BigDecimal.valueOf(80)));
+        assertTrue(cv.getViolations().isEmpty());
+    }
+
     private static Lot createLotWithId(Long id, String code, LotType type, BigDecimal massKg, int pieces,
                                      String claimAttr, BigDecimal claimPct) throws Exception {
         Lot lot = new Lot(code, type, "Cotton", "ST-1", "BRAND_A", 10L, 20L,

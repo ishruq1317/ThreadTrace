@@ -22,9 +22,12 @@ public class PassportExpiryListener {
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     public void onCertificateExpired(CertificateEvents.CertificateExpiredEvent event) {
+        LocalDate effectiveDate = event.evaluationDate() != null
+                ? event.evaluationDate()
+                : event.validTo().plusDays(1);
         passportService.recalculateAllForExpiredEvidence(
                 event.supplierId(),
                 event.lotId(),
-                event.validTo().plusDays(1));
+                effectiveDate);
     }
 }

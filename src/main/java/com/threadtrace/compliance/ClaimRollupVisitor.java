@@ -44,6 +44,9 @@ public class ClaimRollupVisitor implements LineageVisitor {
     public void visitLeaf(LotLeafNode leaf) {
         this.rootNode = leaf;
         Lot lot = leaf.getLot();
+        if (certifiedMassByLotAndAttr.containsKey(lot.getId())) {
+            return;
+        }
         if (lot.isOrphan()) {
             violations.add("Orphan lot detected: " + lot.getLotCode() + " has no registered supplier");
         }
@@ -89,6 +92,12 @@ public class ClaimRollupVisitor implements LineageVisitor {
     public void visitComposite(LotCompositeNode composite) {
         this.rootNode = composite;
         Lot lot = composite.getLot();
+        if (certifiedMassByLotAndAttr.containsKey(lot.getId())) {
+            return;
+        }
+        if (lot.isOrphan()) {
+            violations.add("Orphan lot detected: " + lot.getLotCode() + " has no registered supplier");
+        }
         checkFlaggedEvents(composite.getEvents(), lot);
 
         for (Certificate cert : certificatesForLotOrSupplier(lot)) {
@@ -98,16 +107,15 @@ public class ClaimRollupVisitor implements LineageVisitor {
         }
 
         Map<String, BigDecimal> inputCertifiedByAttr = new LinkedHashMap<>();
-        BigDecimal totalParentMass = BigDecimal.ZERO;
-        for (LineageNode parent : composite.getParents()) {
-            Lot parentLot = parent.getLot();
+        for (LotCompositeNode.ParentEdge edge : composite.getParentEdges()) {
+            Lot parentLot = edge.parent().getLot();
             BigDecimal parentTotalMass = parentLot.getMassKg().compareTo(BigDecimal.ZERO) > 0
                     ? parentLot.getMassKg()
                     : BigDecimal.ONE;
-            BigDecimal shareRatio = parent.getAllocatedMassKgFromParent()
+            BigDecimal allocatedMass = edge.allocatedMassKg() != null ? edge.allocatedMassKg() : parentLot.getMassKg();
+            BigDecimal shareRatio = allocatedMass
                     .divide(parentTotalMass, 6, RoundingMode.HALF_UP)
                     .min(BigDecimal.ONE);
-            totalParentMass = totalParentMass.add(parent.getAllocatedMassKgFromParent());
 
             Map<String, BigDecimal> parentVerified = certifiedMassByLotAndAttr.getOrDefault(parentLot.getId(), Map.of());
             for (Map.Entry<String, BigDecimal> entry : parentVerified.entrySet()) {

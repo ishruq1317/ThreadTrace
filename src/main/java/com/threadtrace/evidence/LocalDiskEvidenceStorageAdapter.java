@@ -26,8 +26,9 @@ public class LocalDiskEvidenceStorageAdapter implements EvidenceStoragePort {
     public String store(String keyPrefix, String originalFilename, String contentType, InputStream content, long sizeBytes) {
         try {
             Files.createDirectories(rootDir);
+            String safePrefix = keyPrefix.replaceAll("[^a-zA-Z0-9._-]", "_");
             String safeName = originalFilename.replaceAll("[^a-zA-Z0-9._-]", "_");
-            String storageKey = keyPrefix + "-" + UUID.randomUUID().toString().substring(0, 8) + "-" + safeName;
+            String storageKey = safePrefix + "-" + UUID.randomUUID().toString().substring(0, 8) + "-" + safeName;
             Path target = rootDir.resolve(storageKey).normalize();
             if (!target.startsWith(rootDir)) {
                 throw new IllegalArgumentException("Invalid storage key path");

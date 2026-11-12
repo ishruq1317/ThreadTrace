@@ -13,5 +13,12 @@ public interface AllocationStrategy {
 
     ThreadTraceProperties.AllocationMethod method();
 
-    BigDecimal allocationFraction(Lot parentLot, LineageNode parentEdgeView);
+    BigDecimal allocationFraction(Lot parentLot, BigDecimal allocatedMassKg, int allocatedPieces);
+
+    default BigDecimal allocationFraction(Lot parentLot, LineageNode parentEdgeView) {
+        return allocationFraction(
+                parentLot,
+                parentEdgeView.getAllocatedMassKgFromParent(),
+                parentEdgeView.getAllocatedPiecesFromParent());
+    }
 }

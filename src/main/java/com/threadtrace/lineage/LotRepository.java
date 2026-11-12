@@ -15,4 +15,6 @@ public interface LotRepository extends JpaRepository<Lot, Long> {
     Page<Lot> findByStatus(LotStatus status, Pageable pageable);
     Page<Lot> findByBrandCodeAndStatus(String brandCode, LotStatus status, Pageable pageable);
     List<Lot> findByIdIn(Collection<Long> ids);
+    List<Lot> findByStyleCode(String styleCode);
+    List<Lot> findByStyleCodeAndBrandCode(String styleCode, String brandCode);
 }

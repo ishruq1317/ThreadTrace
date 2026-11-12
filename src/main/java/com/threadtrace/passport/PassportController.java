@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Digital Product Passports", description = "FR7, FR8, FR10: Versioned passports, audience views, and integrity")
@@ -58,9 +56,11 @@ public class PassportController {
 
     @GetMapping("/passports/{passportCode}/versions")
     @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'AUDITOR', 'BRAND')")
-    @Operation(summary = "List all historical versions of a passport")
-    public List<PassportDtos.PassportVersionSummary> listVersions(@PathVariable String passportCode) {
-        return passportService.listPassportVersions(passportCode);
+    @Operation(summary = "List historical versions of a passport (paginated)")
+    public Page<PassportDtos.PassportVersionSummary> listVersions(
+            @PathVariable String passportCode,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return passportService.listPassportVersions(passportCode, pageable);
     }
 
     @GetMapping("/passports/{passportCode}/versions/{version}")

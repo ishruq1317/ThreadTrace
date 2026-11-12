@@ -46,23 +46,29 @@ public class MassBalanceService implements MassBalanceCheckPort {
     @Override
     public MassBalanceDecision evaluateTransformation(
             String processStep,
-            List<Lot> inputLots,
+            List<InputSlice> inputSlices,
             BigDecimal totalInputQty,
             BigDecimal totalOutputQty,
-            LotUnit unit,
-            String claimedAttribute,
-            BigDecimal claimedPct,
-            BigDecimal outputMassKg) {
+            LotUnit outputUnit,
+            BigDecimal outputMassKg,
+            List<ClaimTarget> claimTargets) {
 
         List<String> issues = new ArrayList<>();
         ThreadTraceProperties.ProcessRuleProperties rule = properties.resolveProcessRule(processStep);
 
-        if (!inputLots.isEmpty()) {
-            boolean sameUnit = inputLots.stream().allMatch(l -> l.getUnit() == unit);
+        if (!inputSlices.isEmpty()) {
+            for (InputSlice slice : inputSlices) {
+                if (slice.inputQuantity().compareTo(slice.lot().getQuantity()) > 0) {
+                    issues.add("Input quantity " + slice.inputQuantity() + " exceeds available lot quantity "
+                            + slice.lot().getQuantity() + " for lot " + slice.lot().getLotCode());
+                }
+            }
+
+            boolean sameUnit = inputSlices.stream().allMatch(s -> s.lot().getUnit() == outputUnit);
             if (sameUnit) {
                 if (totalOutputQty.compareTo(totalInputQty) > 0) {
                     issues.add("Mass balance violation in " + processStep + ": output " + totalOutputQty
-                            + " exceeds input " + totalInputQty + " " + unit);
+                            + " exceeds input " + totalInputQty + " " + outputUnit);
                 } else if (totalInputQty.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal lossPct = totalInputQty.subtract(totalOutputQty)
                             .multiply(HUNDRED)
@@ -72,45 +78,58 @@ public class MassBalanceService implements MassBalanceCheckPort {
                                 + "% exceeds allowed " + rule.getAllowedLossPct() + "%");
                     }
                 }
-            } else {
-                // Cross-unit transformation (e.g. KG fabric cut into PIECES): verify mass conservation
-                BigDecimal inputMassKg = inputLots.stream()
-                        .map(l -> l.getUnit() == LotUnit.KG ? totalInputQty.min(l.getMassKg()) : l.getMassKg())
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-                if (outputMassKg != null && inputMassKg.compareTo(BigDecimal.ZERO) > 0) {
-                    if (outputMassKg.compareTo(inputMassKg) > 0) {
-                        issues.add("Mass balance violation in " + processStep + ": output mass " + outputMassKg
-                                + " kg exceeds input mass " + inputMassKg + " kg");
-                    } else {
-                        BigDecimal massLossPct = inputMassKg.subtract(outputMassKg)
-                                .multiply(HUNDRED)
-                                .divide(inputMassKg, 4, RoundingMode.HALF_UP);
-                        if (massLossPct.compareTo(rule.getAllowedLossPct()) > 0) {
-                            issues.add("Process loss violation in " + processStep + ": mass loss " + massLossPct
-                                    + "% exceeds allowed " + rule.getAllowedLossPct() + "%");
-                        }
+            }
+
+            BigDecimal totalInputMassKg = inputSlices.stream()
+                    .map(InputSlice::inputMassKg)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (outputMassKg != null && totalInputMassKg.compareTo(BigDecimal.ZERO) > 0) {
+                if (outputMassKg.compareTo(totalInputMassKg) > 0) {
+                    issues.add("Mass balance violation in " + processStep + ": output mass " + outputMassKg
+                            + " kg exceeds input mass " + totalInputMassKg + " kg");
+                } else {
+                    BigDecimal massLossPct = totalInputMassKg.subtract(outputMassKg)
+                            .multiply(HUNDRED)
+                            .divide(totalInputMassKg, 4, RoundingMode.HALF_UP);
+                    if (massLossPct.compareTo(rule.getAllowedLossPct()) > 0) {
+                        issues.add("Process loss violation in " + processStep + ": mass loss " + massLossPct
+                                + "% exceeds allowed " + rule.getAllowedLossPct() + "%");
                     }
                 }
             }
         }
 
-        if (claimedAttribute != null && !claimedAttribute.isBlank()
-                && claimedPct != null && claimedPct.compareTo(BigDecimal.ZERO) > 0) {
-            if (!inputLots.isEmpty()) {
-                BigDecimal certifiedInputMass = BigDecimal.ZERO;
-                for (Lot inputLot : inputLots) {
-                    ClaimRollupResult rollup = evaluateClaimsForLot(inputLot, LocalDate.now());
-                    BigDecimal pct = rollup.verifiedClaimPercentages().getOrDefault(
-                            claimedAttribute.trim().toUpperCase(), BigDecimal.ZERO);
-                    BigDecimal inputAvailableMass = inputLot.getMassKg().multiply(pct).divide(HUNDRED, 4, RoundingMode.HALF_UP);
-                    certifiedInputMass = certifiedInputMass.add(inputAvailableMass);
+        if (!inputSlices.isEmpty() && claimTargets != null && !claimTargets.isEmpty()) {
+            Map<String, BigDecimal> requestedByAttr = new java.util.LinkedHashMap<>();
+            for (ClaimTarget target : claimTargets) {
+                if (target.claimedAttribute() != null && !target.claimedAttribute().isBlank()
+                        && target.claimedPct() != null && target.claimedPct().compareTo(BigDecimal.ZERO) > 0) {
+                    String attr = target.claimedAttribute().trim().toUpperCase();
+                    BigDecimal targetMass = (target.outputMassKg() != null ? target.outputMassKg() : BigDecimal.ZERO)
+                            .multiply(target.claimedPct())
+                            .divide(HUNDRED, 4, RoundingMode.HALF_UP);
+                    requestedByAttr.merge(attr, targetMass, BigDecimal::add);
                 }
-                BigDecimal requestedCertifiedMass = (outputMassKg != null ? outputMassKg : BigDecimal.ZERO)
-                        .multiply(claimedPct)
-                        .divide(HUNDRED, 4, RoundingMode.HALF_UP);
-                if (requestedCertifiedMass.compareTo(certifiedInputMass) > 0) {
-                    issues.add("Over-claimed " + claimedAttribute + " content: requested " + requestedCertifiedMass
-                            + " kg exceeds certified input " + certifiedInputMass + " kg");
+            }
+
+            if (!requestedByAttr.isEmpty()) {
+                Map<String, BigDecimal> availableByAttr = new java.util.LinkedHashMap<>();
+                for (InputSlice slice : inputSlices) {
+                    ClaimRollupResult rollup = evaluateClaimsInternal(slice.lot(), LocalDate.now());
+                    for (Map.Entry<String, BigDecimal> entry : rollup.verifiedClaimPercentages().entrySet()) {
+                        BigDecimal sliceCertifiedMass = slice.inputMassKg()
+                                .multiply(entry.getValue())
+                                .divide(HUNDRED, 4, RoundingMode.HALF_UP);
+                        availableByAttr.merge(entry.getKey(), sliceCertifiedMass, BigDecimal::add);
+                    }
+                }
+
+                for (Map.Entry<String, BigDecimal> reqEntry : requestedByAttr.entrySet()) {
+                    BigDecimal available = availableByAttr.getOrDefault(reqEntry.getKey(), BigDecimal.ZERO);
+                    if (reqEntry.getValue().compareTo(available) > 0) {
+                        issues.add("Over-claimed " + reqEntry.getKey() + " content: requested "
+                                + reqEntry.getValue() + " kg exceeds certified input " + available + " kg");
+                    }
                 }
             }
         }

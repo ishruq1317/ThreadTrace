@@ -5,6 +5,8 @@ import com.threadtrace.lineage.Lot;
 import com.threadtrace.lineage.LotRepository;
 import com.threadtrace.parties.Party;
 import com.threadtrace.parties.PartyService;
+import com.threadtrace.shared.Audience;
+import com.threadtrace.shared.AudienceAccessService;
 import com.threadtrace.shared.DomainExceptions;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -33,6 +35,7 @@ public class EvidenceService {
     private final LotRepository lotRepository;
     private final ThreadTraceProperties properties;
     private final ApplicationEventPublisher eventPublisher;
+    private final AudienceAccessService audienceAccessService;
 
     public EvidenceService(
             CertificateRepository certificateRepository,
@@ -40,13 +43,15 @@ public class EvidenceService {
             PartyService partyService,
             LotRepository lotRepository,
             ThreadTraceProperties properties,
-            ApplicationEventPublisher eventPublisher) {
+            ApplicationEventPublisher eventPublisher,
+            AudienceAccessService audienceAccessService) {
         this.certificateRepository = certificateRepository;
         this.storagePort = storagePort;
         this.partyService = partyService;
         this.lotRepository = lotRepository;
         this.properties = properties;
         this.eventPublisher = eventPublisher;
+        this.audienceAccessService = audienceAccessService;
     }
 
     @Transactional
@@ -145,7 +150,7 @@ public class EvidenceService {
         } else if (initialStatus == CertificateStatus.EXPIRED) {
             eventPublisher.publishEvent(new CertificateEvents.CertificateExpiredEvent(
                     cert.getId(), cert.getCertificateNumber(), cert.getCertificateType(),
-                    cert.getClaimedAttribute(), cert.getSupplierId(), cert.getLotId(), cert.getValidTo()));
+                    cert.getClaimedAttribute(), cert.getSupplierId(), cert.getLotId(), cert.getValidTo(), today));
         }
 
         return toView(cert);
@@ -174,7 +179,7 @@ public class EvidenceService {
                     expiredCount++;
                     eventPublisher.publishEvent(new CertificateEvents.CertificateExpiredEvent(
                             cert.getId(), cert.getCertificateNumber(), cert.getCertificateType(),
-                            cert.getClaimedAttribute(), cert.getSupplierId(), cert.getLotId(), cert.getValidTo()));
+                            cert.getClaimedAttribute(), cert.getSupplierId(), cert.getLotId(), cert.getValidTo(), effectiveDate));
                 }
             }
         }
@@ -182,6 +187,14 @@ public class EvidenceService {
     }
 
     public Page<EvidenceDtos.CertificateView> listCertificates(CertificateStatus status, Pageable pageable) {
+        Audience audience = audienceAccessService.resolveAudience();
+        if (audience == Audience.BRAND) {
+            String brandCode = audienceAccessService.currentBrandScope().orElse("");
+            Page<Certificate> page = status != null
+                    ? certificateRepository.findVisibleToBrandByStatus(brandCode, status, pageable)
+                    : certificateRepository.findVisibleToBrand(brandCode, pageable);
+            return page.map(this::toView);
+        }
         Page<Certificate> page = status != null
                 ? certificateRepository.findByStatus(status, pageable)
                 : certificateRepository.findAll(pageable);
@@ -189,9 +202,14 @@ public class EvidenceService {
     }
 
     public Certificate requireCertificate(String certificateNumber) {
-        return certificateRepository.findByCertificateNumber(certificateNumber)
+        Certificate cert = certificateRepository.findByCertificateNumber(certificateNumber)
                 .orElseThrow(() -> new DomainExceptions.ResourceNotFoundException(
                         "Certificate not found: " + certificateNumber));
+        if (cert.getLotId() != null) {
+            lotRepository.findById(cert.getLotId())
+                    .ifPresent(lot -> audienceAccessService.assertBrandAccess(lot.getBrandCode()));
+        }
+        return cert;
     }
 
     public byte[] loadCertificateFile(String certificateNumber) {

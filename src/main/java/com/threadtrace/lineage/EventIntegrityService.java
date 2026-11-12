@@ -57,6 +57,11 @@ public class EventIntegrityService {
                     ev.getInputQuantity(),
                     ev.getOutputQuantity(),
                     ev.getUnit(),
+                    ev.getWaterLiters(),
+                    ev.getEnergyKwh(),
+                    ev.getCo2eKg(),
+                    ev.isFlagged(),
+                    ev.getFlagReason(),
                     ev.getOccurredAt(),
                     ev.getRecordedBy(),
                     ev.getCorrectsEventId()

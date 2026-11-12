@@ -69,8 +69,9 @@ public class EvidenceController {
     public ResponseEntity<byte[]> downloadFile(@PathVariable String certificateNumber) {
         Certificate cert = evidenceService.requireCertificate(certificateNumber);
         byte[] data = evidenceService.loadCertificateFile(certificateNumber);
+        String safeFilename = cert.getOriginalFilename().replaceAll("[\"\\r\\n]", "_");
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + cert.getOriginalFilename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + safeFilename + "\"")
                 .contentType(MediaType.parseMediaType(cert.getContentType()))
                 .body(data);
     }

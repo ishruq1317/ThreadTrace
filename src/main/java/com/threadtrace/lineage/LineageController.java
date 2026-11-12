@@ -114,6 +114,15 @@ public class LineageController {
         return lineageService.traceBackward(lotCode, maxDepth);
     }
 
+    @GetMapping("/traces/backward/style/{styleCode}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'AUDITOR', 'BRAND')")
+    @Operation(summary = "Backward trace from a garment style back to every source lot and supplier")
+    public LineageDtos.TraceResponse traceBackwardByStyle(
+            @PathVariable String styleCode,
+            @RequestParam(defaultValue = "12") @Min(1) @Max(20) int maxDepth) {
+        return lineageService.traceBackwardByStyle(styleCode, maxDepth);
+    }
+
     @GetMapping("/traces/forward/{lotCode}")
     @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'AUDITOR', 'BRAND')")
     @Operation(summary = "Forward trace from a fabric/raw lot to every carton and shipment")

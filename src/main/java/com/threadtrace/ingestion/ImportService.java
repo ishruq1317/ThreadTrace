@@ -51,6 +51,9 @@ public class ImportService {
             ImportType importType,
             ImportFileFormat fileFormat,
             MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new DomainExceptions.DomainValidationException("Uploaded import file must not be empty");
+        }
         ImportRowAdapter adapter = adapters.stream()
                 .filter(a -> a.supports(fileFormat))
                 .findFirst()

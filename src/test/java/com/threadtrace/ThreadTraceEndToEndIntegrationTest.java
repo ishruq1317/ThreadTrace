@@ -326,13 +326,22 @@ class ThreadTraceEndToEndIntegrationTest {
                         .with(httpBasic("brand_a", "test-branda-pass")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.direction").value("FORWARD"))
+                .andExpect(jsonPath("$.stepCount").value(org.hamcrest.Matchers.greaterThanOrEqualTo(5)))
+                .andExpect(jsonPath("$.steps[0].buyerBrandCode").value("BRAND_A"));
+
+        // Style-based backward trace (FR3)
+        mockMvc.perform(get("/api/v1/traces/backward/style/STY-TEE-01")
+                        .with(httpBasic("brand_a", "test-branda-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.direction").value("BACKWARD_BY_STYLE"))
                 .andExpect(jsonPath("$.stepCount").value(org.hamcrest.Matchers.greaterThanOrEqualTo(5)));
 
-        // 8. Footprint Roll-up (FR6): BY_MASS and BY_PIECE_COUNT
+        // 8. Footprint Roll-up (FR6): BY_MASS and BY_PIECE_COUNT (exact 224.0 L with zero diamond double-counting)
         mockMvc.perform(get("/api/v1/footprint/lots/LOT-SHIP-A1?allocationMethod=BY_MASS")
                         .with(httpBasic("brand_a", "test-branda-pass")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.allocationMethod").value("BY_MASS"))
+                .andExpect(jsonPath("$.totalWaterLiters").value(224.0))
                 .andExpect(jsonPath("$.co2eKgPerPiece").isNumber());
 
         mockMvc.perform(get("/api/v1/footprint/lots/LOT-SHIP-A1?allocationMethod=BY_PIECE_COUNT")
@@ -396,6 +405,43 @@ class ThreadTraceEndToEndIntegrationTest {
                         .with(httpBasic("brand_b", "test-brandb-pass")))
                 .andExpect(status().isForbidden());
 
+        // Cross-brand passport code hijack refused
+        mockMvc.perform(post("/api/v1/passports")
+                        .with(httpBasic("brand_b", "test-brandb-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "passportCode": "PP-A1",
+                                  "shipmentLotCode": "LOT-FAB-B1",
+                                  "styleCode": "STY-B-01",
+                                  "styleName": "Hijack Attempt",
+                                  "careAndRepair": "Wash",
+                                  "endOfLifeGuidance": "Recycle"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+
+        // Lot-attached certificate for BRAND_B refused to BRAND_A
+        mockMvc.perform(post("/api/v1/evidence/certificates")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "certificateNumber": "CERT-B-PRIVATE",
+                                  "certificateType": "OEKO_TEX_100",
+                                  "issuer": "Intertek",
+                                  "scope": "Lot B1 Test",
+                                  "lotCode": "LOT-FAB-B1",
+                                  "validFrom": "%s",
+                                  "validTo": "%s"
+                                }
+                                """.formatted(validFrom, validTo.plusMonths(6))))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/api/v1/evidence/certificates/CERT-B-PRIVATE/file")
+                        .with(httpBasic("brand_a", "test-branda-pass")))
+                .andExpect(status().isForbidden());
+
         // 11. QA4: Database-down fallback serves public passport from cache!
         doThrow(new DataAccessResourceFailureException("Simulated PostgreSQL outage"))
                 .when(passportRepository).findByPassportCodeAndLatestVersionTrue("PP-A1");
@@ -426,12 +472,17 @@ class ThreadTraceEndToEndIntegrationTest {
                 .andExpect(jsonPath("$.certifications").isEmpty())
                 .andExpect(jsonPath("$.fibreComposition[0].verifiedPercentage").value(0));
 
-        // Version 1 still retrievable
+        // Version 1 still retrievable & paginated versions list (C3, FR7)
         mockMvc.perform(get("/api/v1/passports/PP-A1/versions/1")
                         .with(httpBasic("auditor", "test-auditor-pass")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.version").value(1))
                 .andExpect(jsonPath("$.status").value("PUBLISHED"));
+
+        mockMvc.perform(get("/api/v1/passports/PP-A1/versions")
+                        .with(httpBasic("auditor", "test-auditor-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page.totalElements").value(2));
 
         // 13. QA2 Planted Problems: cutting loss > 12%, over-claimed content, orphan lot
         // Cutting loss 25% (> 12% limit)
@@ -479,6 +530,32 @@ class ThreadTraceEndToEndIntegrationTest {
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("FLAGGED"));
+
+        // Split over-claim (LOT-FAB-A1 is 80% organic; split child claiming 100% organic must be FLAGGED)
+        mockMvc.perform(post("/api/v1/events/split")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "parentLotCode": "LOT-FAB-A1",
+                                  "factoryCode": "FAC-1",
+                                  "inputQuantity": 10.0,
+                                  "outputs": [
+                                    {
+                                      "outputLotCode": "LOT-SPLIT-OVERCLAIM",
+                                      "outputLotType": "FABRIC",
+                                      "outputQuantity": 10.0,
+                                      "outputMassKg": 10.0,
+                                      "outputPieceCount": 0,
+                                      "unit": "KG",
+                                      "claimedAttribute": "ORGANIC",
+                                      "claimedPct": 100.0
+                                    }
+                                  ]
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$[0].status").value("FLAGGED"));
 
         // Orphan lot (no supplierCode)
         mockMvc.perform(post("/api/v1/events/receive")
@@ -561,9 +638,14 @@ class ThreadTraceEndToEndIntegrationTest {
         JsonNode tamperedNode = objectMapper.readTree(tamperedVerify.getResponse().getContentAsString());
         assertFalse(tamperedNode.get("verified").asBoolean());
 
-        // 16. C3 & C4: Actuator health + OpenAPI docs + RFC 9457 validation error
+        // 16. C3 & C4: Actuator health + OpenAPI docs + RFC 9457 401/400 validation error
         mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
+        mockMvc.perform(get("/actuator/health/readiness")).andExpect(status().isOk());
         mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/v1/lots"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.title").value("Authentication Required"));
 
         mockMvc.perform(post("/api/v1/parties")
                         .with(httpBasic("operator", "test-operator-pass"))

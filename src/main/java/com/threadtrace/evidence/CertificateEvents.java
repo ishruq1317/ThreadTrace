@@ -24,7 +24,8 @@ public final class CertificateEvents {
             String claimedAttribute,
             Long supplierId,
             Long lotId,
-            LocalDate validTo
+            LocalDate validTo,
+            LocalDate evaluationDate
     ) {
     }
 }

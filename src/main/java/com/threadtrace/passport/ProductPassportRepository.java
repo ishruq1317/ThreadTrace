@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ProductPassportRepository extends JpaRepository<ProductPassport, Long> {
     Optional<ProductPassport> findByPassportCodeAndLatestVersionTrue(String passportCode);
     Optional<ProductPassport> findByPassportCodeAndVersion(String passportCode, int version);
-    List<ProductPassport> findByPassportCodeOrderByVersionDesc(String passportCode);
+    Page<ProductPassport> findByPassportCodeOrderByVersionDesc(String passportCode, Pageable pageable);
     List<ProductPassport> findByLatestVersionTrue();
     Page<ProductPassport> findByLatestVersionTrue(Pageable pageable);
     Page<ProductPassport> findByBrandCodeAndLatestVersionTrue(String brandCode, Pageable pageable);

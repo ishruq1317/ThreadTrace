@@ -17,12 +17,11 @@ public class MassAllocationStrategy implements AllocationStrategy {
     }
 
     @Override
-    public BigDecimal allocationFraction(Lot parentLot, LineageNode parentEdgeView) {
+    public BigDecimal allocationFraction(Lot parentLot, BigDecimal allocatedMass, int allocatedPieces) {
         BigDecimal parentMass = parentLot.getMassKg();
         if (parentMass == null || parentMass.compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ONE;
         }
-        BigDecimal allocatedMass = parentEdgeView.getAllocatedMassKgFromParent();
         if (allocatedMass == null || allocatedMass.compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ONE;
         }

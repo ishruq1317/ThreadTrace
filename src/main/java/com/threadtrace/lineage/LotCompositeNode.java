@@ -11,7 +11,7 @@ public class LotCompositeNode implements LineageNode {
     private final List<LotEvent> events;
     private final BigDecimal allocatedMassKgFromParent;
     private final int allocatedPiecesFromParent;
-    private final List<LineageNode> parents = new ArrayList<>();
+    private final List<ParentEdge> parentEdges = new ArrayList<>();
 
     public LotCompositeNode(Lot lot, List<LotEvent> events, BigDecimal allocatedMassKgFromParent, int allocatedPiecesFromParent) {
         this.lot = lot;
@@ -21,7 +21,14 @@ public class LotCompositeNode implements LineageNode {
     }
 
     public void addParent(LineageNode parent) {
-        this.parents.add(parent);
+        this.parentEdges.add(new ParentEdge(
+                parent,
+                parent.getAllocatedMassKgFromParent(),
+                parent.getAllocatedPiecesFromParent()));
+    }
+
+    public void addParent(LineageNode parent, BigDecimal allocatedMassKg, int allocatedPieces) {
+        this.parentEdges.add(new ParentEdge(parent, allocatedMassKg, allocatedPieces));
     }
 
     @Override
@@ -46,14 +53,21 @@ public class LotCompositeNode implements LineageNode {
 
     @Override
     public List<LineageNode> getParents() {
-        return Collections.unmodifiableList(parents);
+        return parentEdges.stream().map(ParentEdge::parent).toList();
+    }
+
+    public List<ParentEdge> getParentEdges() {
+        return Collections.unmodifiableList(parentEdges);
     }
 
     @Override
     public void accept(LineageVisitor visitor) {
-        for (LineageNode parent : parents) {
-            parent.accept(visitor);
+        for (ParentEdge edge : parentEdges) {
+            edge.parent().accept(visitor);
         }
         visitor.visitComposite(this);
+    }
+
+    public record ParentEdge(LineageNode parent, BigDecimal allocatedMassKg, int allocatedPieces) {
     }
 }

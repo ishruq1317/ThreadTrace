@@ -207,6 +207,7 @@ public final class LineageDtos {
             String supplierRegion,
             String childLotCode,
             String childLotType,
+            String buyerBrandCode,
             String eventCode,
             String eventType,
             String processStep,

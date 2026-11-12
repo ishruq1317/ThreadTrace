@@ -29,6 +29,9 @@ public class FootprintRollupVisitor implements LineageVisitor {
     @Override
     public void visitLeaf(LotLeafNode leaf) {
         this.rootNode = leaf;
+        if (totalsByLotId.containsKey(leaf.getLot().getId())) {
+            return;
+        }
         FootprintTotals own = sumOwnEvents(leaf.getEvents());
         totalsByLotId.put(leaf.getLot().getId(), own);
     }
@@ -36,16 +39,19 @@ public class FootprintRollupVisitor implements LineageVisitor {
     @Override
     public void visitComposite(LotCompositeNode composite) {
         this.rootNode = composite;
+        if (totalsByLotId.containsKey(composite.getLot().getId())) {
+            return;
+        }
         FootprintTotals own = sumOwnEvents(composite.getEvents());
 
         BigDecimal water = own.waterLiters();
         BigDecimal energy = own.energyKwh();
         BigDecimal co2e = own.co2eKg();
 
-        for (LineageNode parent : composite.getParents()) {
-            Lot parentLot = parent.getLot();
+        for (LotCompositeNode.ParentEdge edge : composite.getParentEdges()) {
+            Lot parentLot = edge.parent().getLot();
             FootprintTotals parentTotals = totalsByLotId.getOrDefault(parentLot.getId(), FootprintTotals.ZERO);
-            BigDecimal fraction = allocationStrategy.allocationFraction(parentLot, parent);
+            BigDecimal fraction = allocationStrategy.allocationFraction(parentLot, edge.allocatedMassKg(), edge.allocatedPieces());
             water = water.add(parentTotals.waterLiters().multiply(fraction));
             energy = energy.add(parentTotals.energyKwh().multiply(fraction));
             co2e = co2e.add(parentTotals.co2eKg().multiply(fraction));

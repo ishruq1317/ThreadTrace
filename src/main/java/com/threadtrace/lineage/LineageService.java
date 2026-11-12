@@ -15,9 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -83,9 +86,9 @@ public class LineageService {
                         req.quantity(),
                         req.quantity(),
                         req.unit(),
-                        req.claimedAttribute(),
-                        req.claimedPct(),
-                        req.massKg());
+                        req.massKg(),
+                        List.of(new MassBalanceCheckPort.ClaimTarget(
+                                req.claimedAttribute(), req.claimedPct(), req.massKg())));
                 if (claimDecision.flagged()) {
                     flagged = true;
                     flagReason = claimDecision.reason();
@@ -165,15 +168,18 @@ public class LineageService {
         String effectiveClaimAttr = req.claimedAttribute() != null ? req.claimedAttribute() : inputLot.getClaimedAttribute();
         BigDecimal effectiveClaimPct = req.claimedPct() != null ? req.claimedPct() : inputLot.getClaimedPct();
 
+        BigDecimal consumedMassKg = computeConsumedMassKg(inputLot, req.inputQuantity());
+        int consumedPieces = computeConsumedPieces(inputLot, req.inputQuantity());
+
         MassBalanceCheckPort.MassBalanceDecision decision = evaluateMassBalance(
                 processStep,
-                List.of(inputLot),
+                List.of(new MassBalanceCheckPort.InputSlice(inputLot, req.inputQuantity(), consumedMassKg)),
                 req.inputQuantity(),
                 req.outputQuantity(),
                 req.unit(),
-                effectiveClaimAttr,
-                effectiveClaimPct,
-                req.outputMassKg());
+                req.outputMassKg(),
+                List.of(new MassBalanceCheckPort.ClaimTarget(
+                        effectiveClaimAttr, effectiveClaimPct, req.outputMassKg())));
 
         Lot outputLot = new Lot(
                 req.outputLotCode(),
@@ -218,8 +224,8 @@ public class LineageService {
                 outputLot.getId(),
                 req.inputQuantity(),
                 req.unit(),
-                req.unit() == LotUnit.KG ? req.inputQuantity() : inputLot.getMassKg(),
-                req.outputPieceCount() > 0 ? req.outputPieceCount() : inputLot.getPieceCount()
+                consumedMassKg,
+                consumedPieces
         ));
 
         eventPublisher.publishEvent(new LotEventRecordedEvent(
@@ -253,15 +259,22 @@ public class LineageService {
                 .map(LineageDtos.SplitOutputItem::outputMassKg)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        BigDecimal parentConsumedMassKg = computeConsumedMassKg(parentLot, req.inputQuantity());
+        List<MassBalanceCheckPort.ClaimTarget> splitClaimTargets = req.outputs().stream()
+                .map(item -> new MassBalanceCheckPort.ClaimTarget(
+                        item.claimedAttribute() != null ? item.claimedAttribute() : parentLot.getClaimedAttribute(),
+                        item.claimedPct() != null ? item.claimedPct() : parentLot.getClaimedPct(),
+                        item.outputMassKg()))
+                .toList();
+
         MassBalanceCheckPort.MassBalanceDecision decision = evaluateMassBalance(
                 processStep,
-                List.of(parentLot),
+                List.of(new MassBalanceCheckPort.InputSlice(parentLot, req.inputQuantity(), parentConsumedMassKg)),
                 req.inputQuantity(),
                 totalOutputQty,
                 parentLot.getUnit(),
-                parentLot.getClaimedAttribute(),
-                parentLot.getClaimedPct(),
-                totalOutputMass);
+                totalOutputMass,
+                splitClaimTargets);
 
         LotEvent splitEvent = appendEvent(
                 parentLot,
@@ -353,6 +366,7 @@ public class LineageService {
         }
 
         List<Lot> parents = new ArrayList<>(req.inputs().size());
+        List<MassBalanceCheckPort.InputSlice> inputSlices = new ArrayList<>(req.inputs().size());
         BigDecimal totalInputQty = BigDecimal.ZERO;
         String brandCode = null;
         for (LineageDtos.MergeInputItem item : req.inputs()) {
@@ -365,6 +379,7 @@ public class LineageService {
                         "Cannot merge lots from different brands: " + brandCode + " and " + p.getBrandCode());
             }
             parents.add(p);
+            inputSlices.add(new MassBalanceCheckPort.InputSlice(p, item.inputQuantity(), item.inputMassKg()));
             totalInputQty = totalInputQty.add(item.inputQuantity());
         }
 
@@ -381,13 +396,13 @@ public class LineageService {
 
         MassBalanceCheckPort.MassBalanceDecision decision = evaluateMassBalance(
                 processStep,
-                parents,
+                inputSlices,
                 totalInputQty,
                 req.outputQuantity(),
                 req.unit(),
-                req.claimedAttribute(),
-                req.claimedPct(),
-                req.outputMassKg());
+                req.outputMassKg(),
+                List.of(new MassBalanceCheckPort.ClaimTarget(
+                        req.claimedAttribute(), req.claimedPct(), req.outputMassKg())));
 
         Lot outputLot = lotRepository.save(new Lot(
                 req.outputLotCode(),
@@ -538,26 +553,78 @@ public class LineageService {
         return toTraceResponse(lotCode, "FORWARD", source.getBrandCode(), rows);
     }
 
+    public LineageDtos.TraceResponse traceBackwardByStyle(String styleCode, int maxDepth) {
+        Audience audience = audienceAccessService.resolveAudience();
+        List<Lot> styleLots;
+        String brandScope;
+        if (audience == Audience.BRAND) {
+            brandScope = audienceAccessService.currentBrandScope().orElse("");
+            styleLots = lotRepository.findByStyleCodeAndBrandCode(styleCode, brandScope);
+            if (styleLots.isEmpty() && !lotRepository.findByStyleCode(styleCode).isEmpty()) {
+                throw new DomainExceptions.BrandAccessDeniedException(
+                        "Brand '" + brandScope + "' cannot access style '" + styleCode + "'");
+            }
+        } else {
+            styleLots = lotRepository.findByStyleCode(styleCode);
+            brandScope = styleLots.isEmpty() ? null : styleLots.getFirst().getBrandCode();
+        }
+        if (styleLots.isEmpty()) {
+            throw new DomainExceptions.ResourceNotFoundException("No lots found for style: " + styleCode);
+        }
+        Map<String, LineageQueryRepository.TraceStepRow> uniqueSteps = new LinkedHashMap<>();
+        for (Lot lot : styleLots) {
+            for (LineageQueryRepository.TraceStepRow row : lineageQueryRepository.traceBackward(lot.getId(), maxDepth)) {
+                String key = row.eventId() + ":" + row.parentLotId() + "->" + row.childLotId();
+                uniqueSteps.putIfAbsent(key, row);
+            }
+        }
+        return toTraceResponse(styleCode, "BACKWARD_BY_STYLE", brandScope, new ArrayList<>(uniqueSteps.values()));
+    }
+
     public Lot requireLotByCode(String lotCode) {
         return lotRepository.findByLotCode(lotCode)
                 .orElseThrow(() -> new DomainExceptions.ResourceNotFoundException("Lot not found: " + lotCode));
     }
 
+    private static BigDecimal computeConsumedMassKg(Lot inputLot, BigDecimal inputQty) {
+        if (inputLot.getUnit() == LotUnit.KG) {
+            return inputQty;
+        }
+        if (inputLot.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+            return inputLot.getMassKg();
+        }
+        BigDecimal ratio = inputQty.divide(inputLot.getQuantity(), 6, RoundingMode.HALF_UP).min(BigDecimal.ONE);
+        return inputLot.getMassKg().multiply(ratio).setScale(4, RoundingMode.HALF_UP);
+    }
+
+    private static int computeConsumedPieces(Lot inputLot, BigDecimal inputQty) {
+        if (inputLot.getPieceCount() <= 0) {
+            return 0;
+        }
+        if (inputLot.getUnit() == LotUnit.PIECES) {
+            return inputQty.intValue();
+        }
+        if (inputLot.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+            return inputLot.getPieceCount();
+        }
+        BigDecimal ratio = inputQty.divide(inputLot.getQuantity(), 6, RoundingMode.HALF_UP).min(BigDecimal.ONE);
+        return BigDecimal.valueOf(inputLot.getPieceCount()).multiply(ratio).setScale(0, RoundingMode.HALF_UP).intValue();
+    }
+
     private MassBalanceCheckPort.MassBalanceDecision evaluateMassBalance(
             String processStep,
-            List<Lot> inputLots,
+            List<MassBalanceCheckPort.InputSlice> inputSlices,
             BigDecimal inputQty,
             BigDecimal outputQty,
-            LotUnit unit,
-            String claimedAttribute,
-            BigDecimal claimedPct,
-            BigDecimal outputMassKg) {
+            LotUnit outputUnit,
+            BigDecimal outputMassKg,
+            List<MassBalanceCheckPort.ClaimTarget> claimTargets) {
         MassBalanceCheckPort port = massBalancePortProvider.getIfAvailable();
         if (port == null) {
             return MassBalanceCheckPort.MassBalanceDecision.ok();
         }
         return port.evaluateTransformation(
-                processStep, inputLots, inputQty, outputQty, unit, claimedAttribute, claimedPct, outputMassKg);
+                processStep, inputSlices, inputQty, outputQty, outputUnit, outputMassKg, claimTargets);
     }
 
     private LotEvent appendEvent(
@@ -635,6 +702,7 @@ public class LineageService {
                         r.parentSupplierRegion(),
                         r.childLotCode(),
                         r.childLotType(),
+                        r.childBrandCode(),
                         r.eventCode(),
                         r.eventType(),
                         r.processStep(),

@@ -20,8 +20,6 @@ import java.util.stream.IntStream;
 @Component
 public class ExcelImportAdapter implements ImportRowAdapter {
 
-    private final DataFormatter formatter = new DataFormatter();
-
     @Override
     public boolean supports(ImportFileFormat format) {
         return format == ImportFileFormat.EXCEL;
@@ -29,6 +27,7 @@ public class ExcelImportAdapter implements ImportRowAdapter {
 
     @Override
     public List<FactoryImportRow> parse(InputStream input, ImportType importType) {
+        DataFormatter formatter = new DataFormatter();
         List<FactoryImportRow> rows = new ArrayList<>();
         try (Workbook workbook = new XSSFWorkbook(input)) {
             if (workbook.getNumberOfSheets() == 0) {
@@ -42,7 +41,7 @@ public class ExcelImportAdapter implements ImportRowAdapter {
                     continue;
                 }
                 List<String> cols = IntStream.range(0, 11)
-                        .mapToObj(i -> cellString(row.getCell(i)))
+                        .mapToObj(i -> cellString(formatter, row.getCell(i)))
                         .toList();
                 String raw = String.join(",", cols);
                 if (cols.stream().allMatch(String::isBlank)) {
@@ -83,7 +82,7 @@ public class ExcelImportAdapter implements ImportRowAdapter {
         }
     }
 
-    private String cellString(Cell cell) {
+    private String cellString(DataFormatter formatter, Cell cell) {
         if (cell == null) {
             return "";
         }

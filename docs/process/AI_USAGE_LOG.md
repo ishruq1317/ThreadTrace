@@ -22,3 +22,7 @@
 3. **Spring Boot 4.1.2 / Spring Batch 6.0.6 package & API changes**
    - **How found**: Inspecting `mvnw dependency:list` and running `javap` against `spring-batch-core:6.0.6` and `spring-batch-infrastructure:6.0.6` revealed Spring Boot 4 uses Jackson 3 (`tools.jackson.databind.ObjectMapper`), `HttpStatus.UNPROCESSABLE_CONTENT`, and Spring Batch 6 moved item interfaces into `org.springframework.batch.infrastructure.item.*` with `StepBuilder.chunk(int).transactionManager(...)`.
    - **Fix**: Aligned `pom.xml`, `ProblemDetailExceptionHandler`, `PassportService`, and `FactoryImportJobConfig` to the verified Spring Boot 4.1.2 / Spring Batch 6.0.6 APIs with zero compilation errors or deprecation warnings.
+
+4. **Diamond Split-Merge DAG Double-Counting & Cross-Unit `LotEdge` Allocation Bug**
+   - **How found**: Skeptical code review of `LineageCompositeBuilder`, `LotCompositeNode`, and `LineageService.recordTransform` revealed `memo.put(lotId, node)` cached edge allocations (`60 kg` vs `40 kg`) on the shared parent node itself, inflating water footprint by 20% (`1200 L` instead of `1000 L`) on split-then-merge DAGs, while `recordTransform` checked output `req.unit()` instead of `inputLot.getUnit()`.
+   - **Fix**: Introduced `LotCompositeNode.ParentEdge`, per-input `MassBalanceCheckPort.InputSlice`/`ClaimTarget`, `LotEvent` footprint/flag hashing, style backward trace, cross-brand passport/cert scoping, and idempotent Flyway `V2__spring_batch_schema.sql`, verified by new unit, HTTP SigV4, and E2E integration tests.

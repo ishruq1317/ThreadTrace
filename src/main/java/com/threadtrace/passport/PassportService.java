@@ -142,6 +142,10 @@ public class PassportService {
 
         int nextVersion = passportRepository.findByPassportCodeAndLatestVersionTrue(passportCode)
                 .map(prev -> {
+                    if (!prev.getBrandCode().equalsIgnoreCase(shipmentLot.getBrandCode())) {
+                        throw new DomainExceptions.BrandAccessDeniedException(
+                                "Passport code '" + passportCode + "' belongs to another brand");
+                    }
                     prev.markSuperseded();
                     passportRepository.save(prev);
                     return prev.getVersion() + 1;
@@ -174,11 +178,22 @@ public class PassportService {
         // Build fibre composition strictly from verified claims (never publish unsupported claims)
         Map<String, BigDecimal> verifiedClaims = claimResult.verifiedClaimPercentages();
         if (verifiedClaims.isEmpty()) {
-            builder.addFibreComponent(new PassportDtos.FibreComponent(
-                    shipmentLot.getMaterialType(),
-                    "STANDARD_UNVERIFIED_CLAIM_DROPPED",
-                    BigDecimal.ZERO
-            ));
+            boolean hadClaim = claimResult.lineage().allLotsInLineage().stream()
+                    .anyMatch(l -> l.getClaimedAttribute() != null && !l.getClaimedAttribute().isBlank()
+                            && l.getClaimedPct().compareTo(BigDecimal.ZERO) > 0);
+            if (hadClaim || !claimResult.violations().isEmpty()) {
+                builder.addFibreComponent(new PassportDtos.FibreComponent(
+                        shipmentLot.getMaterialType(),
+                        "STANDARD_UNVERIFIED_CLAIM_DROPPED",
+                        BigDecimal.ZERO
+                ));
+            } else {
+                builder.addFibreComponent(new PassportDtos.FibreComponent(
+                        shipmentLot.getMaterialType(),
+                        "STANDARD",
+                        BigDecimal.valueOf(100)
+                ));
+            }
         } else {
             for (Map.Entry<String, BigDecimal> entry : verifiedClaims.entrySet()) {
                 builder.addFibreComponent(new PassportDtos.FibreComponent(
@@ -315,13 +330,13 @@ public class PassportService {
         return page.map(this::toVersionSummary);
     }
 
-    public List<PassportDtos.PassportVersionSummary> listPassportVersions(String passportCode) {
-        List<ProductPassport> versions = passportRepository.findByPassportCodeOrderByVersionDesc(passportCode);
+    public Page<PassportDtos.PassportVersionSummary> listPassportVersions(String passportCode, Pageable pageable) {
+        Page<ProductPassport> versions = passportRepository.findByPassportCodeOrderByVersionDesc(passportCode, pageable);
         if (versions.isEmpty()) {
             throw new DomainExceptions.ResourceNotFoundException("Passport not found: " + passportCode);
         }
-        audienceAccessService.assertBrandAccess(versions.getFirst().getBrandCode());
-        return versions.stream().map(this::toVersionSummary).toList();
+        audienceAccessService.assertBrandAccess(versions.getContent().getFirst().getBrandCode());
+        return versions.map(this::toVersionSummary);
     }
 
     public PassportDtos.PassportIntegrityVerificationView verifyPassportIntegrity(String passportCode) {

@@ -56,5 +56,16 @@ class HashChainIntegrityTest {
         when(eventRepo.findByLotIdOrderBySequenceNumberAsc(100L)).thenReturn(List.of(e1, tampered));
         LineageDtos.LotChainVerificationResult invalid = service.verifyLot(lot);
         assertFalse(invalid.verified());
+
+        // Tamper with footprint metric directly on stored event row
+        LotEvent metricTampered = new LotEvent("E1", 100L, "LOT-H1", EventType.RECEIVE, "receive", 1L, null,
+                BigDecimal.TEN, BigDecimal.TEN, LotUnit.KG, BigDecimal.valueOf(999), BigDecimal.ZERO, BigDecimal.ZERO,
+                null, 1L, HashUtils.GENESIS_HASH, false, null, null, "op", Instant.now());
+        var hashField = LotEvent.class.getDeclaredField("eventHash");
+        hashField.setAccessible(true);
+        hashField.set(metricTampered, e1.getEventHash());
+        when(eventRepo.findByLotIdOrderBySequenceNumberAsc(100L)).thenReturn(List.of(metricTampered, e2));
+        LineageDtos.LotChainVerificationResult invalidMetric = service.verifyLot(lot);
+        assertFalse(invalidMetric.verified());
     }
 }

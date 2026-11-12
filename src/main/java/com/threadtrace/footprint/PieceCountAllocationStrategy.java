@@ -17,18 +17,16 @@ public class PieceCountAllocationStrategy implements AllocationStrategy {
     }
 
     @Override
-    public BigDecimal allocationFraction(Lot parentLot, LineageNode parentEdgeView) {
+    public BigDecimal allocationFraction(Lot parentLot, BigDecimal allocatedMassKg, int allocatedPieces) {
         int parentPieces = parentLot.getPieceCount();
-        int allocatedPieces = parentEdgeView.getAllocatedPiecesFromParent();
         if (parentPieces > 0 && allocatedPieces > 0) {
             return BigDecimal.valueOf(allocatedPieces)
                     .divide(BigDecimal.valueOf(parentPieces), 6, RoundingMode.HALF_UP)
                     .min(BigDecimal.ONE);
         }
         BigDecimal parentMass = parentLot.getMassKg();
-        if (parentMass != null && parentMass.compareTo(BigDecimal.ZERO) > 0
-                && parentEdgeView.getAllocatedMassKgFromParent() != null) {
-            return parentEdgeView.getAllocatedMassKgFromParent()
+        if (parentMass != null && parentMass.compareTo(BigDecimal.ZERO) > 0 && allocatedMassKg != null) {
+            return allocatedMassKg
                     .divide(parentMass, 6, RoundingMode.HALF_UP)
                     .min(BigDecimal.ONE);
         }

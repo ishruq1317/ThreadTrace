@@ -10,13 +10,18 @@ public interface MassBalanceCheckPort {
 
     MassBalanceDecision evaluateTransformation(
             String processStep,
-            List<Lot> inputLots,
+            List<InputSlice> inputSlices,
             BigDecimal totalInputQty,
             BigDecimal totalOutputQty,
-            LotUnit unit,
-            String claimedAttribute,
-            BigDecimal claimedPct,
-            BigDecimal outputMassKg);
+            LotUnit outputUnit,
+            BigDecimal outputMassKg,
+            List<ClaimTarget> claimTargets);
+
+    record InputSlice(Lot lot, BigDecimal inputQuantity, BigDecimal inputMassKg) {
+    }
+
+    record ClaimTarget(String claimedAttribute, BigDecimal claimedPct, BigDecimal outputMassKg) {
+    }
 
     record MassBalanceDecision(boolean flagged, String reason) {
         public static MassBalanceDecision ok() {

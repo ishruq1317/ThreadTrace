@@ -93,7 +93,7 @@ public class LineageCompositeBuilder {
         Set<Long> addedParents = new HashSet<>();
         for (LineageQueryRepository.TraceStepRow edge : parentEdges) {
             if (addedParents.add(edge.parentLotId())) {
-                composite.addParent(buildNode(
+                LineageNode parentNode = buildNode(
                         edge.parentLotId(),
                         edge.allocatedMassKg(),
                         edge.allocatedPieces(),
@@ -101,7 +101,8 @@ public class LineageCompositeBuilder {
                         eventsByLotId,
                         parentsByChild,
                         memo,
-                        visiting));
+                        visiting);
+                composite.addParent(parentNode, edge.allocatedMassKg(), edge.allocatedPieces());
             }
         }
         visiting.remove(lotId);

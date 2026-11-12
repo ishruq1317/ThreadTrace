@@ -140,7 +140,8 @@ public class LotEvent {
         this.recordedAt = Instant.now().truncatedTo(ChronoUnit.MILLIS);
         this.eventHash = HashUtils.sha256(canonicalPayload(
                 lotCode, sequenceNumber, previousHash, eventType, processStep,
-                inputQuantity, outputQuantity, unit, this.occurredAt, recordedBy, correctsEventId));
+                inputQuantity, outputQuantity, unit, this.waterLiters, this.energyKwh, this.co2eKg,
+                flagged, flagReason, this.occurredAt, recordedBy, correctsEventId));
     }
 
     public static String canonicalPayload(
@@ -152,6 +153,11 @@ public class LotEvent {
             BigDecimal inputQuantity,
             BigDecimal outputQuantity,
             LotUnit unit,
+            BigDecimal waterLiters,
+            BigDecimal energyKwh,
+            BigDecimal co2eKg,
+            boolean flagged,
+            String flagReason,
             Instant occurredAt,
             String recordedBy,
             Long correctsEventId) {
@@ -164,6 +170,11 @@ public class LotEvent {
                 inputQuantity.stripTrailingZeros().toPlainString(),
                 outputQuantity.stripTrailingZeros().toPlainString(),
                 unit.name(),
+                waterLiters.stripTrailingZeros().toPlainString(),
+                energyKwh.stripTrailingZeros().toPlainString(),
+                co2eKg.stripTrailingZeros().toPlainString(),
+                Boolean.toString(flagged),
+                flagReason == null ? "" : flagReason,
                 Long.toString(occurredAt.toEpochMilli()),
                 recordedBy,
                 correctsEventId == null ? "" : Long.toString(correctsEventId)

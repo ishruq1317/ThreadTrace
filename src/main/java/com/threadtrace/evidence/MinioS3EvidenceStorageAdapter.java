@@ -39,10 +39,12 @@ public class MinioS3EvidenceStorageAdapter implements EvidenceStoragePort {
     public String store(String keyPrefix, String originalFilename, String contentType, InputStream content, long sizeBytes) {
         try {
             byte[] payload = content.readAllBytes();
+            String safePrefix = keyPrefix.replaceAll("[^a-zA-Z0-9._-]", "_");
             String safeName = originalFilename.replaceAll("[^a-zA-Z0-9._-]", "_");
-            String storageKey = keyPrefix + "-" + UUID.randomUUID().toString().substring(0, 8) + "-" + safeName;
+            String storageKey = safePrefix + "-" + UUID.randomUUID().toString().substring(0, 8) + "-" + safeName;
             String objectPath = "/" + storage.getMinioBucket() + "/" + storageKey;
 
+            ensureBucketExists();
             SignedHeaders signed = sign("PUT", objectPath, payload);
             restClient.put()
                     .uri(objectPath)
@@ -73,6 +75,33 @@ public class MinioS3EvidenceStorageAdapter implements EvidenceStoragePort {
                 .header("Authorization", signed.authorization())
                 .retrieve()
                 .body(byte[].class);
+    }
+
+    private void ensureBucketExists() {
+        String bucketPath = "/" + storage.getMinioBucket();
+        byte[] empty = new byte[0];
+        SignedHeaders headSigned = sign("HEAD", bucketPath, empty);
+        try {
+            restClient.head()
+                    .uri(bucketPath)
+                    .header("Host", headSigned.host())
+                    .header("x-amz-date", headSigned.amzDate())
+                    .header("x-amz-content-sha256", headSigned.payloadHash())
+                    .header("Authorization", headSigned.authorization())
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (org.springframework.web.client.HttpClientErrorException.NotFound ignored) {
+            SignedHeaders putSigned = sign("PUT", bucketPath, empty);
+            restClient.put()
+                    .uri(bucketPath)
+                    .header("Host", putSigned.host())
+                    .header("x-amz-date", putSigned.amzDate())
+                    .header("x-amz-content-sha256", putSigned.payloadHash())
+                    .header("Authorization", putSigned.authorization())
+                    .body(empty)
+                    .retrieve()
+                    .toBodilessEntity();
+        }
     }
 
     private SignedHeaders sign(String method, String canonicalUri, byte[] payload) {
