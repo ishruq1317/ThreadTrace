@@ -1,0 +1,136 @@
+spring:
+  application:
+    name: threadtrace
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  mvc:
+    problemdetails:
+      enabled: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=5000,expireAfterWrite=300s
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  structured:
+    format:
+      console: ecs
+  level:
+    com.threadtrace: INFO
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+threadtrace:
+  mass-balance:
+    enforcement-mode: ${THREADTRACE_MASS_BALANCE_MODE:FLAG}
+    default-allowed-loss-pct: 10.0
+  evidence:
+    expiry-warning-days: 30
+    allowed-certificate-types:
+      - GOTS
+      - GRS
+      - OEKO_TEX_100
+      - ISO_14001
+      - ZDHC_MRSL
+      - LAB_TEST_REPORT
+  footprint:
+    default-allocation-method: ${THREADTRACE_ALLOCATION_METHOD:BY_MASS}
+  storage:
+    type: ${THREADTRACE_STORAGE_TYPE:local}
+    local-dir: ${THREADTRACE_STORAGE_DIR:./storage/evidence}
+    minio-endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    minio-bucket: ${MINIO_BUCKET:threadtrace-evidence}
+    minio-access-key: ${MINIO_ACCESS_KEY:}
+    minio-secret-key: ${MINIO_SECRET_KEY:}
+  passport:
+    public-base-url: ${THREADTRACE_PUBLIC_BASE_URL:http://localhost:8080}
+    cache-ttl-seconds: 60
+    stale-while-revalidate-seconds: 300
+    extra-fields:
+      eu-dpp-regulation: "EU ESPR Textile DPP Draft"
+      care-standard: "ISO 3758 Care Labelling"
+  processes:
+    receive:
+      allowed-loss-pct: 0.0
+      water-liters-per-unit: 0.0
+      energy-kwh-per-unit: 0.05
+      co2e-kg-per-unit: 0.02
+    cut:
+      allowed-loss-pct: 12.0
+      water-liters-per-unit: 0.5
+      energy-kwh-per-unit: 0.25
+      co2e-kg-per-unit: 0.14
+    sew:
+      allowed-loss-pct: 3.0
+      water-liters-per-unit: 0.2
+      energy-kwh-per-unit: 0.45
+      co2e-kg-per-unit: 0.24
+    wash_or_dye:
+      allowed-loss-pct: 5.0
+      water-liters-per-unit: 38.0
+      energy-kwh-per-unit: 1.80
+      co2e-kg-per-unit: 0.95
+    finish:
+      allowed-loss-pct: 2.0
+      water-liters-per-unit: 4.5
+      energy-kwh-per-unit: 0.60
+      co2e-kg-per-unit: 0.32
+    pack:
+      allowed-loss-pct: 1.0
+      water-liters-per-unit: 0.1
+      energy-kwh-per-unit: 0.10
+      co2e-kg-per-unit: 0.06
+    ship:
+      allowed-loss-pct: 0.0
+      water-liters-per-unit: 0.0
+      energy-kwh-per-unit: 0.15
+      co2e-kg-per-unit: 0.40
+    split:
+      allowed-loss-pct: 0.0
+      water-liters-per-unit: 0.0
+      energy-kwh-per-unit: 0.02
+      co2e-kg-per-unit: 0.01
+    merge:
+      allowed-loss-pct: 0.0
+      water-liters-per-unit: 0.0
+      energy-kwh-per-unit: 0.02
+      co2e-kg-per-unit: 0.01
+    correction:
+      allowed-loss-pct: 100.0
+      water-liters-per-unit: 0.0
+      energy-kwh-per-unit: 0.0
+      co2e-kg-per-unit: 0.0
