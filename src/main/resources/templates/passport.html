@@ -22,6 +22,10 @@
 </head>
 <body>
 <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #eef2f0; font-size:0.84rem;">
+        <a href="/" style="color:#0b5d3b; text-decoration:none; font-weight:700;">&larr; ThreadTrace Product Entry &amp; QR Portal</a>
+        <span style="color:#4b5c55;">EU ESPR Digital Product Passport</span>
+    </div>
     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
         <div>
             <h1 th:text="${passport.styleName}">Garment Style</h1>
@@ -112,6 +116,13 @@
     <div class="qr">
         <img th:src="@{'/api/v1/public/passports/' + ${passport.passportCode} + '/qr'}"
              alt="Digital Product Passport QR Code" width="140" height="140"/>
+        <div style="margin-top:8px;">
+            <a th:href="@{'/api/v1/public/passports/' + ${passport.passportCode} + '/qr'}"
+               th:download="${passport.passportCode} + '-qr.png'"
+               style="display:inline-block; padding:5px 12px; border-radius:6px; background:#d9f2e6; color:#0b5d3b; text-decoration:none; font-size:0.8rem; font-weight:600;">
+                Download QR Code (PNG)
+            </a>
+        </div>
     </div>
 </div>
 </body>

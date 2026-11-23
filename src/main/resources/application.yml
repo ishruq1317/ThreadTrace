@@ -115,7 +115,7 @@ threadtrace:
       energy-kwh-per-unit: 0.10
       co2e-kg-per-unit: 0.06
     ship:
-      allowed-loss-pct: 0.0
+      allowed-loss-pct: 5.0
       water-liters-per-unit: 0.0
       energy-kwh-per-unit: 0.15
       co2e-kg-per-unit: 0.40

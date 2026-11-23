@@ -656,6 +656,129 @@ class ThreadTraceEndToEndIntegrationTest {
                 .andExpect(jsonPath("$.errors.code").exists());
     }
 
+    @Test
+    void interactiveSixStepPortalWorkflowCreatesHoodiePassportAndQr() throws Exception {
+        // Verify Home UI & AJAX 401 suppression of WWW-Authenticate header
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("PP-HOODIE-2026")))
+                .andExpect(content().string(containsString("https://threadtrace.onrender.com/p/PP-HOODIE-2026")));
+
+        mockMvc.perform(get("/api/v1/parties").header("X-Requested-With", "XMLHttpRequest"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().doesNotExist("WWW-Authenticate"));
+
+        // Step 2: Register MILL-GAZIPUR-1
+        mockMvc.perform(post("/api/v1/parties")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "code": "MILL-GAZIPUR-1",
+                                  "name": "Gazipur Organic Spinning Mill",
+                                  "partyType": "SPINNING_MILL",
+                                  "country": "Bangladesh",
+                                  "region": "Gazipur",
+                                  "exactAddress": "Plot 12, Gazipur BSCIC",
+                                  "workerCount": 450,
+                                  "unitPriceUsd": 15.50
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        // Step 3: Upload GOTS-2026-BD-01 Certificate
+        mockMvc.perform(post("/api/v1/evidence/certificates")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "certificateNumber": "GOTS-2026-BD-01",
+                                  "certificateType": "GOTS",
+                                  "issuer": "Control Union",
+                                  "scope": "100% Organic Cotton Fiber",
+                                  "claimedAttribute": "ORGANIC",
+                                  "certifiedPct": 100.0,
+                                  "supplierCode": "MILL-GAZIPUR-1",
+                                  "validFrom": "2026-01-01",
+                                  "validTo": "2027-12-31"
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        // Step 4A: Receive LOT-RAW-001
+        mockMvc.perform(post("/api/v1/events/receive")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "lotCode": "LOT-RAW-001",
+                                  "lotType": "RAW_FIBER",
+                                  "materialType": "Cotton",
+                                  "styleCode": "HOODIE-2026",
+                                  "brandCode": "BRAND_A",
+                                  "supplierCode": "MILL-GAZIPUR-1",
+                                  "quantity": 100.0,
+                                  "massKg": 100.0,
+                                  "pieceCount": 0,
+                                  "unit": "KG",
+                                  "claimedAttribute": "ORGANIC",
+                                  "claimedPct": 100.0
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        // Step 4B: Transform LOT-RAW-001 -> LOT-GARMENT-001
+        mockMvc.perform(post("/api/v1/events/transform")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "inputLotCode": "LOT-RAW-001",
+                                  "outputLotCode": "LOT-GARMENT-001",
+                                  "outputLotType": "SHIPMENT",
+                                  "eventType": "SHIP",
+                                  "processStep": "ship",
+                                  "inputQuantity": 100.0,
+                                  "outputQuantity": 95.0,
+                                  "outputMassKg": 95.0,
+                                  "outputPieceCount": 190,
+                                  "unit": "PIECES"
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        // Step 5: Generate Digital Product Passport PP-HOODIE-2026
+        mockMvc.perform(post("/api/v1/passports")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "passportCode": "PP-HOODIE-2026",
+                                  "shipmentLotCode": "LOT-GARMENT-001",
+                                  "styleCode": "HOODIE-2026",
+                                  "styleName": "Eco Friendly Winter Hoodie",
+                                  "careAndRepair": "Machine wash cold 30C, line dry",
+                                  "endOfLifeGuidance": "100% Cotton, suitable for textile recycling",
+                                  "allocationMethod": "BY_MASS"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.passportCode").value("PP-HOODIE-2026"))
+                .andExpect(jsonPath("$.status").value("PUBLISHED"));
+
+        // Step 6: View Consumer Passport HTML (/p/PP-HOODIE-2026), JSON, and QR Code PNG
+        mockMvc.perform(get("/p/PP-HOODIE-2026"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Eco Friendly Winter Hoodie")))
+                .andExpect(content().string(containsString("Gazipur Organic Spinning Mill")))
+                .andExpect(content().string(containsString("ORGANIC")))
+                .andExpect(content().string(not(containsString("Plot 12, Gazipur BSCIC"))));
+
+        mockMvc.perform(get("/api/v1/public/passports/PP-HOODIE-2026/qr"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_PNG));
+    }
+
     private void createParty(
             String code, String name, String type, String country, String region,
             String exactAddress, Integer workers, String price) throws Exception {

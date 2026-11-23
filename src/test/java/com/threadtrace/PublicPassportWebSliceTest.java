@@ -84,4 +84,31 @@ class PublicPassportWebSliceTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_PNG));
     }
+
+    @Test
+    void servesInteractivePortalUiAndHandlesForwardedHostQr() throws Exception {
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("ThreadTrace")))
+                .andExpect(content().string(containsString("MILL-GAZIPUR-1")))
+                .andExpect(content().string(containsString("GOTS-2026-BD-01")))
+                .andExpect(content().string(containsString("LOT-RAW-001")))
+                .andExpect(content().string(containsString("LOT-GARMENT-001")))
+                .andExpect(content().string(containsString("PP-HOODIE-2026")))
+                .andExpect(content().string(containsString("https://threadtrace.onrender.com/p/PP-HOODIE-2026")));
+
+        mockMvc.perform(get("/ui"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Authorize")));
+
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("change_me_operator_pw")));
+
+        mockMvc.perform(get("/api/v1/public/passports/PP-HOODIE-2026/qr")
+                        .header("X-Forwarded-Host", "threadtrace.onrender.com")
+                        .header("X-Forwarded-Proto", "https"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_PNG));
+    }
 }

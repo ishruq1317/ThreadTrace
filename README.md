@@ -5,7 +5,7 @@
 
 **A Production-Grade Spring Boot 4.1.2 Modular Monolith for EU ESPR Textile Compliance & Supply-Chain Lineage**
 
-[![Live on Render](https://img.shields.io/badge/Render-Live%20Demo-brightgreen?style=for-the-badge&logo=render)](https://threadtrace.onrender.com/swagger-ui.html)
+[![Live on Render](https://img.shields.io/badge/Render-Live%20Demo-brightgreen?style=for-the-badge&logo=render)](https://threadtrace.onrender.com/)
 [![Java 21](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://adoptium.net)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
@@ -14,7 +14,7 @@
 
 ---
 
-### 🌐 [Live Swagger API Docs](https://threadtrace.onrender.com/swagger-ui.html) &nbsp;•&nbsp; 🩺 [Actuator Health Status](https://threadtrace.onrender.com/actuator/health) &nbsp;•&nbsp; 📦 [GitHub Repository](https://github.com/ishruq1317/ThreadTrace)
+### 🖥️ [Live Web UI Portal](https://threadtrace.onrender.com/) &nbsp;•&nbsp; 🌐 [Live Swagger API Docs](https://threadtrace.onrender.com/swagger-ui.html) &nbsp;•&nbsp; 🩺 [Actuator Health Status](https://threadtrace.onrender.com/actuator/health) &nbsp;•&nbsp; 📦 [GitHub Repository](https://github.com/ishruq1317/ThreadTrace)
 
 </div>
 

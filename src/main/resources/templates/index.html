@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bn">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ThreadTrace — Garment Traceability &amp; Digital Product Passport Studio</title>
+    <style>
+        :root {
+            --bg: #f3f7f5;
+            --surface: #ffffff;
+            --surface-alt: #f8fbf9;
+            --border: #dce7e1;
+            --border-strong: #bfd4c9;
+            --text: #13231d;
+            --text-muted: #52665e;
+            --emerald: #107c41;
+            --emerald-dark: #0b5d30;
+            --emerald-light: #e3f5ec;
+            --blue: #2563eb;
+            --blue-dark: #1d4ed8;
+            --blue-light: #eff6ff;
+            --amber: #d97706;
+            --amber-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --shadow: 0 4px 16px rgba(15, 35, 29, 0.06);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+        }
+
+        /* Top Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--emerald), #059669);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            box-shadow: 0 3px 8px rgba(16, 124, 65, 0.25);
+        }
+
+        .brand-title {
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .brand-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-alt);
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+            border-color: var(--border-strong);
+            background: #eaf2ee;
+        }
+
+        /* Green Authorize Button (Swagger style with Lock Icon) */
+        .btn-authorize {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 2px solid #16a34a;
+            background: #ffffff;
+            color: #15803d;
+            box-shadow: 0 2px 6px rgba(22, 163, 74, 0.12);
+        }
+
+        .btn-authorize:hover {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .btn-authorize.locked {
+            background: #16a34a;
+            color: #ffffff;
+            border-color: #15803d;
+        }
+
+        .btn-authorize.locked:hover {
+            background: #15803d;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 24px 18px 64px;
+        }
+
+        /* Hero Banner */
+        .hero {
+            background: linear-gradient(135deg, #0b3b24 0%, #106b3c 60%, #0f5132 100%);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 24px rgba(11, 59, 36, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .hero-content {
+            max-width: 680px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.55rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            margin: 0;
+            font-size: 0.94rem;
+            color: #d1fae5;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 230px;
+        }
+
+        .btn-hero-primary {
+            background: #22c55e;
+            color: #052e16;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 9px;
+            font-weight: 800;
+            font-size: 0.92rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+            transition: transform 0.12s ease, background 0.12s ease;
+        }
+
+        .btn-hero-primary:hover {
+            background: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        .btn-hero-secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.84rem;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-hero-secondary:hover {
+            background: rgba(255, 255, 255, 0.24);
+        }
+
+        /* Stepper Navigation Bar */
+        .stepper {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .stepper {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 520px) {
+            .stepper {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .step-pill {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .step-pill:hover {
+            border-color: var(--blue);
+            transform: translateY(-1px);
+        }
+
+        .step-pill.done {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #334155;
+            font-weight: 800;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-pill.done .step-num {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .step-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .step-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: block;
+            font-weight: 500;
+        }
+
+        /* Step Card */
+        .step-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 22px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .step-card-header {
+            padding: 16px 22px;
+            background: var(--surface-alt);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .step-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-badge {
+            background: var(--emerald);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.8rem;
+            padding: 4px 11px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .step-card-header h2 {
+            margin: 0;
+            font-size: 1.12rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .step-card-header .en-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        /* Swagger-like POST Endpoint Blue Bar */
+        .endpoint-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ebf3ff;
+            border: 1px solid #93c5fd;
+            padding: 5px 12px;
+            border-radius: 7px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.83rem;
+            color: #1e3a8a;
+            font-weight: 700;
+        }
+
+        .method-post {
+            background: #2563eb;
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+
+        .method-get {
+            background: #059669;
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+
+        .step-card-body {
+            padding: 20px 22px;
+        }
+
+        .step-guide {
+            background: #f8fafc;
+            border-left: 4px solid var(--blue);
+            padding: 10px 14px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+            font-size: 0.88rem;
+            color: #334155;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group label span.field-key {
+            font-family: 'Consolas', monospace;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.74rem;
+        }
+
+        .form-control {
+            padding: 9px 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 0.9rem;
+            color: var(--text);
+            background: #ffffff;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        /* Raw JSON Request Body Collapsible */
+        .json-toggle-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn-toggle-json {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 5px 11px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-toggle-json:hover {
+            background: #e2e8f0;
+        }
+
+        .json-box-container {
+            display: none;
+            margin-bottom: 16px;
+        }
+
+        .json-box-container.open {
+            display: block;
+        }
+
+        .json-textarea {
+            width: 100%;
+            min-height: 170px;
+            background: var(--code-bg);
+            color: #38bdf8;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.84rem;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            line-height: 1.45;
+            resize: vertical;
+        }
+
+        /* Big Blue Execute Button (Swagger style) */
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-execute {
+            background: var(--blue);
+            color: #ffffff;
+            border: none;
+            padding: 11px 26px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+            transition: background 0.15s ease, transform 0.1s ease;
+        }
+
+        .btn-execute:hover {
+            background: var(--blue-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-execute:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Response Box */
+        .response-panel {
+            margin-top: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: none;
+        }
+
+        .response-panel.visible {
+            display: block;
+        }
+
+        .response-header {
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 0.86rem;
+        }
+
+        .response-header.ok {
+            background: #dcfce7;
+            color: #14532d;
+            border-bottom: 1px solid #bbf7d0;
+        }
+
+        .response-header.warn {
+            background: #fef3c7;
+            color: #78350f;
+            border-bottom: 1px solid #fde68a;
+        }
+
+        .response-header.err {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border-bottom: 1px solid #fecaca;
+        }
+
+        .status-code-badge {
+            font-family: 'Consolas', monospace;
+            padding: 2px 9px;
+            border-radius: 5px;
+            font-weight: 800;
+            font-size: 0.82rem;
+            background: rgba(255, 255, 255, 0.75);
+        }
+
+        .response-body-pre {
+            margin: 0;
+            padding: 12px 14px;
+            background: #0f172a;
+            color: #a7f3d0;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            max-height: 220px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Sub-step Divider inside Step 4 */
+        .substep-box {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 18px;
+            background: #fcfefd;
+            margin-bottom: 18px;
+        }
+
+        .substep-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .substep-title {
+            font-weight: 800;
+            font-size: 0.98rem;
+            color: #0f5132;
+            margin: 0;
+        }
+
+        /* Step 6 Special Highlight Card */
+        .step6-card {
+            border: 2px solid #16a34a;
+            background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+        }
+
+        .url-instruction-box {
+            background: #ffffff;
+            border: 1.5px solid #86efac;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.08);
+        }
+
+        .url-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin: 14px 0;
+        }
+
+        .url-card {
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.84rem;
+        }
+
+        .url-card.old-local {
+            background: #f8fafc;
+            color: #64748b;
+        }
+
+        .url-card.live-internet {
+            background: #ecfdf5;
+            border-color: #34d399;
+            color: #064e3b;
+        }
+
+        .live-url-builder {
+            display: flex;
+            align-items: stretch;
+            flex-wrap: wrap;
+            gap: 0;
+            border: 2px solid #16a34a;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #ffffff;
+            margin: 12px 0;
+        }
+
+        .url-prefix {
+            background: #f0fdf4;
+            color: #15803d;
+            padding: 11px 14px;
+            font-family: 'Consolas', monospace;
+            font-weight: 700;
+            font-size: 0.92rem;
+            border-right: 1.5px solid #bbf7d0;
+            display: flex;
+            align-items: center;
+            user-select: all;
+        }
+
+        .url-code-input {
+            flex: 1;
+            min-width: 190px;
+            border: none;
+            padding: 11px 14px;
+            font-family: 'Consolas', monospace;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+        .url-code-input:focus {
+            outline: none;
+            background: #dbeafe;
+        }
+
+        /* Consumer Preview & QR Showcase */
+        .consumer-showcase {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 780px) {
+            .consumer-showcase {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .passport-preview-box {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .qr-preview-box {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-preview-box img {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            background: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .metric-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .metric-mini {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-mini .val {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #065f46;
+        }
+
+        .metric-mini .lbl {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        /* Authorize Modal Popup (Swagger style) */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-window {
+            background: #ffffff;
+            border-radius: 12px;
+            max-width: 460px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .role-chips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .role-chip {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 15px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .role-chip:hover, .role-chip.active {
+            background: #dcfce7;
+            border-color: #16a34a;
+            color: #14532d;
+        }
+
+        .btn-green {
+            background: #16a34a;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-green:hover {
+            background: #15803d;
+        }
+
+        .btn-outline {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Top Navbar with Green Authorize Button (Top-Right Corner) -->
+<header class="navbar">
+    <a href="/" class="brand">
+        <div class="brand-logo">🧵</div>
+        <div>
+            <div class="brand-title">ThreadTrace</div>
+            <div class="brand-sub">Garment Supply-Chain Traceability &amp; Digital Product Passports</div>
+        </div>
+    </a>
+
+    <div class="nav-actions">
+        <a href="#step-6" class="nav-link">🔍 ধাপ ৬: পাসপোর্ট ও QR খুঁজুন (Find Passport &amp; QR)</a>
+        <a href="/swagger-ui.html" target="_blank" class="nav-link">⚙️ Swagger UI</a>
+        <button type="button" id="topAuthorizeBtn" class="btn-authorize" onclick="openAuthModal()">
+            <span id="topLockIcon">🔓</span>
+            <span id="topAuthText">Authorize</span>
+        </button>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>গার্মেন্টস ট্রেসেবিলিটি এবং ডিজিটাল প্রোডাক্ট পাসপোর্ট পোর্টাল</h1>
+            <p>
+                সহজ ৬টি ধাপে (ধাপ ১ থেকে ধাপ ৬) মিল তৈরি, পরিবেশগত সনদ যোগ, কাঁচামাল গ্রহণ, গার্মেন্টস শিপমেন্ট,
+                ডিজিটাল পাসপোর্ট তৈরি এবং ক্রেতার দৃষ্টিভঙ্গিতে লাইভ পাসপোর্ট ও QR কোড দেখুন।
+            </p>
+        </div>
+        <div class="hero-buttons">
+            <button type="button" class="btn-hero-primary" onclick="runFullDemoPipeline()">
+                🚀 ১-ক্লিকে সব ধাপ সম্পন্ন করুন (Auto-Run)
+            </button>
+            <div style="display:flex; gap:6px;">
+                <button type="button" class="btn-hero-secondary" style="flex:1;" onclick="generateNewProductPreset()">
+                    ✨ নতুন প্রোডাক্ট কোড সেট করুন
+                </button>
+                <button type="button" class="btn-hero-secondary" onclick="resetToDefaultHoodie()">
+                    ↺ ডিফল্ট উদাহরণ
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6-Step Visual Progress Bar -->
+    <nav class="stepper" aria-label="Product Entry Steps">
+        <a href="#step-1" class="step-pill" id="pill-step-1">
+            <span class="step-num" id="num-step-1">১</span>
+            <div>
+                <span class="step-label">ধাপ ১: লগইন</span>
+                <span class="step-sub">Authorize System</span>
+            </div>
+        </a>
+        <a href="#step-2" class="step-pill" id="pill-step-2">
+            <span class="step-num" id="num-step-2">২</span>
+            <div>
+                <span class="step-label">ধাপ ২: মিল/ফ্যাক্টরি</span>
+                <span class="step-sub">Parties &amp; Facilities</span>
+            </div>
+        </a>
+        <a href="#step-3" class="step-pill" id="pill-step-3">
+            <span class="step-num" id="num-step-3">৩</span>
+            <div>
+                <span class="step-label">ধাপ ৩: পরিবেশগত সনদ</span>
+                <span class="step-sub">Certificates</span>
+            </div>
+        </a>
+        <a href="#step-4" class="step-pill" id="pill-step-4">
+            <span class="step-num" id="num-step-4">৪</span>
+            <div>
+                <span class="step-label">ধাপ ৪: কাঁচামাল ও পোশাক</span>
+                <span class="step-sub">Receive &amp; Transform</span>
+            </div>
+        </a>
+        <a href="#step-5" class="step-pill" id="pill-step-5">
+            <span class="step-num" id="num-step-5">৫</span>
+            <div>
+                <span class="step-label">ধাপ ৫: প্রোডাক্ট পাসপোর্ট</span>
+                <span class="step-sub">Generate Passport</span>
+            </div>
+        </a>
+        <a href="#step-6" class="step-pill" id="pill-step-6">
+            <span class="step-num" id="num-step-6">৬</span>
+            <div>
+                <span class="step-label">ধাপ ৬: ক্রেতার ভিউ ও QR</span>
+                <span class="step-sub">Live URL &amp; QR Code</span>
+            </div>
+        </a>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- STEP 1: AUTHORIZE / LOGIN -->
+    <!-- ===================================================================== -->
+    <section class="step-card" id="step-1">
+        <div class="step-card-header">
+            <div class="step-title-group">
+                <span class="step-badge">ধাপ ১ (Step 1)</span>
+                <h2>সিস্টেমে লগইন করা <span class="en-subtitle">— Authorize Button / System Login</span></h2>
+            </div>
+            <span id="step1LockStatus" class="endpoint-bar" style="background:#fef3c7; border-color:#f59e0b; color:#92400e;">
+                🔓 তালা খোলা (Not Authorized Yet)
+            </span>
+        </div>
+        <div class="step-card-body">
+            <div class="step-guide">
+                <strong>নির্দেশনা:</strong> পেজের একদম উপরে ডান কোণায় থাকা সবুজ রঙের <strong>Authorize</strong> বাটনে ক্লিক করুন অথবা সরাসরি নিচের বক্সে
+                <code>Username: operator</code> এবং <code>Password: change_me_operator_pw</code> দিয়ে সবুজ <strong>Authorize</strong> বাটনে চাপুন (লগইন হলে তালাটি বন্ধ 🔒 দেখাবে)।
+            </div>
+
+            <div class="role-chips">
+                <span style="font-size:0.78rem; font-weight:700; color:var(--text-muted); align-self:center; margin-right:4px;">Quick Fill Role:</span>
+                <button type="button" class="role-chip active" onclick="fillCredentials('operator', 'change_me_operator_pw', this)">
+                    👷 Operator (operator)
+                </button>
+                <button type="button" class="role-chip" onclick="fillCredentials('admin', 'change_me_admin_pw', this)">
+                    🛡️ Admin (admin)
+                </button>
+                <button type="button" class="role-chip" onclick="fillCredentials('auditor', 'change_me_auditor_pw', this)">
+                    🔍 Auditor (auditor)
+                </button>
+                <button type="button" class="role-chip" onclick="fillCredentials('brand_a', 'change_me_branda_pw', this)">
+                    🏷️ Brand A (brand_a)
+                </button>
+            </div>
+
+            <div class="form-grid" style="max-width:640px;">
+                <div class="form-group">
+                    <label for="inlineUsername">Username</label>
+                    <input type="text" id="inlineUsername" class="form-control" value="operator" autocomplete="username"/>
+                </div>
+                <div class="form-group">
+                    <label for="inlinePassword">Password</label>
+                    <input type="password" id="inlinePassword" class="form-control" value="change_me_operator_pw" autocomplete="current-password"/>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button type="button" class="btn-green" onclick="performAuthorize(false)">
+                    🔒 Authorize (লগইন করুন)
+                </button>
+                <button type="button" class="btn-outline" id="inlineLogoutBtn" style="display:none;" onclick="performLogout()">
+                    🔓 Logout
+                </button>
+                <span id="authFeedbackText" style="font-size:0.88rem; font-weight:700; color:#15803d;"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- STEP 2: REGISTER MILL / FACTORY (PARTIES & FACILITIES) -->
+    <!-- ===================================================================== -->
+    <section class="step-card" id="step-2">
+        <div class="step-card-header">
+            <div class="step-title-group">
+                <span class="step-badge">ধাপ ২ (Step 2)</span>
+                <h2>একটি মিল বা ফ্যাক্টরি তৈরি করা <span class="en-subtitle">— Parties &amp; Facilities</span></h2>
+            </div>
+            <div class="endpoint-bar">
+                <span class="method-post">POST</span>
+                <span>/api/v1/parties</span>
+            </div>
+        </div>
+        <div class="step-card-body">
+            <div class="step-guide">
+                <strong>নির্দেশনা:</strong> নিচের ফর্মের তথ্যগুলো যাচাই করুন (অথবা প্রয়োজনমতো পরিবর্তন করুন) এবং নিচে বড় নীল রঙের <strong>Execute</strong> বাটনে ক্লিক করুন। রেসপন্স কোড <code>201 Created</code> দেখতে পাবেন।
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Mill / Facility Code <span class="field-key">code</span></label>
+                    <input type="text" id="p_code" class="form-control" value="MILL-GAZIPUR-1" oninput="onPartyCodeChange()"/>
+                </div>
+                <div class="form-group">
+                    <label>Facility Name <span class="field-key">name</span></label>
+                    <input type="text" id="p_name" class="form-control" value="Gazipur Organic Spinning Mill" oninput="syncStep2Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Party Type <span class="field-key">partyType</span></label>
+                    <select id="p_partyType" class="form-control" onchange="syncStep2Json()">
+                        <option value="SPINNING_MILL" selected>SPINNING_MILL</option>
+                        <option value="FABRIC_MILL">FABRIC_MILL</option>
+                        <option value="DYE_HOUSE">DYE_HOUSE</option>
+                        <option value="WASH_PLANT">WASH_PLANT</option>
+                        <option value="TRIMS_SUPPLIER">TRIMS_SUPPLIER</option>
+                        <option value="FACTORY">FACTORY</option>
+                        <option value="BRAND">BRAND</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Country <span class="field-key">country</span></label>
+                    <input type="text" id="p_country" class="form-control" value="Bangladesh" oninput="syncStep2Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Region <span class="field-key">region</span></label>
+                    <input type="text" id="p_region" class="form-control" value="Gazipur" oninput="syncStep2Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Exact Address (Confidential) <span class="field-key">exactAddress</span></label>
+                    <input type="text" id="p_exactAddress" class="form-control" value="Plot 12, Gazipur BSCIC" oninput="syncStep2Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Worker Count (Confidential) <span class="field-key">workerCount</span></label>
+                    <input type="number" id="p_workerCount" class="form-control" value="450" oninput="syncStep2Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Unit Price USD (Confidential) <span class="field-key">unitPriceUsd</span></label>
+                    <input type="number" step="0.01" id="p_unitPriceUsd" class="form-control" value="15.50" oninput="syncStep2Json()"/>
+                </div>
+            </div>
+
+            <div class="json-toggle-bar">
+                <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep2')">
+                    { } Request Body (JSON) দেখুন বা পেস্ট করুন
+                </button>
+            </div>
+            <div id="jsonBoxStep2" class="json-box-container">
+                <textarea id="jsonStep2" class="json-textarea" oninput="applyStep2JsonToForm()"></textarea>
+            </div>
+
+            <div class="action-row">
+                <button type="button" class="btn-execute" id="btnExecStep2" onclick="executeStep2()">
+                    ▶ Execute (POST /api/v1/parties)
+                </button>
+            </div>
+
+            <div id="respStep2" class="response-panel">
+                <div id="respHeaderStep2" class="response-header ok">
+                    <span id="respTitleStep2">Response</span>
+                    <span id="respCodeStep2" class="status-code-badge">201 Created</span>
+                </div>
+                <pre id="respBodyStep2" class="response-body-pre"></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- STEP 3: UPLOAD ENVIRONMENTAL CERTIFICATE (EVIDENCE & CERTIFICATES) -->
+    <!-- ===================================================================== -->
+    <section class="step-card" id="step-3">
+        <div class="step-card-header">
+            <div class="step-title-group">
+                <span class="step-badge">ধাপ ৩ (Step 3)</span>
+                <h2>একটি পরিবেশগত সনদ আপলোড করা <span class="en-subtitle">— Evidence &amp; Certificates</span></h2>
+            </div>
+            <div class="endpoint-bar">
+                <span class="method-post">POST</span>
+                <span>/api/v1/evidence/certificates</span>
+            </div>
+        </div>
+        <div class="step-card-body">
+            <div class="step-guide">
+                <strong>নির্দেশনা:</strong> গাজীপুর স্পিনিং মিলের জন্য ১০০% অর্গানিক কটনের <strong>GOTS</strong> পরিবেশগত সনদটি যুক্ত করতে নিচে <strong>Execute</strong> বাটনে ক্লিক করুন। রেসপন্স কোড <code>201 Created</code> আসবে।
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Certificate Number <span class="field-key">certificateNumber</span></label>
+                    <input type="text" id="c_certificateNumber" class="form-control" value="GOTS-2026-BD-01" oninput="syncStep3Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Certificate Type <span class="field-key">certificateType</span></label>
+                    <select id="c_certificateType" class="form-control" onchange="syncStep3Json()">
+                        <option value="GOTS" selected>GOTS</option>
+                        <option value="GRS">GRS</option>
+                        <option value="OEKO_TEX_100">OEKO_TEX_100</option>
+                        <option value="ISO_14001">ISO_14001</option>
+                        <option value="ZDHC_MRSL">ZDHC_MRSL</option>
+                        <option value="LAB_TEST_REPORT">LAB_TEST_REPORT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Issuer <span class="field-key">issuer</span></label>
+                    <input type="text" id="c_issuer" class="form-control" value="Control Union" oninput="syncStep3Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Scope <span class="field-key">scope</span></label>
+                    <input type="text" id="c_scope" class="form-control" value="100% Organic Cotton Fiber" oninput="syncStep3Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Claimed Attribute <span class="field-key">claimedAttribute</span></label>
+                    <input type="text" id="c_claimedAttribute" class="form-control" value="ORGANIC" oninput="syncStep3Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Certified Percentage (%) <span class="field-key">certifiedPct</span></label>
+                    <input type="number" step="0.1" id="c_certifiedPct" class="form-control" value="100.0" oninput="syncStep3Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Supplier Code <span class="field-key">supplierCode</span></label>
+                    <input type="text" id="c_supplierCode" class="form-control" value="MILL-GAZIPUR-1" oninput="syncStep3Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Valid From <span class="field-key">validFrom</span></label>
+                    <input type="date" id="c_validFrom" class="form-control" value="2026-01-01" oninput="syncStep3Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Valid To <span class="field-key">validTo</span></label>
+                    <input type="date" id="c_validTo" class="form-control" value="2027-12-31" oninput="syncStep3Json()"/>
+                </div>
+            </div>
+
+            <div class="json-toggle-bar">
+                <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep3')">
+                    { } Request Body (JSON) দেখুন বা পেস্ট করুন
+                </button>
+            </div>
+            <div id="jsonBoxStep3" class="json-box-container">
+                <textarea id="jsonStep3" class="json-textarea" oninput="applyStep3JsonToForm()"></textarea>
+            </div>
+
+            <div class="action-row">
+                <button type="button" class="btn-execute" id="btnExecStep3" onclick="executeStep3()">
+                    ▶ Execute (POST /api/v1/evidence/certificates)
+                </button>
+            </div>
+
+            <div id="respStep3" class="response-panel">
+                <div id="respHeaderStep3" class="response-header ok">
+                    <span id="respTitleStep3">Response</span>
+                    <span id="respCodeStep3" class="status-code-badge">201 Created</span>
+                </div>
+                <pre id="respBodyStep3" class="response-body-pre"></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- STEP 4: RECEIVE RAW MATERIAL & TRANSFORM INTO GARMENTS -->
+    <!-- ===================================================================== -->
+    <section class="step-card" id="step-4">
+        <div class="step-card-header">
+            <div class="step-title-group">
+                <span class="step-badge">ধাপ ৪ (Step 4)</span>
+                <h2>কাঁচামাল গ্রহণ ও গার্মেন্টস তৈরি <span class="en-subtitle">— Lots, Events &amp; Lineage</span></h2>
+            </div>
+            <div class="endpoint-bar">
+                <span class="method-post">POST</span>
+                <span>/events/receive &amp; /events/transform</span>
+            </div>
+        </div>
+        <div class="step-card-body">
+
+            <!-- Sub-step 4A: Receive Raw Fiber -->
+            <div class="substep-box">
+                <div class="substep-header">
+                    <h3 class="substep-title">ধাপ ৪ (ক): কাঁচামাল গ্রহণ করা (Receive Raw Fiber Lot)</h3>
+                    <div class="endpoint-bar">
+                        <span class="method-post">POST</span>
+                        <span>/api/v1/events/receive</span>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Raw Lot Code <span class="field-key">lotCode</span></label>
+                        <input type="text" id="r_lotCode" class="form-control" value="LOT-RAW-001" oninput="onRawLotCodeChange()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Lot Type <span class="field-key">lotType</span></label>
+                        <select id="r_lotType" class="form-control" onchange="syncStep4AJson()">
+                            <option value="RAW_FIBER" selected>RAW_FIBER</option>
+                            <option value="YARN">YARN</option>
+                            <option value="FABRIC">FABRIC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Material Type <span class="field-key">materialType</span></label>
+                        <input type="text" id="r_materialType" class="form-control" value="Cotton" oninput="syncStep4AJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Style Code <span class="field-key">styleCode</span></label>
+                        <input type="text" id="r_styleCode" class="form-control" value="HOODIE-2026" oninput="onStyleCodeChange()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Code <span class="field-key">brandCode</span></label>
+                        <input type="text" id="r_brandCode" class="form-control" value="BRAND_A" oninput="syncStep4AJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier Code <span class="field-key">supplierCode</span></label>
+                        <input type="text" id="r_supplierCode" class="form-control" value="MILL-GAZIPUR-1" oninput="syncStep4AJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity <span class="field-key">quantity</span></label>
+                        <input type="number" step="0.1" id="r_quantity" class="form-control" value="100.0" oninput="syncStep4AJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Mass (KG) <span class="field-key">massKg</span></label>
+                        <input type="number" step="0.1" id="r_massKg" class="form-control" value="100.0" oninput="syncStep4AJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Piece Count <span class="field-key">pieceCount</span></label>
+                        <input type="number" id="r_pieceCount" class="form-control" value="0" oninput="syncStep4AJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Unit <span class="field-key">unit</span></label>
+                        <select id="r_unit" class="form-control" onchange="syncStep4AJson()">
+                            <option value="KG" selected>KG</option>
+                            <option value="PIECES">PIECES</option>
+                            <option value="CARTONS">CARTONS</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Claimed Attribute <span class="field-key">claimedAttribute</span></label>
+                        <input type="text" id="r_claimedAttribute" class="form-control" value="ORGANIC" oninput="syncStep4AJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Claimed % <span class="field-key">claimedPct</span></label>
+                        <input type="number" step="0.1" id="r_claimedPct" class="form-control" value="100.0" oninput="syncStep4AJson()"/>
+                    </div>
+                </div>
+
+                <div class="json-toggle-bar">
+                    <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep4A')">
+                        { } Request Body (JSON) দেখুন বা পেস্ট করুন
+                    </button>
+                </div>
+                <div id="jsonBoxStep4A" class="json-box-container">
+                    <textarea id="jsonStep4A" class="json-textarea" oninput="applyStep4AJsonToForm()"></textarea>
+                </div>
+
+                <div class="action-row">
+                    <button type="button" class="btn-execute" id="btnExecStep4A" onclick="executeStep4A()">
+                        ▶ Execute Receive (POST /api/v1/events/receive)
+                    </button>
+                </div>
+
+                <div id="respStep4A" class="response-panel">
+                    <div id="respHeaderStep4A" class="response-header ok">
+                        <span id="respTitleStep4A">Response</span>
+                        <span id="respCodeStep4A" class="status-code-badge">201 Created</span>
+                    </div>
+                    <pre id="respBodyStep4A" class="response-body-pre"></pre>
+                </div>
+            </div>
+
+            <!-- Sub-step 4B: Transform into Garments -->
+            <div class="substep-box" style="margin-bottom:0;">
+                <div class="substep-header">
+                    <h3 class="substep-title">ধাপ ৪ (খ): কাপড় কাটিং, সুইং ও গার্মেন্টস শিপমেন্ট (Transform Lot)</h3>
+                    <div class="endpoint-bar">
+                        <span class="method-post">POST</span>
+                        <span>/api/v1/events/transform</span>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Input Lot Code <span class="field-key">inputLotCode</span></label>
+                        <input type="text" id="t_inputLotCode" class="form-control" value="LOT-RAW-001" oninput="syncStep4BJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Output Shipment Lot Code <span class="field-key">outputLotCode</span></label>
+                        <input type="text" id="t_outputLotCode" class="form-control" value="LOT-GARMENT-001" oninput="onOutputLotCodeChange()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Output Lot Type <span class="field-key">outputLotType</span></label>
+                        <select id="t_outputLotType" class="form-control" onchange="syncStep4BJson()">
+                            <option value="SHIPMENT" selected>SHIPMENT</option>
+                            <option value="CARTON">CARTON</option>
+                            <option value="FINISHED_GARMENT">FINISHED_GARMENT</option>
+                            <option value="SEWN_GARMENT">SEWN_GARMENT</option>
+                            <option value="CUT_BUNDLE">CUT_BUNDLE</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Type <span class="field-key">eventType</span></label>
+                        <select id="t_eventType" class="form-control" onchange="syncStep4BJson()">
+                            <option value="SHIP" selected>SHIP</option>
+                            <option value="CUT">CUT</option>
+                            <option value="SEW">SEW</option>
+                            <option value="WASH_OR_DYE">WASH_OR_DYE</option>
+                            <option value="FINISH">FINISH</option>
+                            <option value="PACK">PACK</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Process Step <span class="field-key">processStep</span></label>
+                        <select id="t_processStep" class="form-control" onchange="syncStep4BJson()">
+                            <option value="ship" selected>ship</option>
+                            <option value="cut">cut</option>
+                            <option value="sew">sew</option>
+                            <option value="wash_or_dye">wash_or_dye</option>
+                            <option value="finish">finish</option>
+                            <option value="pack">pack</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Input Quantity <span class="field-key">inputQuantity</span></label>
+                        <input type="number" step="0.1" id="t_inputQuantity" class="form-control" value="100.0" oninput="syncStep4BJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Output Quantity <span class="field-key">outputQuantity</span></label>
+                        <input type="number" step="0.1" id="t_outputQuantity" class="form-control" value="95.0" oninput="syncStep4BJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Output Mass (KG) <span class="field-key">outputMassKg</span></label>
+                        <input type="number" step="0.1" id="t_outputMassKg" class="form-control" value="95.0" oninput="syncStep4BJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Output Piece Count <span class="field-key">outputPieceCount</span></label>
+                        <input type="number" id="t_outputPieceCount" class="form-control" value="190" oninput="syncStep4BJson()"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Unit <span class="field-key">unit</span></label>
+                        <select id="t_unit" class="form-control" onchange="syncStep4BJson()">
+                            <option value="PIECES" selected>PIECES</option>
+                            <option value="KG">KG</option>
+                            <option value="CARTONS">CARTONS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="json-toggle-bar">
+                    <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep4B')">
+                        { } Request Body (JSON) দেখুন বা পেস্ট করুন
+                    </button>
+                </div>
+                <div id="jsonBoxStep4B" class="json-box-container">
+                    <textarea id="jsonStep4B" class="json-textarea" oninput="applyStep4BJsonToForm()"></textarea>
+                </div>
+
+                <div class="action-row">
+                    <button type="button" class="btn-execute" id="btnExecStep4B" onclick="executeStep4B()">
+                        ▶ Execute Transform (POST /api/v1/events/transform)
+                    </button>
+                </div>
+
+                <div id="respStep4B" class="response-panel">
+                    <div id="respHeaderStep4B" class="response-header ok">
+                        <span id="respTitleStep4B">Response</span>
+                        <span id="respCodeStep4B" class="status-code-badge">201 Created</span>
+                    </div>
+                    <pre id="respBodyStep4B" class="response-body-pre"></pre>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- STEP 5: GENERATE DIGITAL PRODUCT PASSPORT -->
+    <!-- ===================================================================== -->
+    <section class="step-card" id="step-5">
+        <div class="step-card-header">
+            <div class="step-title-group">
+                <span class="step-badge">ধাপ ৫ (Step 5)</span>
+                <h2>ডিজিটাল প্রোডাক্ট পাসপোর্ট তৈরি করা <span class="en-subtitle">— Digital Product Passports</span></h2>
+            </div>
+            <div class="endpoint-bar">
+                <span class="method-post">POST</span>
+                <span>/api/v1/passports</span>
+            </div>
+        </div>
+        <div class="step-card-body">
+            <div class="step-guide">
+                <strong>নির্দেশনা:</strong> গার্মেন্টস শিপমেন্ট লটটির জন্য ডিজিটাল প্রোডাক্ট পাসপোর্ট তৈরি করতে নিচে <strong>Execute</strong> বাটনে ক্লিক করুন। রেসপন্স কোড আসবে <code>201 Created</code> এবং স্বয়ংক্রিয়ভাবে ধাপ ৬-এ পাসপোর্ট লিংক ও QR কোড প্রস্তুত হয়ে যাবে।
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Passport Code (Product Name/Code) <span class="field-key">passportCode</span></label>
+                    <input type="text" id="pp_passportCode" class="form-control" value="PP-HOODIE-2026" oninput="onPassportCodeChange()"/>
+                </div>
+                <div class="form-group">
+                    <label>Shipment Lot Code <span class="field-key">shipmentLotCode</span></label>
+                    <input type="text" id="pp_shipmentLotCode" class="form-control" value="LOT-GARMENT-001" oninput="syncStep5Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Style Code <span class="field-key">styleCode</span></label>
+                    <input type="text" id="pp_styleCode" class="form-control" value="HOODIE-2026" oninput="syncStep5Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Style Name (Product Display Name) <span class="field-key">styleName</span></label>
+                    <input type="text" id="pp_styleName" class="form-control" value="Eco Friendly Winter Hoodie" oninput="syncStep5Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Care &amp; Repair Instructions <span class="field-key">careAndRepair</span></label>
+                    <input type="text" id="pp_careAndRepair" class="form-control" value="Machine wash cold 30C, line dry" oninput="syncStep5Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>End-of-Life Guidance <span class="field-key">endOfLifeGuidance</span></label>
+                    <input type="text" id="pp_endOfLifeGuidance" class="form-control" value="100% Cotton, suitable for textile recycling" oninput="syncStep5Json()"/>
+                </div>
+                <div class="form-group">
+                    <label>Allocation Method <span class="field-key">allocationMethod</span></label>
+                    <select id="pp_allocationMethod" class="form-control" onchange="syncStep5Json()">
+                        <option value="BY_MASS" selected>BY_MASS</option>
+                        <option value="BY_PIECE_COUNT">BY_PIECE_COUNT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="json-toggle-bar">
+                <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep5')">
+                    { } Request Body (JSON) দেখুন বা পেস্ট করুন
+                </button>
+            </div>
+            <div id="jsonBoxStep5" class="json-box-container">
+                <textarea id="jsonStep5" class="json-textarea" oninput="applyStep5JsonToForm()"></textarea>
+            </div>
+
+            <div class="action-row">
+                <button type="button" class="btn-execute" id="btnExecStep5" onclick="executeStep5()">
+                    ▶ Execute (POST /api/v1/passports)
+                </button>
+            </div>
+
+            <div id="respStep5" class="response-panel">
+                <div id="respHeaderStep5" class="response-header ok">
+                    <span id="respTitleStep5">Response</span>
+                    <span id="respCodeStep5" class="status-code-badge">201 Created</span>
+                </div>
+                <pre id="respBodyStep5" class="response-body-pre"></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- STEP 6: CONSUMER PERSPECTIVE — LIVE BROWSER URL, PASSPORT & QR CODE -->
+    <!-- ===================================================================== -->
+    <section class="step-card step6-card" id="step-6">
+        <div class="step-card-header" style="background:#dcfce7; border-bottom-color:#86efac;">
+            <div class="step-title-group">
+                <span class="step-badge" style="background:#15803d;">ধাপ ৬ (Step 6)</span>
+                <h2>সাধারণ ক্রেতার দৃষ্টিভঙ্গিতে পাসপোর্ট ও QR কোড দেখা <span class="en-subtitle">— Consumer View: Live Passport URL &amp; QR Finder</span></h2>
+            </div>
+            <div class="endpoint-bar" style="background:#ffffff; border-color:#16a34a; color:#15803d;">
+                <span class="method-get">GET</span>
+                <span>/p/{passportCode} &amp; /qr</span>
+            </div>
+        </div>
+        <div class="step-card-body">
+
+            <!-- Detailed Browser & Live URL Instruction Block -->
+            <div class="url-instruction-box">
+                <h3 style="margin:0 0 8px 0; font-size:1.05rem; color:#065f46;">
+                    🌐 ব্রাউজারে ক্রেতার পাসপোর্ট ও QR কোড দেখার নিয়ম (How to Open the Live Passport in Any Browser)
+                </h3>
+                <p style="margin:0 0 10px 0; font-size:0.9rem; color:#1e293b;">
+                    আগে লোকাল কম্পিউটারে (Local PC) থাকাকালীন লিংকটি ছিল <code>http://localhost:18080/p/PP-HOODIE-2026</code>।
+                    এখন প্রজেক্টটি ইন্টারনেটে লাইভ (Live on Internet) হওয়ায় যেকোনো মোবাইল বা কম্পিউটার ব্রাউজারে একটি নতুন ট্যাব খুলে
+                    <strong>আসল লাইভ লিংকে</strong> যেতে হবে এবং লিংকের <strong>একদম শেষের অংশে (<code>/p/</code> এর পরে) আপনার প্রোডাক্ট পাসপোর্ট কোড বা প্রোডাক্টের নাম</strong> (যেমন: <code>PP-HOODIE-2026</code>) বসাতে হবে:
+                </p>
+
+                <div class="url-comparison">
+                    <div class="url-card old-local">
+                        <div style="font-weight:700; margin-bottom:4px;">💻 আগের লোকাল পিসি লিংক (Old Local PC URL):</div>
+                        <code style="text-decoration:line-through;">http://localhost:18080/p/PP-HOODIE-2026</code>
+                    </div>
+                    <div class="url-card live-internet">
+                        <div style="font-weight:800; margin-bottom:4px;">🌍 বর্তমান লাইভ ইন্টারনেট লিংক (Live Internet URL):</div>
+                        <code id="liveRenderUrlExample" style="font-weight:800; font-size:0.9rem; color:#047857;">https://threadtrace.onrender.com/p/PP-HOODIE-2026</code>
+                    </div>
+                </div>
+
+                <!-- Interactive URL Builder with Last-Portion Product Name/Code Input -->
+                <label for="step6PassportInput" style="font-size:0.85rem; font-weight:800; color:#065f46; display:block; margin-top:10px;">
+                    ✍️ নিচের বক্সে লিংকের শেষের অংশে আপনার প্রোডাক্ট পাসপোর্ট কোডটি (Product Passport Code) লিখুন বা পরিবর্তন করুন:
+                </label>
+                <div class="live-url-builder">
+                    <div class="url-prefix" id="liveBaseUrlPrefix">https://threadtrace.onrender.com/p/</div>
+                    <input type="text" id="step6PassportInput" class="url-code-input" value="PP-HOODIE-2026"
+                           placeholder="Type Product Passport Code (e.g. PP-HOODIE-2026)"
+                           oninput="updateStep6Links()"/>
+                </div>
+                <div style="font-size:0.8rem; color:#475569; margin-bottom:14px;">
+                    💡 <strong>টিপস (Tip):</strong> লিংকের প্রথম অংশটি হলো লাইভ ওয়েবসাইটের ঠিকানা (<code id="currentOriginDisplay">https://threadtrace.onrender.com</code>) এবং <code>/p/</code> এর পরের শেষের নীল অংশটি হলো আপনার প্রোডাক্টের পাসপোর্ট কোড (যেমন: <code id="dynamicCodeHint">PP-HOODIE-2026</code>)।
+                </div>
+
+                <!-- Direct Action Buttons -->
+                <div class="action-row">
+                    <a id="openPassportTabLink" href="/p/PP-HOODIE-2026" target="_blank" rel="noopener"
+                       class="btn-green" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        👉 নতুন ট্যাবে পাসপোর্ট পেজ খুলুন (Open Live Passport Page)
+                    </a>
+                    <button type="button" class="btn-execute" onclick="loadStep6Preview()">
+                        🔍 এখানেই পাসপোর্ট ও QR কোড দেখুন (Load Passport &amp; QR Here)
+                    </button>
+                    <button type="button" class="btn-outline" onclick="copyLivePassportUrl()">
+                        📋 লাইভ লিংক কপি করুন (Copy Live URL)
+                    </button>
+                    <a id="directQrLink" href="/api/v1/public/passports/PP-HOODIE-2026/qr" target="_blank" rel="noopener"
+                       class="btn-outline" download="PP-HOODIE-2026-qr.png">
+                        ⬇ সরাসরি QR কোড ইমেজ নামান (Download QR PNG)
+                    </a>
+                </div>
+                <div id="copyFeedback" style="font-size:0.82rem; font-weight:700; color:#15803d; margin-top:8px;"></div>
+            </div>
+
+            <!-- Live Consumer Preview & QR Code Display -->
+            <div id="step6PreviewContainer" class="consumer-showcase">
+                <div class="passport-preview-box" id="consumerPassportDetails">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+                        <div>
+                            <div style="font-size:0.76rem; font-weight:700; color:#15803d; text-transform:uppercase;">
+                                Digital Product Passport (Consumer View)
+                            </div>
+                            <h3 id="prevStyleName" style="margin:2px 0 4px 0; font-size:1.25rem;">Eco Friendly Winter Hoodie</h3>
+                            <div style="font-size:0.83rem; color:var(--text-muted);">
+                                Passport: <strong id="prevPassportCode">PP-HOODIE-2026</strong>
+                                &middot; Style: <span id="prevStyleCode">HOODIE-2026</span>
+                                &middot; Brand: <span id="prevBrandCode">BRAND_A</span>
+                            </div>
+                        </div>
+                        <span id="prevStatusBadge" class="step-badge" style="background:#16a34a;">PUBLISHED</span>
+                    </div>
+
+                    <div class="metric-mini-grid">
+                        <div class="metric-mini">
+                            <div class="lbl">💧 পানির ব্যবহার (Water/pc)</div>
+                            <div class="val" id="prevWater">0.00 L</div>
+                        </div>
+                        <div class="metric-mini">
+                            <div class="lbl">⚡ বিদ্যুৎ খরচ (Energy/pc)</div>
+                            <div class="val" id="prevEnergy">0.1013 kWh</div>
+                        </div>
+                        <div class="metric-mini">
+                            <div class="lbl">🌱 কার্বন নির্গমন (CO2e/pc)</div>
+                            <div class="val" id="prevCo2">0.2105 kg</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size:0.86rem; margin-top:10px;">
+                        <p style="margin:6px 0;">
+                            <strong>🧵 ফেব্রিক ও অর্গানিক ক্লেইম (Verified Claims):</strong>
+                            <span id="prevClaims">Cotton — ORGANIC (100%)</span>
+                        </p>
+                        <p style="margin:6px 0;">
+                            <strong>🏭 উৎপাদনকারী মিল/ফ্যাক্টরি (Origin Facilities):</strong>
+                            <span id="prevOrigins">Gazipur Organic Spinning Mill (SPINNING_MILL, Gazipur, Bangladesh)</span>
+                        </p>
+                        <p style="margin:6px 0;">
+                            <strong>📜 পরিবেশগত সনদ (Certifications):</strong>
+                            <span id="prevCerts">GOTS-2026-BD-01 (GOTS • Control Union)</span>
+                        </p>
+                        <p style="margin:6px 0;">
+                            <strong>🧺 যত্ন ও রিসাইক্লিং (Care &amp; End-of-Life):</strong>
+                            <span id="prevCare">Machine wash cold 30C, line dry • 100% Cotton, suitable for textile recycling</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="qr-preview-box">
+                    <div style="font-weight:800; font-size:0.9rem; color:#065f46; margin-bottom:8px;">
+                        📱 আসল QR Code (Scannable)
+                    </div>
+                    <img id="prevQrImage" src="/api/v1/public/passports/PP-HOODIE-2026/qr"
+                         alt="Digital Product Passport QR Code" width="175" height="175"/>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; word-break:break-all;">
+                        Endpoint: <code id="prevQrEndpoint">/api/v1/public/passports/PP-HOODIE-2026/qr</code>
+                    </div>
+                    <a id="prevQrDownloadBtn" href="/api/v1/public/passports/PP-HOODIE-2026/qr"
+                       download="PP-HOODIE-2026-qr.png" class="btn-outline" style="font-size:0.8rem; padding:7px 14px;">
+                        ⬇ QR ইমেজ ডাউনলোড করুন
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<!-- ========================================================================= -->
+<!-- AUTHORIZE POPUP MODAL (Top-Right Authorize Button Window) -->
+<!-- ========================================================================= -->
+<div class="modal-backdrop" id="authModalBackdrop">
+    <div class="modal-window" role="dialog" aria-labelledby="authModalTitle">
+        <div class="modal-header">
+            <h3 id="authModalTitle">
+                <span id="modalLockIcon">🔓</span>
+                <span>Available Authorizations (HTTP Basic Auth)</span>
+            </h3>
+            <button type="button" onclick="closeAuthModal()" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="margin:0 0 12px 0; font-size:0.86rem; color:var(--text-muted);">
+                সিস্টেমে এন্ট্রি দেওয়ার জন্য নিচের ক্রেডেনশিয়াল দিয়ে সবুজ <strong>Authorize</strong> বাটনে ক্লিক করুন, তারপর <strong>Close</strong> বাটনে চাপুন:
+            </p>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="modalUsername">Username</label>
+                <input type="text" id="modalUsername" class="form-control" value="operator"/>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label for="modalPassword">Password</label>
+                <input type="password" id="modalPassword" class="form-control" value="change_me_operator_pw"/>
+            </div>
+            <div id="modalAuthMessage" style="font-size:0.84rem; font-weight:700; margin-bottom:12px;"></div>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" class="btn-green" onclick="performAuthorize(true)">Authorize</button>
+                <button type="button" class="btn-outline" onclick="closeAuthModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- State ---
+    let authHeader = null;
+    let currentUser = null;
+    let presetCounter = 1;
+
+    function getEffectiveOrigin() {
+        const origin = window.location.origin || 'https://threadtrace.onrender.com';
+        return origin.replace(/\/+$/, '');
+    }
+
+    function getDisplayLiveBaseUrl() {
+        const origin = getEffectiveOrigin();
+        if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+            return origin;
+        }
+        return origin;
+    }
+
+    // --- Initialize on Load ---
+    window.addEventListener('DOMContentLoaded', () => {
+        syncStep2Json();
+        syncStep3Json();
+        syncStep4AJson();
+        syncStep4BJson();
+        syncStep5Json();
+        updateStep6Links();
+
+        // Restore saved session credentials if present
+        const savedUser = sessionStorage.getItem('tt_user');
+        const savedHeader = sessionStorage.getItem('tt_auth');
+        if (savedUser && savedHeader) {
+            currentUser = savedUser;
+            authHeader = savedHeader;
+            document.getElementById('inlineUsername').value = savedUser;
+            document.getElementById('modalUsername').value = savedUser;
+            setAuthorizedUiState(true, savedUser);
+        }
+    });
+
+    // --- Authorize & Login Functions (Step 1) ---
+    function openAuthModal() {
+        document.getElementById('modalUsername').value = document.getElementById('inlineUsername').value;
+        document.getElementById('modalPassword').value = document.getElementById('inlinePassword').value;
+        document.getElementById('authModalBackdrop').classList.add('open');
+    }
+
+    function closeAuthModal() {
+        document.getElementById('authModalBackdrop').classList.remove('open');
+    }
+
+    function fillCredentials(user, pass, chipEl) {
+        document.getElementById('inlineUsername').value = user;
+        document.getElementById('inlinePassword').value = pass;
+        document.getElementById('modalUsername').value = user;
+        document.getElementById('modalPassword').value = pass;
+        document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
+        if (chipEl) chipEl.classList.add('active');
+    }
+
+    async function performAuthorize(fromModal) {
+        const userEl = fromModal ? document.getElementById('modalUsername') : document.getElementById('inlineUsername');
+        const passEl = fromModal ? document.getElementById('modalPassword') : document.getElementById('inlinePassword');
+        const username = userEl.value.trim();
+        const password = passEl.value;
+
+        document.getElementById('inlineUsername').value = username;
+        document.getElementById('inlinePassword').value = password;
+        document.getElementById('modalUsername').value = username;
+        document.getElementById('modalPassword').value = password;
+
+        const candidateHeader = 'Basic ' + btoa(username + ':' + password);
+        try {
+            const res = await fetch('/api/v1/parties?size=1', {
+                method: 'GET',
+                headers: {
+                    'Authorization': candidateHeader,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (res.ok) {
+                authHeader = candidateHeader;
+                currentUser = username;
+                sessionStorage.setItem('tt_user', username);
+                sessionStorage.setItem('tt_auth', candidateHeader);
+                setAuthorizedUiState(true, username);
+                document.getElementById('modalAuthMessage').style.color = '#15803d';
+                document.getElementById('modalAuthMessage').textContent = '🔒 Authorized successfully as ' + username + '! Click Close to continue.';
+                if (fromModal) {
+                    setTimeout(() => closeAuthModal(), 550);
+                }
+                return true;
+            } else {
+                setAuthorizedUiState(false, null, 'Invalid username or password (HTTP ' + res.status + ')');
+                document.getElementById('modalAuthMessage').style.color = '#dc2626';
+                document.getElementById('modalAuthMessage').textContent = '❌ Invalid credentials (HTTP ' + res.status + ')';
+                return false;
+            }
+        } catch (err) {
+            setAuthorizedUiState(false, null, 'Network error: ' + err.message);
+            return false;
+        }
+    }
+
+    function performLogout() {
+        authHeader = null;
+        currentUser = null;
+        sessionStorage.removeItem('tt_user');
+        sessionStorage.removeItem('tt_auth');
+        setAuthorizedUiState(false, null);
+    }
+
+    function setAuthorizedUiState(authorized, username, errorMsg) {
+        const topBtn = document.getElementById('topAuthorizeBtn');
+        const topIcon = document.getElementById('topLockIcon');
+        const topText = document.getElementById('topAuthText');
+        const step1Status = document.getElementById('step1LockStatus');
+        const feedback = document.getElementById('authFeedbackText');
+        const logoutBtn = document.getElementById('inlineLogoutBtn');
+        const modalIcon = document.getElementById('modalLockIcon');
+
+        if (authorized) {
+            topBtn.classList.add('locked');
+            topIcon.textContent = '🔒';
+            topText.textContent = 'Authorized (' + username + ')';
+            modalIcon.textContent = '🔒';
+            step1Status.style.background = '#dcfce7';
+            step1Status.style.borderColor = '#16a34a';
+            step1Status.style.color = '#14532d';
+            step1Status.textContent = '🔒 তালা বন্ধ (Authorized as ' + username + ')';
+            feedback.style.color = '#15803d';
+            feedback.textContent = '✅ লগইন সফল হয়েছে! তালাটি এখন বন্ধ (🔒) রয়েছে। এবার ধাপ ২ থেকে ধাপ ৬ সম্পন্ন করুন।';
+            logoutBtn.style.display = 'inline-flex';
+            markStepDone(1);
+        } else {
+            topBtn.classList.remove('locked');
+            topIcon.textContent = '🔓';
+            topText.textContent = 'Authorize';
+            modalIcon.textContent = '🔓';
+            step1Status.style.background = '#fef3c7';
+            step1Status.style.borderColor = '#f59e0b';
+            step1Status.style.color = '#92400e';
+            step1Status.textContent = '🔓 তালা খোলা (Not Authorized)';
+            logoutBtn.style.display = 'none';
+            document.getElementById('pill-step-1').classList.remove('done');
+            document.getElementById('num-step-1').textContent = '১';
+            if (errorMsg) {
+                feedback.style.color = '#dc2626';
+                feedback.textContent = '❌ ' + errorMsg;
+            } else {
+                feedback.textContent = '';
+            }
+        }
+    }
+
+    function markStepDone(stepNumber) {
+        const pill = document.getElementById('pill-step-' + stepNumber);
+        const num = document.getElementById('num-step-' + stepNumber);
+        if (pill && num) {
+            pill.classList.add('done');
+            num.textContent = '✓';
+        }
+    }
+
+    function toggleJsonBox(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('open');
+    }
+
+    // --- Auto-Sync Helpers across Steps 2 -> 6 ---
+    function onPartyCodeChange() {
+        const code = document.getElementById('p_code').value.trim();
+        document.getElementById('c_supplierCode').value = code;
+        document.getElementById('r_supplierCode').value = code;
+        syncStep2Json();
+        syncStep3Json();
+        syncStep4AJson();
+    }
+
+    function onRawLotCodeChange() {
+        const lotCode = document.getElementById('r_lotCode').value.trim();
+        document.getElementById('t_inputLotCode').value = lotCode;
+        syncStep4AJson();
+        syncStep4BJson();
+    }
+
+    function onStyleCodeChange() {
+        const styleCode = document.getElementById('r_styleCode').value.trim();
+        document.getElementById('pp_styleCode').value = styleCode;
+        syncStep4AJson();
+        syncStep5Json();
+    }
+
+    function onOutputLotCodeChange() {
+        const outLot = document.getElementById('t_outputLotCode').value.trim();
+        document.getElementById('pp_shipmentLotCode').value = outLot;
+        syncStep4BJson();
+        syncStep5Json();
+    }
+
+    function onPassportCodeChange() {
+        const ppCode = document.getElementById('pp_passportCode').value.trim();
+        document.getElementById('step6PassportInput').value = ppCode;
+        syncStep5Json();
+        updateStep6Links();
+    }
+
+    // --- Two-Way Form <-> JSON Sync ---
+    function syncStep2Json() {
+        const payload = {
+            code: document.getElementById('p_code').value.trim(),
+            name: document.getElementById('p_name').value.trim(),
+            partyType: document.getElementById('p_partyType').value,
+            country: document.getElementById('p_country').value.trim(),
+            region: document.getElementById('p_region').value.trim(),
+            exactAddress: document.getElementById('p_exactAddress').value.trim(),
+            workerCount: Number(document.getElementById('p_workerCount').value),
+            unitPriceUsd: Number(document.getElementById('p_unitPriceUsd').value)
+        };
+        document.getElementById('jsonStep2').value = JSON.stringify(payload, null, 2);
+        return payload;
+    }
+
+    function applyStep2JsonToForm() {
+        try {
+            const d = JSON.parse(document.getElementById('jsonStep2').value);
+            if (d.code !== undefined) document.getElementById('p_code').value = d.code;
+            if (d.name !== undefined) document.getElementById('p_name').value = d.name;
+            if (d.partyType !== undefined) document.getElementById('p_partyType').value = d.partyType;
+            if (d.country !== undefined) document.getElementById('p_country').value = d.country;
+            if (d.region !== undefined) document.getElementById('p_region').value = d.region;
+            if (d.exactAddress !== undefined) document.getElementById('p_exactAddress').value = d.exactAddress;
+            if (d.workerCount !== undefined) document.getElementById('p_workerCount').value = d.workerCount;
+            if (d.unitPriceUsd !== undefined) document.getElementById('p_unitPriceUsd').value = d.unitPriceUsd;
+        } catch (_) {}
+    }
+
+    function syncStep3Json() {
+        const payload = {
+            certificateNumber: document.getElementById('c_certificateNumber').value.trim(),
+            certificateType: document.getElementById('c_certificateType').value,
+            issuer: document.getElementById('c_issuer').value.trim(),
+            scope: document.getElementById('c_scope').value.trim(),
+            claimedAttribute: document.getElementById('c_claimedAttribute').value.trim(),
+            certifiedPct: Number(document.getElementById('c_certifiedPct').value),
+            supplierCode: document.getElementById('c_supplierCode').value.trim(),
+            validFrom: document.getElementById('c_validFrom').value,
+            validTo: document.getElementById('c_validTo').value
+        };
+        document.getElementById('jsonStep3').value = JSON.stringify(payload, null, 2);
+        return payload;
+    }
+
+    function applyStep3JsonToForm() {
+        try {
+            const d = JSON.parse(document.getElementById('jsonStep3').value);
+            if (d.certificateNumber !== undefined) document.getElementById('c_certificateNumber').value = d.certificateNumber;
+            if (d.certificateType !== undefined) document.getElementById('c_certificateType').value = d.certificateType;
+            if (d.issuer !== undefined) document.getElementById('c_issuer').value = d.issuer;
+            if (d.scope !== undefined) document.getElementById('c_scope').value = d.scope;
+            if (d.claimedAttribute !== undefined) document.getElementById('c_claimedAttribute').value = d.claimedAttribute;
+            if (d.certifiedPct !== undefined) document.getElementById('c_certifiedPct').value = d.certifiedPct;
+            if (d.supplierCode !== undefined) document.getElementById('c_supplierCode').value = d.supplierCode;
+            if (d.validFrom !== undefined) document.getElementById('c_validFrom').value = d.validFrom;
+            if (d.validTo !== undefined) document.getElementById('c_validTo').value = d.validTo;
+        } catch (_) {}
+    }
+
+    function syncStep4AJson() {
+        const payload = {
+            lotCode: document.getElementById('r_lotCode').value.trim(),
+            lotType: document.getElementById('r_lotType').value,
+            materialType: document.getElementById('r_materialType').value.trim(),
+            styleCode: document.getElementById('r_styleCode').value.trim(),
+            brandCode: document.getElementById('r_brandCode').value.trim(),
+            supplierCode: document.getElementById('r_supplierCode').value.trim(),
+            quantity: Number(document.getElementById('r_quantity').value),
+            massKg: Number(document.getElementById('r_massKg').value),
+            pieceCount: Number(document.getElementById('r_pieceCount').value),
+            unit: document.getElementById('r_unit').value,
+            claimedAttribute: document.getElementById('r_claimedAttribute').value.trim(),
+            claimedPct: Number(document.getElementById('r_claimedPct').value)
+        };
+        document.getElementById('jsonStep4A').value = JSON.stringify(payload, null, 2);
+        return payload;
+    }
+
+    function applyStep4AJsonToForm() {
+        try {
+            const d = JSON.parse(document.getElementById('jsonStep4A').value);
+            if (d.lotCode !== undefined) document.getElementById('r_lotCode').value = d.lotCode;
+            if (d.lotType !== undefined) document.getElementById('r_lotType').value = d.lotType;
+            if (d.materialType !== undefined) document.getElementById('r_materialType').value = d.materialType;
+            if (d.styleCode !== undefined) document.getElementById('r_styleCode').value = d.styleCode;
+            if (d.brandCode !== undefined) document.getElementById('r_brandCode').value = d.brandCode;
+            if (d.supplierCode !== undefined) document.getElementById('r_supplierCode').value = d.supplierCode;
+            if (d.quantity !== undefined) document.getElementById('r_quantity').value = d.quantity;
+            if (d.massKg !== undefined) document.getElementById('r_massKg').value = d.massKg;
+            if (d.pieceCount !== undefined) document.getElementById('r_pieceCount').value = d.pieceCount;
+            if (d.unit !== undefined) document.getElementById('r_unit').value = d.unit;
+            if (d.claimedAttribute !== undefined) document.getElementById('r_claimedAttribute').value = d.claimedAttribute;
+            if (d.claimedPct !== undefined) document.getElementById('r_claimedPct').value = d.claimedPct;
+        } catch (_) {}
+    }
+
+    function syncStep4BJson() {
+        const payload = {
+            inputLotCode: document.getElementById('t_inputLotCode').value.trim(),
+            outputLotCode: document.getElementById('t_outputLotCode').value.trim(),
+            outputLotType: document.getElementById('t_outputLotType').value,
+            eventType: document.getElementById('t_eventType').value,
+            processStep: document.getElementById('t_processStep').value,
+            inputQuantity: Number(document.getElementById('t_inputQuantity').value),
+            outputQuantity: Number(document.getElementById('t_outputQuantity').value),
+            outputMassKg: Number(document.getElementById('t_outputMassKg').value),
+            outputPieceCount: Number(document.getElementById('t_outputPieceCount').value),
+            unit: document.getElementById('t_unit').value
+        };
+        document.getElementById('jsonStep4B').value = JSON.stringify(payload, null, 2);
+        return payload;
+    }
+
+    function applyStep4BJsonToForm() {
+        try {
+            const d = JSON.parse(document.getElementById('jsonStep4B').value);
+            if (d.inputLotCode !== undefined) document.getElementById('t_inputLotCode').value = d.inputLotCode;
+            if (d.outputLotCode !== undefined) document.getElementById('t_outputLotCode').value = d.outputLotCode;
+            if (d.outputLotType !== undefined) document.getElementById('t_outputLotType').value = d.outputLotType;
+            if (d.eventType !== undefined) document.getElementById('t_eventType').value = d.eventType;
+            if (d.processStep !== undefined) document.getElementById('t_processStep').value = d.processStep;
+            if (d.inputQuantity !== undefined) document.getElementById('t_inputQuantity').value = d.inputQuantity;
+            if (d.outputQuantity !== undefined) document.getElementById('t_outputQuantity').value = d.outputQuantity;
+            if (d.outputMassKg !== undefined) document.getElementById('t_outputMassKg').value = d.outputMassKg;
+            if (d.outputPieceCount !== undefined) document.getElementById('t_outputPieceCount').value = d.outputPieceCount;
+            if (d.unit !== undefined) document.getElementById('t_unit').value = d.unit;
+        } catch (_) {}
+    }
+
+    function syncStep5Json() {
+        const payload = {
+            passportCode: document.getElementById('pp_passportCode').value.trim(),
+            shipmentLotCode: document.getElementById('pp_shipmentLotCode').value.trim(),
+            styleCode: document.getElementById('pp_styleCode').value.trim(),
+            styleName: document.getElementById('pp_styleName').value.trim(),
+            careAndRepair: document.getElementById('pp_careAndRepair').value.trim(),
+            endOfLifeGuidance: document.getElementById('pp_endOfLifeGuidance').value.trim(),
+            allocationMethod: document.getElementById('pp_allocationMethod').value
+        };
+        document.getElementById('jsonStep5').value = JSON.stringify(payload, null, 2);
+        return payload;
+    }
+
+    function applyStep5JsonToForm() {
+        try {
+            const d = JSON.parse(document.getElementById('jsonStep5').value);
+            if (d.passportCode !== undefined) document.getElementById('pp_passportCode').value = d.passportCode;
+            if (d.shipmentLotCode !== undefined) document.getElementById('pp_shipmentLotCode').value = d.shipmentLotCode;
+            if (d.styleCode !== undefined) document.getElementById('pp_styleCode').value = d.styleCode;
+            if (d.styleName !== undefined) document.getElementById('pp_styleName').value = d.styleName;
+            if (d.careAndRepair !== undefined) document.getElementById('pp_careAndRepair').value = d.careAndRepair;
+            if (d.endOfLifeGuidance !== undefined) document.getElementById('pp_endOfLifeGuidance').value = d.endOfLifeGuidance;
+            if (d.allocationMethod !== undefined) document.getElementById('pp_allocationMethod').value = d.allocationMethod;
+        } catch (_) {}
+    }
+
+    // --- Generic API POST Runner ---
+    async function ensureAuthorizedOrAutoLogin() {
+        if (authHeader) return true;
+        return await performAuthorize(false);
+    }
+
+    function renderResponsePanel(suffix, status, statusText, bodyObj, isDuplicateOk) {
+        const panel = document.getElementById('resp' + suffix);
+        const header = document.getElementById('respHeader' + suffix);
+        const title = document.getElementById('respTitle' + suffix);
+        const codeBadge = document.getElementById('respCode' + suffix);
+        const pre = document.getElementById('respBody' + suffix);
+
+        panel.classList.add('visible');
+        header.className = 'response-header';
+
+        if (status >= 200 && status < 300) {
+            header.classList.add('ok');
+            title.textContent = '✅ সফলভাবে সম্পন্ন হয়েছে (Success)';
+            codeBadge.textContent = status + ' ' + statusText;
+        } else if (status === 409 && isDuplicateOk) {
+            header.classList.add('warn');
+            title.textContent = 'ℹ️ এই কোডটি ইতিমধ্যে ডাটাবেজে তৈরি করা আছে — পরবর্তী ধাপে যেতে পারেন (Already Exists)';
+            codeBadge.textContent = '409 Conflict (Ready)';
+        } else {
+            header.classList.add('err');
+            title.textContent = '❌ ত্রুটি (Request Failed)';
+            codeBadge.textContent = status + ' ' + statusText;
+        }
+
+        pre.textContent = typeof bodyObj === 'string' ? bodyObj : JSON.stringify(bodyObj, null, 2);
+    }
+
+    async function postJsonStep(url, rawJsonText, suffix, stepNumToMark) {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) {
+            renderResponsePanel(suffix, 401, 'Unauthorized', {
+                error: 'প্রথমে ধাপ ১ থেকে সিস্টেমে লগইন (Authorize) করুন।'
+            }, false);
+            return false;
+        }
+
+        let parsedBody;
+        try {
+            parsedBody = JSON.parse(rawJsonText);
+        } catch (e) {
+            renderResponsePanel(suffix, 400, 'Invalid JSON', { error: 'Invalid JSON syntax: ' + e.message }, false);
+            return false;
+        }
+
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': authHeader,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(parsedBody)
+            });
+
+            const text = await res.text();
+            let data = text;
+            try { data = JSON.parse(text); } catch (_) {}
+
+            const statusLabel = res.status === 201 ? 'Created' : (res.statusText || '');
+            renderResponsePanel(suffix, res.status, statusLabel, data, true);
+
+            if ((res.status >= 200 && res.status < 300) || res.status === 409) {
+                if (stepNumToMark) markStepDone(stepNumToMark);
+                return true;
+            }
+            return false;
+        } catch (err) {
+            renderResponsePanel(suffix, 500, 'Network Error', { error: err.message }, false);
+            return false;
+        }
+    }
+
+    // --- Step 2..5 Execution Handlers ---
+    async function executeStep2() {
+        syncStep2Json();
+        return await postJsonStep('/api/v1/parties', document.getElementById('jsonStep2').value, 'Step2', 2);
+    }
+
+    async function executeStep3() {
+        syncStep3Json();
+        return await postJsonStep('/api/v1/evidence/certificates', document.getElementById('jsonStep3').value, 'Step3', 3);
+    }
+
+    async function executeStep4A() {
+        syncStep4AJson();
+        return await postJsonStep('/api/v1/events/receive', document.getElementById('jsonStep4A').value, 'Step4A', null);
+    }
+
+    async function executeStep4B() {
+        syncStep4BJson();
+        return await postJsonStep('/api/v1/events/transform', document.getElementById('jsonStep4B').value, 'Step4B', 4);
+    }
+
+    async function executeStep5() {
+        syncStep5Json();
+        const ok = await postJsonStep('/api/v1/passports', document.getElementById('jsonStep5').value, 'Step5', 5);
+        if (ok) {
+            const code = document.getElementById('pp_passportCode').value.trim();
+            document.getElementById('step6PassportInput').value = code;
+            updateStep6Links();
+            await loadStep6Preview();
+        }
+        return ok;
+    }
+
+    // --- Step 6: Live URL & Consumer Passport / QR Preview ---
+    function updateStep6Links() {
+        const rawCode = document.getElementById('step6PassportInput').value.trim() || 'PP-HOODIE-2026';
+        const encodedCode = encodeURIComponent(rawCode);
+        const liveOrigin = getDisplayLiveBaseUrl();
+        const renderBase = 'https://threadtrace.onrender.com';
+
+        document.getElementById('liveBaseUrlPrefix').textContent = liveOrigin + '/p/';
+        document.getElementById('currentOriginDisplay').textContent = liveOrigin;
+        document.getElementById('dynamicCodeHint').textContent = rawCode;
+        document.getElementById('liveRenderUrlExample').textContent = renderBase + '/p/' + rawCode;
+
+        const relativePassportUrl = '/p/' + encodedCode;
+        const relativeQrUrl = '/api/v1/public/passports/' + encodedCode + '/qr';
+
+        document.getElementById('openPassportTabLink').href = relativePassportUrl;
+        document.getElementById('directQrLink').href = relativeQrUrl;
+        document.getElementById('directQrLink').setAttribute('download', rawCode + '-qr.png');
+    }
+
+    function copyLivePassportUrl() {
+        const rawCode = document.getElementById('step6PassportInput').value.trim() || 'PP-HOODIE-2026';
+        const fullUrl = getDisplayLiveBaseUrl() + '/p/' + encodeURIComponent(rawCode);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                document.getElementById('copyFeedback').textContent = '✅ কপি হয়েছে: ' + fullUrl;
+            });
+        } else {
+            document.getElementById('copyFeedback').textContent = '🔗 লাইভ লিংক: ' + fullUrl;
+        }
+    }
+
+    async function loadStep6Preview() {
+        const rawCode = document.getElementById('step6PassportInput').value.trim() || 'PP-HOODIE-2026';
+        const encodedCode = encodeURIComponent(rawCode);
+        updateStep6Links();
+
+        // Always update QR code image immediately
+        const qrUrl = '/api/v1/public/passports/' + encodedCode + '/qr';
+        document.getElementById('prevQrImage').src = qrUrl + '?t=' + Date.now();
+        document.getElementById('prevQrEndpoint').textContent = qrUrl;
+        document.getElementById('prevQrDownloadBtn').href = qrUrl;
+        document.getElementById('prevQrDownloadBtn').setAttribute('download', rawCode + '-qr.png');
+
+        try {
+            const res = await fetch('/api/v1/public/passports/' + encodedCode, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            if (!res.ok) {
+                document.getElementById('copyFeedback').style.color = '#d97706';
+                document.getElementById('copyFeedback').textContent =
+                    'ℹ️ পাসপোর্ট "' + rawCode + '" এখনো ডাটাবেজে তৈরি হয়নি। উপরে "🚀 ১-ক্লিকে সব ধাপ সম্পন্ন করুন" বা ধাপ ২-৫ এর Execute বাটনে চাপুন!';
+                return false;
+            }
+            const p = await res.json();
+            document.getElementById('prevStyleName').textContent = p.styleName || rawCode;
+            document.getElementById('prevPassportCode').textContent = p.passportCode + ' (v' + p.version + ')';
+            document.getElementById('prevStyleCode').textContent = p.styleCode || '-';
+            document.getElementById('prevBrandCode').textContent = p.brandCode || '-';
+            document.getElementById('prevStatusBadge').textContent = p.status || 'PUBLISHED';
+
+            if (p.footprint) {
+                document.getElementById('prevWater').textContent = p.footprint.waterLitersPerPiece + ' L';
+                document.getElementById('prevEnergy').textContent = p.footprint.energyKwhPerPiece + ' kWh';
+                document.getElementById('prevCo2').textContent = p.footprint.co2eKgPerPiece + ' kg';
+            }
+
+            if (Array.isArray(p.fibreComposition) && p.fibreComposition.length > 0) {
+                document.getElementById('prevClaims').textContent = p.fibreComposition
+                    .map(f => f.materialType + ' — ' + f.verifiedClaim + ' (' + f.verifiedPercentage + '%)')
+                    .join(', ');
+            }
+
+            if (Array.isArray(p.originByProcessStep) && p.originByProcessStep.length > 0) {
+                document.getElementById('prevOrigins').textContent = p.originByProcessStep
+                    .map(o => o.partyName + ' (' + o.processStep + ' • ' + o.region + ', ' + o.country + ')')
+                    .join(' → ');
+            }
+
+            if (Array.isArray(p.certifications) && p.certifications.length > 0) {
+                document.getElementById('prevCerts').textContent = p.certifications
+                    .map(c => c.certificateNumber + ' (' + c.certificateType + ' • ' + c.issuer + ', valid to ' + c.validTo + ')')
+                    .join(', ');
+            } else {
+                document.getElementById('prevCerts').textContent = 'No active certifications attached';
+            }
+
+            document.getElementById('prevCare').textContent =
+                (p.careAndRepair || '') + ' • ' + (p.endOfLifeGuidance || '');
+
+            document.getElementById('copyFeedback').style.color = '#15803d';
+            document.getElementById('copyFeedback').textContent =
+                '✅ পাসপোর্ট "' + rawCode + '" এবং আসল QR Code সফলভাবে লোড হয়েছে!';
+            markStepDone(6);
+            return true;
+        } catch (err) {
+            document.getElementById('copyFeedback').style.color = '#dc2626';
+            document.getElementById('copyFeedback').textContent = 'Error loading passport: ' + err.message;
+            return false;
+        }
+    }
+
+    // --- 1-Click Auto-Run All Steps ---
+    async function runFullDemoPipeline() {
+        const s1 = await performAuthorize(false);
+        if (!s1) return;
+        const s2 = await executeStep2();
+        if (!s2) return;
+        const s3 = await executeStep3();
+        if (!s3) return;
+        const s4a = await executeStep4A();
+        if (!s4a) return;
+        const s4b = await executeStep4B();
+        if (!s4b) return;
+        const s5 = await executeStep5();
+        if (s5) {
+            document.getElementById('step-6').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // --- Presets: Generate New Product Codes or Reset to Default Hoodie ---
+    function generateNewProductPreset() {
+        presetCounter++;
+        const sfx = String(presetCounter).padStart(2, '0');
+        document.getElementById('p_code').value = 'MILL-GAZIPUR-' + presetCounter;
+        document.getElementById('p_name').value = 'Gazipur Organic Spinning Mill #' + presetCounter;
+        document.getElementById('c_certificateNumber').value = 'GOTS-2026-BD-' + sfx;
+        document.getElementById('c_supplierCode').value = 'MILL-GAZIPUR-' + presetCounter;
+        document.getElementById('r_lotCode').value = 'LOT-RAW-0' + sfx;
+        document.getElementById('r_styleCode').value = 'HOODIE-2026-' + sfx;
+        document.getElementById('r_supplierCode').value = 'MILL-GAZIPUR-' + presetCounter;
+        document.getElementById('t_inputLotCode').value = 'LOT-RAW-0' + sfx;
+        document.getElementById('t_outputLotCode').value = 'LOT-GARMENT-0' + sfx;
+        document.getElementById('pp_passportCode').value = 'PP-HOODIE-2026-' + sfx;
+        document.getElementById('pp_shipmentLotCode').value = 'LOT-GARMENT-0' + sfx;
+        document.getElementById('pp_styleCode').value = 'HOODIE-2026-' + sfx;
+        document.getElementById('pp_styleName').value = 'Eco Friendly Winter Hoodie #' + presetCounter;
+        document.getElementById('step6PassportInput').value = 'PP-HOODIE-2026-' + sfx;
+
+        syncStep2Json();
+        syncStep3Json();
+        syncStep4AJson();
+        syncStep4BJson();
+        syncStep5Json();
+        updateStep6Links();
+    }
+
+    function resetToDefaultHoodie() {
+        document.getElementById('p_code').value = 'MILL-GAZIPUR-1';
+        document.getElementById('p_name').value = 'Gazipur Organic Spinning Mill';
+        document.getElementById('p_partyType').value = 'SPINNING_MILL';
+        document.getElementById('p_country').value = 'Bangladesh';
+        document.getElementById('p_region').value = 'Gazipur';
+        document.getElementById('p_exactAddress').value = 'Plot 12, Gazipur BSCIC';
+        document.getElementById('p_workerCount').value = '450';
+        document.getElementById('p_unitPriceUsd').value = '15.50';
+
+        document.getElementById('c_certificateNumber').value = 'GOTS-2026-BD-01';
+        document.getElementById('c_certificateType').value = 'GOTS';
+        document.getElementById('c_issuer').value = 'Control Union';
+        document.getElementById('c_scope').value = '100% Organic Cotton Fiber';
+        document.getElementById('c_claimedAttribute').value = 'ORGANIC';
+        document.getElementById('c_certifiedPct').value = '100.0';
+        document.getElementById('c_supplierCode').value = 'MILL-GAZIPUR-1';
+        document.getElementById('c_validFrom').value = '2026-01-01';
+        document.getElementById('c_validTo').value = '2027-12-31';
+
+        document.getElementById('r_lotCode').value = 'LOT-RAW-001';
+        document.getElementById('r_lotType').value = 'RAW_FIBER';
+        document.getElementById('r_materialType').value = 'Cotton';
+        document.getElementById('r_styleCode').value = 'HOODIE-2026';
+        document.getElementById('r_brandCode').value = 'BRAND_A';
+        document.getElementById('r_supplierCode').value = 'MILL-GAZIPUR-1';
+        document.getElementById('r_quantity').value = '100.0';
+        document.getElementById('r_massKg').value = '100.0';
+        document.getElementById('r_pieceCount').value = '0';
+        document.getElementById('r_unit').value = 'KG';
+        document.getElementById('r_claimedAttribute').value = 'ORGANIC';
+        document.getElementById('r_claimedPct').value = '100.0';
+
+        document.getElementById('t_inputLotCode').value = 'LOT-RAW-001';
+        document.getElementById('t_outputLotCode').value = 'LOT-GARMENT-001';
+        document.getElementById('t_outputLotType').value = 'SHIPMENT';
+        document.getElementById('t_eventType').value = 'SHIP';
+        document.getElementById('t_processStep').value = 'ship';
+        document.getElementById('t_inputQuantity').value = '100.0';
+        document.getElementById('t_outputQuantity').value = '95.0';
+        document.getElementById('t_outputMassKg').value = '95.0';
+        document.getElementById('t_outputPieceCount').value = '190';
+        document.getElementById('t_unit').value = 'PIECES';
+
+        document.getElementById('pp_passportCode').value = 'PP-HOODIE-2026';
+        document.getElementById('pp_shipmentLotCode').value = 'LOT-GARMENT-001';
+        document.getElementById('pp_styleCode').value = 'HOODIE-2026';
+        document.getElementById('pp_styleName').value = 'Eco Friendly Winter Hoodie';
+        document.getElementById('pp_careAndRepair').value = 'Machine wash cold 30C, line dry';
+        document.getElementById('pp_endOfLifeGuidance').value = '100% Cotton, suitable for textile recycling';
+        document.getElementById('pp_allocationMethod').value = 'BY_MASS';
+
+        document.getElementById('step6PassportInput').value = 'PP-HOODIE-2026';
+
+        syncStep2Json();
+        syncStep3Json();
+        syncStep4AJson();
+        syncStep4BJson();
+        syncStep5Json();
+        updateStep6Links();
+    }
+</script>
+</body>
+</html>

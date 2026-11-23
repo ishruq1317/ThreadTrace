@@ -73,7 +73,9 @@ public class SecurityConfig {
             pd.setType(URI.create("https://threadtrace.local/problems/unauthorized"));
             pd.setInstance(URI.create(request.getRequestURI()));
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.setHeader("WWW-Authenticate", "Basic realm=\"ThreadTrace\"");
+            if (!"XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))) {
+                response.setHeader("WWW-Authenticate", "Basic realm=\"ThreadTrace\"");
+            }
             response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
             jsonMapper.writeValue(response.getWriter(), pd);
         };
@@ -91,6 +93,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/ui", "/ui/**", "/login", "/favicon.ico", "/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/p/**", "/api/v1/public/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()

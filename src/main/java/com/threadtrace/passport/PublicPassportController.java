@@ -62,12 +62,38 @@ public class PublicPassportController {
 
     @GetMapping(value = "/{passportCode}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     @Operation(summary = "Generate PNG QR code pointing to the public passport URL")
-    public ResponseEntity<byte[]> getPassportQr(@PathVariable String passportCode) {
-        String targetUrl = properties.getPassport().getPublicBaseUrl() + "/p/" + passportCode;
+    public ResponseEntity<byte[]> getPassportQr(
+            @PathVariable String passportCode,
+            jakarta.servlet.http.HttpServletRequest request) {
+        String baseUrl = resolvePublicBaseUrl(request);
+        String targetUrl = baseUrl + "/p/" + passportCode;
         byte[] png = qrCodeGenerator.generatePng(targetUrl, 256, 256);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic())
                 .contentType(MediaType.IMAGE_PNG)
                 .body(png);
+    }
+
+    private String resolvePublicBaseUrl(jakarta.servlet.http.HttpServletRequest request) {
+        String configured = properties.getPassport().getPublicBaseUrl();
+        if (request != null && (configured == null || configured.contains("localhost"))) {
+            String forwardedHost = request.getHeader("X-Forwarded-Host");
+            String host = (forwardedHost != null && !forwardedHost.isBlank())
+                    ? forwardedHost.split(",")[0].trim()
+                    : request.getServerName();
+            if (host != null && !host.isBlank() && !"localhost".equalsIgnoreCase(host) && !"127.0.0.1".equals(host)) {
+                String forwardedProto = request.getHeader("X-Forwarded-Proto");
+                String scheme = (forwardedProto != null && !forwardedProto.isBlank())
+                        ? forwardedProto.split(",")[0].trim()
+                        : request.getScheme();
+                int port = request.getServerPort();
+                boolean standardPort = ("http".equalsIgnoreCase(scheme) && port == 80)
+                        || ("https".equalsIgnoreCase(scheme) && port == 443)
+                        || (forwardedHost != null && !forwardedHost.isBlank())
+                        || (forwardedProto != null && !forwardedProto.isBlank());
+                return standardPort ? (scheme + "://" + host) : (scheme + "://" + host + ":" + port);
+            }
+        }
+        return configured != null ? configured.replaceAll("/+$", "") : "http://localhost:8080";
     }
 }
