@@ -93,7 +93,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/ui", "/ui/**", "/login", "/favicon.ico", "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/ui", "/ui/**", "/login", "/home", "/passport-view", "/favicon.ico", "/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/p/**", "/api/v1/public/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()

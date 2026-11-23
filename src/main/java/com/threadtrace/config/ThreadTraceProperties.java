@@ -241,7 +241,7 @@ public class ThreadTraceProperties {
 
     public static class PassportProperties {
         @NotBlank
-        private String publicBaseUrl = "http://localhost:8080";
+        private String publicBaseUrl = "https://threadtrace.onrender.com";
 
         @Min(1)
         private int cacheTtlSeconds = 60;

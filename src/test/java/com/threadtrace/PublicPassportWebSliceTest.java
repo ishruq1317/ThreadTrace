@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -61,7 +62,7 @@ class PublicPassportWebSliceTest {
                         BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ONE,
                         BigDecimal.ONE, BigDecimal.valueOf(0.1), BigDecimal.valueOf(0.1), 10, "BY_MASS"),
                 Map.of("season", "AW26"),
-                "http://localhost:8080/api/v1/public/passports/PP-SLICE-1/qr",
+                "https://threadtrace.onrender.com/api/v1/public/passports/PP-SLICE-1/qr",
                 Instant.now()
         );
 
@@ -104,6 +105,24 @@ class PublicPassportWebSliceTest {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("change_me_operator_pw")));
+
+        mockMvc.perform(get("/home"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("id=\"page-login\"")))
+                .andExpect(content().string(containsString("id=\"page-home\"")))
+                .andExpect(content().string(containsString("id=\"page-passport\"")))
+                .andExpect(content().string(containsString("Hasin Ishruq")))
+                .andExpect(content().string(containsString("CSE 444")))
+                .andExpect(content().string(containsString("ishruq1317")))
+                .andExpect(content().string(containsString("tt_completed_steps")))
+                .andExpect(content().string(containsString(".onrender.com")))
+                .andExpect(content().string(not(containsString("swagger-ui.html"))))
+                .andExpect(content().string(not(containsString("localhost"))))
+                .andExpect(content().string(not(containsString("runFullDemoPipeline"))));
+
+        mockMvc.perform(get("/passport-view"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("https://threadtrace.onrender.com/p/PP-HOODIE-2026")));
 
         mockMvc.perform(get("/api/v1/public/passports/PP-HOODIE-2026/qr")
                         .header("X-Forwarded-Host", "threadtrace.onrender.com")

@@ -24,7 +24,7 @@ public class PublicPassportWebController {
         this.properties = properties;
     }
 
-    @GetMapping({"/", "/ui", "/login"})
+    @GetMapping({"/", "/ui", "/login", "/home", "/passport-view"})
     public String viewPortalHome(Model model) {
         model.addAttribute("configuredBaseUrl", properties.getPassport().getPublicBaseUrl());
         return "index";

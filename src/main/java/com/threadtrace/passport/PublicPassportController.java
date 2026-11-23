@@ -76,7 +76,7 @@ public class PublicPassportController {
 
     private String resolvePublicBaseUrl(jakarta.servlet.http.HttpServletRequest request) {
         String configured = properties.getPassport().getPublicBaseUrl();
-        if (request != null && (configured == null || configured.contains("localhost"))) {
+        if (request != null) {
             String forwardedHost = request.getHeader("X-Forwarded-Host");
             String host = (forwardedHost != null && !forwardedHost.isBlank())
                     ? forwardedHost.split(",")[0].trim()
@@ -94,6 +94,6 @@ public class PublicPassportController {
                 return standardPort ? (scheme + "://" + host) : (scheme + "://" + host + ":" + port);
             }
         }
-        return configured != null ? configured.replaceAll("/+$", "") : "http://localhost:8080";
+        return configured != null ? configured.replaceAll("/+$", "") : "https://threadtrace.onrender.com";
     }
 }
