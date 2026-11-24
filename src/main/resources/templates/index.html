@@ -121,44 +121,6 @@
             text-overflow: ellipsis;
         }
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-authorize {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            font-size: 0.88rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.16s ease;
-            border: 1.5px solid var(--emerald);
-            background: #ffffff;
-            color: var(--emerald-dark);
-            box-shadow: 0 2px 6px rgba(13, 115, 68, 0.1);
-        }
-
-        .btn-authorize:hover {
-            background: var(--emerald);
-            color: #ffffff;
-        }
-
-        .btn-authorize.locked {
-            background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
-            color: #ffffff;
-            border-color: var(--emerald-dark);
-        }
-
-        .btn-authorize.locked:hover {
-            background: var(--emerald-deep);
-        }
-
         /* Main Container */
         .container {
             width: 100%;
@@ -204,7 +166,7 @@
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 10px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .step-pill {
@@ -281,6 +243,36 @@
             margin-top: 1px;
         }
 
+        /* Quick Section Jump Bar on Home Page */
+        .quick-jump-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            align-items: center;
+        }
+
+        .quick-jump-chip {
+            background: var(--surface-alt);
+            border: 1px solid var(--border-strong);
+            color: var(--emerald-deep);
+            padding: 5px 11px;
+            border-radius: 18px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .quick-jump-chip:hover {
+            background: var(--emerald-soft);
+            border-color: var(--emerald);
+        }
+
         /* Separate Page Views */
         .page-view {
             display: none;
@@ -324,6 +316,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         /* Work Card */
@@ -415,15 +408,15 @@
         /* Form Grid */
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 18px;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             min-width: 0;
         }
 
@@ -447,10 +440,10 @@
 
         .form-control {
             width: 100%;
-            padding: 10px 12px;
+            padding: 9px 12px;
             border: 1px solid #bfd2c9;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.89rem;
             color: var(--text);
             background: #fbfdfc;
             transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
@@ -464,60 +457,11 @@
             box-shadow: 0 0 0 3px rgba(30, 86, 200, 0.13);
         }
 
-        /* JSON Collapsible */
-        .json-toggle-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .btn-toggle-json {
-            background: var(--surface-alt);
-            border: 1px solid var(--border-strong);
-            color: var(--text-secondary);
-            padding: 6px 12px;
-            border-radius: 7px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.15s ease;
-        }
-
-        .btn-toggle-json:hover {
-            background: #e1efe8;
-        }
-
-        .json-box-container {
-            display: none;
-            margin-bottom: 16px;
-        }
-
-        .json-box-container.open {
-            display: block;
-        }
-
-        .json-textarea {
-            width: 100%;
-            min-height: 165px;
-            background: var(--code-bg);
-            color: #7dd3fc;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 0.83rem;
-            padding: 12px 14px;
-            border-radius: 9px;
-            border: 1px solid #263849;
-            line-height: 1.45;
-            resize: vertical;
-        }
-
         /* Action Buttons */
         .action-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
@@ -525,9 +469,9 @@
             background: linear-gradient(135deg, var(--blue), var(--blue-dark));
             color: #ffffff;
             border: none;
-            padding: 11px 24px;
+            padding: 10px 22px;
             border-radius: 9px;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
@@ -553,10 +497,10 @@
             background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
             color: #ffffff;
             border: none;
-            padding: 11px 22px;
+            padding: 10px 20px;
             border-radius: 9px;
             font-weight: 700;
-            font-size: 0.91rem;
+            font-size: 0.9rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -576,10 +520,10 @@
             background: #ffffff;
             color: var(--text-secondary);
             border: 1px solid var(--border-strong);
-            padding: 10px 18px;
+            padding: 9px 16px;
             border-radius: 9px;
             font-weight: 700;
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
@@ -597,7 +541,7 @@
 
         /* Response Panel */
         .response-panel {
-            margin-top: 16px;
+            margin-top: 14px;
             border-radius: 9px;
             border: 1px solid var(--border);
             overflow: hidden;
@@ -646,26 +590,60 @@
             background: rgba(255, 255, 255, 0.82);
         }
 
+        .response-summary-box {
+            padding: 12px 14px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.84rem;
+            color: var(--text);
+            overflow-x: auto;
+        }
+
         .response-body-pre {
             margin: 0;
             padding: 12px 14px;
             background: var(--code-bg);
             color: var(--code-text);
             font-family: 'Consolas', monospace;
-            font-size: 0.8rem;
-            max-height: 220px;
+            font-size: 0.79rem;
+            max-height: 240px;
             overflow: auto;
             white-space: pre-wrap;
             word-break: break-word;
         }
 
-        /* Sub-boxes inside Receive & Transform Card */
+        /* Clean Data Table for Traceability, Events, Alerts, Rejected Rows */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            margin-top: 6px;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid var(--border);
+            padding: 7px 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .data-table th {
+            background: var(--surface-alt);
+            color: var(--emerald-deep);
+            font-weight: 800;
+        }
+
+        /* Sub-boxes inside Cards */
         .substep-box {
             border: 1px solid var(--border);
             border-radius: 11px;
             padding: 18px;
             background: #fafdfc;
             margin-bottom: 18px;
+        }
+
+        .substep-box:last-child {
+            margin-bottom: 0;
         }
 
         .substep-header {
@@ -686,18 +664,18 @@
             margin: 0;
         }
 
-        /* Role Chips */
+        /* Role & Preset Chips */
         .role-chips {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             align-items: center;
         }
 
         .role-chip {
-            font-size: 0.78rem;
-            padding: 6px 12px;
+            font-size: 0.77rem;
+            padding: 5px 12px;
             border-radius: 20px;
             border: 1px solid var(--border-strong);
             background: var(--surface-alt);
@@ -881,55 +859,6 @@
             letter-spacing: 0.03em;
         }
 
-        /* Authorize Modal */
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(11, 25, 20, 0.52);
-            backdrop-filter: blur(3px);
-            z-index: 200;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .modal-backdrop.open {
-            display: flex;
-        }
-
-        .modal-window {
-            background: #ffffff;
-            border-radius: 14px;
-            max-width: 440px;
-            width: 100%;
-            box-shadow: 0 22px 44px rgba(0, 0, 0, 0.22);
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .modal-header {
-            padding: 15px 20px;
-            background: var(--surface-alt);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1rem;
-            color: var(--emerald-deep);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
         /* Compact Footer with User Info */
         .site-footer {
             background: rgba(255, 255, 255, 0.88);
@@ -993,7 +922,7 @@
             .stepper {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
-                margin-bottom: 18px;
+                margin-bottom: 14px;
             }
             .step-card-header {
                 padding: 14px 16px;
@@ -1076,28 +1005,28 @@
             <span class="step-num" id="num-step-2">2</span>
             <div>
                 <span class="step-label">Mill / Factory</span>
-                <span class="step-sub">Parties &amp; Facilities</span>
+                <span class="step-sub">Parties &amp; Lines (FR1)</span>
             </div>
         </button>
         <button type="button" class="step-pill" id="pill-step-3" onclick="onStepPillClick(3)">
             <span class="step-num" id="num-step-3">3</span>
             <div>
                 <span class="step-label">Certificates</span>
-                <span class="step-sub">Environmental Evidence</span>
+                <span class="step-sub">Evidence &amp; Expiry (FR5)</span>
             </div>
         </button>
         <button type="button" class="step-pill" id="pill-step-4" onclick="onStepPillClick(4)">
             <span class="step-num" id="num-step-4">4</span>
             <div>
-                <span class="step-label">Raw Material &amp; Garment</span>
-                <span class="step-sub">Receive &amp; Transform</span>
+                <span class="step-label">Lots &amp; Traceability</span>
+                <span class="step-sub">Events &amp; Footprint (FR2–FR6)</span>
             </div>
         </button>
         <button type="button" class="step-pill" id="pill-step-5" onclick="onStepPillClick(5)">
             <span class="step-num" id="num-step-5">5</span>
             <div>
                 <span class="step-label">Product Passport</span>
-                <span class="step-sub">Generate Passport</span>
+                <span class="step-sub">Passports &amp; Audits (FR7–FR10)</span>
             </div>
         </button>
         <button type="button" class="step-pill" id="pill-step-6" onclick="onStepPillClick(6)">
@@ -1116,7 +1045,7 @@
         <section class="step-card" id="work-login">
             <div class="step-card-header">
                 <div class="step-title-group">
-                    <h2>System Login &amp; Authorization</h2>
+                    <h2>System Login &amp; Role-Based Authorization</h2>
                 </div>
                 <span id="step1LockStatus" class="endpoint-bar" style="background:#fef3c7; border-color:#f59e0b; color:#92400e;">
                     🔓 Not Authorized
@@ -1136,6 +1065,9 @@
                     </button>
                     <button type="button" class="role-chip" onclick="fillCredentials('brand_a', 'change_me_branda_pw', this)">
                         🏷️ Brand A (brand_a)
+                    </button>
+                    <button type="button" class="role-chip" onclick="fillCredentials('brand_b', 'change_me_brandb_pw', this)">
+                        🏷️ Brand B (brand_b)
                     </button>
                 </div>
 
@@ -1167,13 +1099,13 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- PAGE 2: HOME PAGE (WORKS FOR MILL, CERTIFICATE, LOTS & PASSPORT) -->
+    <!-- PAGE 2: HOME PAGE (COMPLETE FR1–FR10 WORKSPACE) -->
     <!-- ===================================================================== -->
     <div id="page-home" class="page-view">
 
         <div class="page-toolbar">
             <div class="page-toolbar-title">
-                <span>🏭 Supply-Chain &amp; Product Passport Workspace</span>
+                <span>🏭 Complete Supply-Chain Traceability &amp; Digital Product Passport Workspace (FR1–FR10)</span>
                 <span id="homeToolbarNotice" style="font-size:0.81rem; font-weight:600; color:var(--amber); margin-left:6px;"></span>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -1186,82 +1118,188 @@
             </div>
         </div>
 
-        <!-- WORK: REGISTER MILL / FACTORY (PARTIES & FACILITIES) -->
+        <!-- Quick Jump Navigation for FR1–FR10 -->
+        <div class="quick-jump-bar" aria-label="Quick Jump to Functional Requirements">
+            <span style="font-size:0.77rem; font-weight:800; color:var(--text-secondary);">Jump to Section:</span>
+            <button type="button" class="quick-jump-chip" onclick="scrollToSection('work-parties')">FR1: Parties &amp; Production Lines</button>
+            <button type="button" class="quick-jump-chip" onclick="scrollToSection('work-certificates')">FR5: Certificates, Expiry &amp; Alerts</button>
+            <button type="button" class="quick-jump-chip" onclick="scrollToSection('work-lineage')">FR2: Receive, Transform, Split, Merge &amp; Correction</button>
+            <button type="button" class="quick-jump-chip" onclick="scrollToSection('work-traceability')">FR3: Backward &amp; Forward Traceability</button>
+            <button type="button" class="quick-jump-chip" onclick="scrollToSection('work-claims-footprint')">FR4 &amp; FR6: Mass Balance &amp; Footprint</button>
+            <button type="button" class="quick-jump-chip" onclick="scrollToSection('work-passport')">FR7 &amp; FR8: Passports, Versions &amp; Audience Views</button>
+            <button type="button" class="quick-jump-chip" onclick="scrollToSection('work-imports')">FR9: Bulk CSV/Excel Import</button>
+            <button type="button" class="quick-jump-chip" onclick="scrollToSection('work-integrity')">FR10: Hash-Chain Integrity</button>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CARD 1 (FR1): REGISTER MILL / FACTORY & PRODUCTION LINES -->
+        <!-- ================================================================= -->
         <section class="step-card" id="work-parties">
             <div class="step-card-header">
                 <div class="step-title-group">
-                    <h2>Register Mill or Factory <span class="en-subtitle">— Parties &amp; Facilities</span></h2>
+                    <h2>FR1: Register Mill, Factory &amp; Production Lines <span class="en-subtitle">— Parties &amp; Facilities</span></h2>
                 </div>
                 <div class="endpoint-bar">
                     <span class="method-post">POST</span>
-                    <span>/api/v1/parties</span>
+                    <span>/api/v1/parties &amp; /lines</span>
                 </div>
             </div>
             <div class="step-card-body">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Mill / Facility Code <span class="field-key">code</span></label>
-                        <input type="text" id="p_code" class="form-control" value="MILL-GAZIPUR-1" oninput="onPartyCodeChange()"/>
+
+                <!-- Sub-box 1A: Register Party -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">1A. Register Supplier Mill, Garment Factory, or Brand</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-post">POST</span>
+                            <span>/api/v1/parties</span>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Facility Name <span class="field-key">name</span></label>
-                        <input type="text" id="p_name" class="form-control" value="Gazipur Organic Spinning Mill" oninput="syncStep2Json()"/>
+
+                    <div class="role-chips">
+                        <span style="font-size:0.76rem; font-weight:700; color:var(--text-muted);">Quick Presets:</span>
+                        <button type="button" class="role-chip active" onclick="fillPartyPreset('MILL-GAZIPUR-1', 'Gazipur Organic Spinning Mill', 'SPINNING_MILL', 'Bangladesh', 'Gazipur', 'Plot 12, Gazipur BSCIC', 450, 15.50, this)">
+                            Spinning Mill (MILL-GAZIPUR-1)
+                        </button>
+                        <button type="button" class="role-chip" onclick="fillPartyPreset('FAC-DHAKA-1', 'Dhaka Apparel Manufacturing Factory', 'FACTORY', 'Bangladesh', 'Dhaka', 'Plot 42, Dhaka EPZ Sector 3', 1200, 9.25, this)">
+                            Garment Factory (FAC-DHAKA-1)
+                        </button>
+                        <button type="button" class="role-chip" onclick="fillPartyPreset('DYE-NARAYANGANJ-1', 'Narayanganj Eco Dye &amp; Wash Plant', 'DYE_HOUSE', 'Bangladesh', 'Narayanganj', 'Industrial Plot 8, Narayanganj', 310, 4.75, this)">
+                            Dye House (DYE-NARAYANGANJ-1)
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label>Party Type <span class="field-key">partyType</span></label>
-                        <select id="p_partyType" class="form-control" onchange="syncStep2Json()">
-                            <option value="SPINNING_MILL" selected>SPINNING_MILL</option>
-                            <option value="FABRIC_MILL">FABRIC_MILL</option>
-                            <option value="DYE_HOUSE">DYE_HOUSE</option>
-                            <option value="WASH_PLANT">WASH_PLANT</option>
-                            <option value="TRIMS_SUPPLIER">TRIMS_SUPPLIER</option>
-                            <option value="FACTORY">FACTORY</option>
-                            <option value="BRAND">BRAND</option>
-                        </select>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Mill / Facility Code <span class="field-key">code</span></label>
+                            <input type="text" id="p_code" class="form-control" value="MILL-GAZIPUR-1" oninput="onPartyCodeChange()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Facility Name <span class="field-key">name</span></label>
+                            <input type="text" id="p_name" class="form-control" value="Gazipur Organic Spinning Mill" oninput="syncStep2Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Party Type <span class="field-key">partyType</span></label>
+                            <select id="p_partyType" class="form-control" onchange="syncStep2Json()">
+                                <option value="SPINNING_MILL" selected>SPINNING_MILL</option>
+                                <option value="FABRIC_MILL">FABRIC_MILL</option>
+                                <option value="DYE_HOUSE">DYE_HOUSE</option>
+                                <option value="WASH_PLANT">WASH_PLANT</option>
+                                <option value="TRIMS_SUPPLIER">TRIMS_SUPPLIER</option>
+                                <option value="FACTORY">FACTORY</option>
+                                <option value="BRAND">BRAND</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Country <span class="field-key">country</span></label>
+                            <input type="text" id="p_country" class="form-control" value="Bangladesh" oninput="syncStep2Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Region <span class="field-key">region</span></label>
+                            <input type="text" id="p_region" class="form-control" value="Gazipur" oninput="syncStep2Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Exact Address (Confidential) <span class="field-key">exactAddress</span></label>
+                            <input type="text" id="p_exactAddress" class="form-control" value="Plot 12, Gazipur BSCIC" oninput="syncStep2Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Worker Count (Confidential) <span class="field-key">workerCount</span></label>
+                            <input type="number" id="p_workerCount" class="form-control" value="450" oninput="syncStep2Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Unit Price USD (Confidential) <span class="field-key">unitPriceUsd</span></label>
+                            <input type="number" step="0.01" id="p_unitPriceUsd" class="form-control" value="15.50" oninput="syncStep2Json()"/>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Country <span class="field-key">country</span></label>
-                        <input type="text" id="p_country" class="form-control" value="Bangladesh" oninput="syncStep2Json()"/>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" id="btnExecStep2" onclick="executeStep2()">
+                            ▶ Execute
+                        </button>
+                        <button type="button" class="btn-outline" onclick="executeListParties()">
+                            📋 List Registered Parties
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label>Region <span class="field-key">region</span></label>
-                        <input type="text" id="p_region" class="form-control" value="Gazipur" oninput="syncStep2Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Exact Address (Confidential) <span class="field-key">exactAddress</span></label>
-                        <input type="text" id="p_exactAddress" class="form-control" value="Plot 12, Gazipur BSCIC" oninput="syncStep2Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Worker Count (Confidential) <span class="field-key">workerCount</span></label>
-                        <input type="number" id="p_workerCount" class="form-control" value="450" oninput="syncStep2Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Unit Price USD (Confidential) <span class="field-key">unitPriceUsd</span></label>
-                        <input type="number" step="0.01" id="p_unitPriceUsd" class="form-control" value="15.50" oninput="syncStep2Json()"/>
+
+                    <div id="respStep2" class="response-panel">
+                        <div id="respHeaderStep2" class="response-header ok">
+                            <span id="respTitleStep2">Response</span>
+                            <span id="respCodeStep2" class="status-code-badge">201 Created</span>
+                        </div>
+                        <div id="respSummaryStep2" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyStep2" class="response-body-pre"></pre>
                     </div>
                 </div>
 
-                <div class="action-row">
-                    <button type="button" class="btn-execute" id="btnExecStep2" onclick="executeStep2()">
-                        ▶ Execute
-                    </button>
+                <!-- Sub-box 1B: Register Production Line inside a Factory -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">1B. Register &amp; List Production Lines Inside a Factory</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-post">POST</span>
+                            <span>/api/v1/parties/{factoryCode}/lines</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Parent Factory Code <span class="field-key">factoryCode</span></label>
+                            <input type="text" id="pl_factoryCode" class="form-control" value="FAC-DHAKA-1"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Production Line Code <span class="field-key">lineCode</span></label>
+                            <input type="text" id="pl_lineCode" class="form-control" value="LINE-CUT-01"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Line Name <span class="field-key">name</span></label>
+                            <input type="text" id="pl_name" class="form-control" value="Automated Cutting &amp; Sewing Line A"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Process Type <span class="field-key">processType</span></label>
+                            <select id="pl_processType" class="form-control">
+                                <option value="cut" selected>cut</option>
+                                <option value="sew">sew</option>
+                                <option value="wash_or_dye">wash_or_dye</option>
+                                <option value="finish">finish</option>
+                                <option value="pack">pack</option>
+                                <option value="ship">ship</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Location Detail <span class="field-key">locationDetail</span></label>
+                            <input type="text" id="pl_locationDetail" class="form-control" value="Building B, Floor 2"/>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeRegisterProductionLine()">
+                            ▶ Execute
+                        </button>
+                        <button type="button" class="btn-outline" onclick="executeListProductionLines()">
+                            📋 List Factory Production Lines
+                        </button>
+                    </div>
+
+                    <div id="respProdLine" class="response-panel">
+                        <div id="respHeaderProdLine" class="response-header ok">
+                            <span id="respTitleProdLine">Response</span>
+                            <span id="respCodeProdLine" class="status-code-badge">201 Created</span>
+                        </div>
+                        <div id="respSummaryProdLine" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyProdLine" class="response-body-pre"></pre>
+                    </div>
                 </div>
 
-                <div id="respStep2" class="response-panel">
-                    <div id="respHeaderStep2" class="response-header ok">
-                        <span id="respTitleStep2">Response</span>
-                        <span id="respCodeStep2" class="status-code-badge">201 Created</span>
-                    </div>
-                    <pre id="respBodyStep2" class="response-body-pre" style="display:none;"></pre>
-                </div>
             </div>
         </section>
 
-        <!-- WORK: UPLOAD ENVIRONMENTAL CERTIFICATE (EVIDENCE & CERTIFICATES) -->
+        <!-- ================================================================= -->
+        <!-- CARD 2 (FR5): ENVIRONMENTAL CERTIFICATES, FILE UPLOAD, EXPIRY & ALERTS -->
+        <!-- ================================================================= -->
         <section class="step-card" id="work-certificates">
             <div class="step-card-header">
                 <div class="step-title-group">
-                    <h2>Upload Environmental Certificate <span class="en-subtitle">— Evidence &amp; Certificates</span></h2>
+                    <h2>FR5: Environmental Certificates, File Upload/Download, 30-Day Expiry &amp; Alerts</h2>
                 </div>
                 <div class="endpoint-bar">
                     <span class="method-post">POST</span>
@@ -1269,85 +1307,166 @@
                 </div>
             </div>
             <div class="step-card-body">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Certificate Number <span class="field-key">certificateNumber</span></label>
-                        <input type="text" id="c_certificateNumber" class="form-control" value="GOTS-2026-BD-01" oninput="syncStep3Json()"/>
+
+                <!-- Sub-box 2A: Register / Upload / Download Certificate -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">2A. Register Certificate Metadata, Upload Evidence File &amp; Download Stored File</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-post">POST</span>
+                            <span>/certificates &amp; /upload &amp; /file</span>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Certificate Type <span class="field-key">certificateType</span></label>
-                        <select id="c_certificateType" class="form-control" onchange="syncStep3Json()">
-                            <option value="GOTS" selected>GOTS</option>
-                            <option value="GRS">GRS</option>
-                            <option value="OEKO_TEX_100">OEKO_TEX_100</option>
-                            <option value="ISO_14001">ISO_14001</option>
-                            <option value="ZDHC_MRSL">ZDHC_MRSL</option>
-                            <option value="LAB_TEST_REPORT">LAB_TEST_REPORT</option>
-                        </select>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Certificate Number <span class="field-key">certificateNumber</span></label>
+                            <input type="text" id="c_certificateNumber" class="form-control" value="GOTS-2026-BD-01" oninput="syncStep3Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Certificate Type <span class="field-key">certificateType</span></label>
+                            <select id="c_certificateType" class="form-control" onchange="syncStep3Json()">
+                                <option value="GOTS" selected>GOTS</option>
+                                <option value="GRS">GRS</option>
+                                <option value="OEKO_TEX_100">OEKO_TEX_100</option>
+                                <option value="ISO_14001">ISO_14001</option>
+                                <option value="ZDHC_MRSL">ZDHC_MRSL</option>
+                                <option value="LAB_TEST_REPORT">LAB_TEST_REPORT</option>
+                                <option value="CUSTOM_MILL_CERT">CUSTOM_MILL_CERT</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Issuer <span class="field-key">issuer</span></label>
+                            <input type="text" id="c_issuer" class="form-control" value="Control Union" oninput="syncStep3Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Scope <span class="field-key">scope</span></label>
+                            <input type="text" id="c_scope" class="form-control" value="100% Organic Cotton Fiber" oninput="syncStep3Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Claimed Attribute <span class="field-key">claimedAttribute</span></label>
+                            <input type="text" id="c_claimedAttribute" class="form-control" value="ORGANIC" oninput="syncStep3Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Certified Percentage (%) <span class="field-key">certifiedPct</span></label>
+                            <input type="number" step="0.1" id="c_certifiedPct" class="form-control" value="100.0" oninput="syncStep3Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Supplier Code <span class="field-key">supplierCode</span></label>
+                            <input type="text" id="c_supplierCode" class="form-control" value="MILL-GAZIPUR-1" oninput="syncStep3Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Valid From <span class="field-key">validFrom</span></label>
+                            <input type="date" id="c_validFrom" class="form-control" value="2026-01-01" oninput="syncStep3Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Valid To <span class="field-key">validTo</span></label>
+                            <input type="date" id="c_validTo" class="form-control" value="2027-12-31" oninput="syncStep3Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Evidence PDF / Report File (Optional) <span class="field-key">file</span></label>
+                            <input type="file" id="c_fileInput" class="form-control" accept=".pdf,.txt,.png,.jpg"/>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Issuer <span class="field-key">issuer</span></label>
-                        <input type="text" id="c_issuer" class="form-control" value="Control Union" oninput="syncStep3Json()"/>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" id="btnExecStep3" onclick="executeStep3()">
+                            ▶ Execute
+                        </button>
+                        <button type="button" class="btn-outline" onclick="executeUploadCertificateMultipart()">
+                            📤 Upload Certificate File (Multipart)
+                        </button>
+                        <button type="button" class="btn-outline" onclick="executeDownloadCertificateFile()">
+                            ⬇ Download Stored Certificate File
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label>Scope <span class="field-key">scope</span></label>
-                        <input type="text" id="c_scope" class="form-control" value="100% Organic Cotton Fiber" oninput="syncStep3Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Claimed Attribute <span class="field-key">claimedAttribute</span></label>
-                        <input type="text" id="c_claimedAttribute" class="form-control" value="ORGANIC" oninput="syncStep3Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Certified Percentage (%) <span class="field-key">certifiedPct</span></label>
-                        <input type="number" step="0.1" id="c_certifiedPct" class="form-control" value="100.0" oninput="syncStep3Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Supplier Code <span class="field-key">supplierCode</span></label>
-                        <input type="text" id="c_supplierCode" class="form-control" value="MILL-GAZIPUR-1" oninput="syncStep3Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Valid From <span class="field-key">validFrom</span></label>
-                        <input type="date" id="c_validFrom" class="form-control" value="2026-01-01" oninput="syncStep3Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Valid To <span class="field-key">validTo</span></label>
-                        <input type="date" id="c_validTo" class="form-control" value="2027-12-31" oninput="syncStep3Json()"/>
+
+                    <div id="respStep3" class="response-panel">
+                        <div id="respHeaderStep3" class="response-header ok">
+                            <span id="respTitleStep3">Response</span>
+                            <span id="respCodeStep3" class="status-code-badge">201 Created</span>
+                        </div>
+                        <div id="respSummaryStep3" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyStep3" class="response-body-pre"></pre>
                     </div>
                 </div>
 
-                <div class="action-row">
-                    <button type="button" class="btn-execute" id="btnExecStep3" onclick="executeStep3()">
-                        ▶ Execute
-                    </button>
+                <!-- Sub-box 2B: 30-Day Certificate Expiry Evaluation & Compliance Alerts -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">2B. Evaluate 30-Day Certificate Expiry &amp; View Compliance Alerts</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-post">POST</span>
+                            <span>/certificates/evaluate-expiry &amp; /compliance/alerts</span>
+                        </div>
+                    </div>
+
+                    <div class="role-chips">
+                        <span style="font-size:0.76rem; font-weight:700; color:var(--text-muted);">Simulation Date Presets:</span>
+                        <button type="button" class="role-chip active" onclick="setExpiryDatePreset('2027-12-15', this)">
+                            ⏰ Within 30-Day Warning Window (2027-12-15 &rarr; EXPIRING_SOON)
+                        </button>
+                        <button type="button" class="role-chip" onclick="setExpiryDatePreset('2028-01-15', this)">
+                            🚨 Past Expiry Date (2028-01-15 &rarr; EXPIRED &amp; Auto-Recalculates Passport v2)
+                        </button>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Evaluation Date <span class="field-key">asOfDate</span></label>
+                            <input type="date" id="exp_asOfDate" class="form-control" value="2027-12-15"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Compliance Alert Filter <span class="field-key">resolved</span></label>
+                            <select id="exp_alertResolved" class="form-control">
+                                <option value="" selected>All Alerts (Active &amp; Resolved)</option>
+                                <option value="false">Unresolved Alerts Only (resolved=false)</option>
+                                <option value="true">Resolved Alerts Only (resolved=true)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeEvaluateExpiry()">
+                            ▶ Execute
+                        </button>
+                        <button type="button" class="btn-outline" onclick="executeListComplianceAlerts()">
+                            🔔 Load Compliance Alerts
+                        </button>
+                    </div>
+
+                    <div id="respExpiry" class="response-panel">
+                        <div id="respHeaderExpiry" class="response-header ok">
+                            <span id="respTitleExpiry">Response</span>
+                            <span id="respCodeExpiry" class="status-code-badge">200 OK</span>
+                        </div>
+                        <div id="respSummaryExpiry" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyExpiry" class="response-body-pre"></pre>
+                    </div>
                 </div>
 
-                <div id="respStep3" class="response-panel">
-                    <div id="respHeaderStep3" class="response-header ok">
-                        <span id="respTitleStep3">Response</span>
-                        <span id="respCodeStep3" class="status-code-badge">201 Created</span>
-                    </div>
-                    <pre id="respBodyStep3" class="response-body-pre" style="display:none;"></pre>
-                </div>
             </div>
         </section>
 
-        <!-- WORK: RECEIVE RAW MATERIAL & TRANSFORM INTO GARMENTS -->
+        <!-- ================================================================= -->
+        <!-- CARD 3 (FR2): RECEIVE, TRANSFORM, SPLIT, MERGE, CORRECTION & EVENTS -->
+        <!-- ================================================================= -->
         <section class="step-card" id="work-lineage">
             <div class="step-card-header">
                 <div class="step-title-group">
-                    <h2>Receive Raw Material &amp; Transform into Garments <span class="en-subtitle">— Lots, Events &amp; Lineage</span></h2>
+                    <h2>FR2: Immutable Lot Lifecycle — Receive, Transform, Split, Merge &amp; Correction</h2>
                 </div>
                 <div class="endpoint-bar">
                     <span class="method-post">POST</span>
-                    <span>/events/receive &amp; /events/transform</span>
+                    <span>/api/v1/events/*</span>
                 </div>
             </div>
             <div class="step-card-body">
 
-                <!-- Receive Raw Fiber Lot -->
+                <!-- 3A. Receive Raw Fiber Lot -->
                 <div class="substep-box">
                     <div class="substep-header">
-                        <h3 class="substep-title">Receive Raw Fiber Lot</h3>
+                        <h3 class="substep-title">3A. Receive Raw Fiber or Fabric Lot</h3>
                         <div class="endpoint-bar">
                             <span class="method-post">POST</span>
                             <span>/api/v1/events/receive</span>
@@ -1424,14 +1543,15 @@
                             <span id="respTitleStep4A">Response</span>
                             <span id="respCodeStep4A" class="status-code-badge">201 Created</span>
                         </div>
-                        <pre id="respBodyStep4A" class="response-body-pre" style="display:none;"></pre>
+                        <div id="respSummaryStep4A" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyStep4A" class="response-body-pre"></pre>
                     </div>
                 </div>
 
-                <!-- Transform Lot into Garments -->
-                <div class="substep-box" style="margin-bottom:0;">
+                <!-- 3B. Transform Lot into Garments -->
+                <div class="substep-box">
                     <div class="substep-header">
-                        <h3 class="substep-title">Cutting, Sewing &amp; Garment Shipment (Transform Lot)</h3>
+                        <h3 class="substep-title">3B. Cutting, Sewing, Dye/Wash &amp; Garment Shipment (Transform Lot)</h3>
                         <div class="endpoint-bar">
                             <span class="method-post">POST</span>
                             <span>/api/v1/events/transform</span>
@@ -1516,18 +1636,391 @@
                             <span id="respTitleStep4B">Response</span>
                             <span id="respCodeStep4B" class="status-code-badge">201 Created</span>
                         </div>
-                        <pre id="respBodyStep4B" class="response-body-pre" style="display:none;"></pre>
+                        <div id="respSummaryStep4B" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyStep4B" class="response-body-pre"></pre>
+                    </div>
+                </div>
+
+                <!-- 3C. Split Lot into Multiple Child Lots -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">3C. Split One Parent Lot into Multiple Child Lots</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-post">POST</span>
+                            <span>/api/v1/events/split</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Parent Lot Code <span class="field-key">parentLotCode</span></label>
+                            <input type="text" id="sp_parentLotCode" class="form-control" value="LOT-RAW-001"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Parent Input Quantity <span class="field-key">inputQuantity</span></label>
+                            <input type="number" step="0.1" id="sp_inputQuantity" class="form-control" value="100.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Child 1 Lot Code <span class="field-key">outputs[0].outputLotCode</span></label>
+                            <input type="text" id="sp_child1Code" class="form-control" value="LOT-SPLIT-A"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Child 1 Mass / Qty (KG) <span class="field-key">outputs[0].outputMassKg</span></label>
+                            <input type="number" step="0.1" id="sp_child1Mass" class="form-control" value="60.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Child 2 Lot Code <span class="field-key">outputs[1].outputLotCode</span></label>
+                            <input type="text" id="sp_child2Code" class="form-control" value="LOT-SPLIT-B"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Child 2 Mass / Qty (KG) <span class="field-key">outputs[1].outputMassKg</span></label>
+                            <input type="number" step="0.1" id="sp_child2Mass" class="form-control" value="40.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Child Lot Type <span class="field-key">outputLotType</span></label>
+                            <select id="sp_outputLotType" class="form-control">
+                                <option value="FABRIC" selected>FABRIC</option>
+                                <option value="CUT_BUNDLE">CUT_BUNDLE</option>
+                                <option value="YARN">YARN</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Unit <span class="field-key">unit</span></label>
+                            <select id="sp_unit" class="form-control">
+                                <option value="KG" selected>KG</option>
+                                <option value="PIECES">PIECES</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeSplitLot()">
+                            ▶ Execute
+                        </button>
+                    </div>
+
+                    <div id="respSplit" class="response-panel">
+                        <div id="respHeaderSplit" class="response-header ok">
+                            <span id="respTitleSplit">Response</span>
+                            <span id="respCodeSplit" class="status-code-badge">201 Created</span>
+                        </div>
+                        <div id="respSummarySplit" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodySplit" class="response-body-pre"></pre>
+                    </div>
+                </div>
+
+                <!-- 3D. Merge Multiple Parent Lots into One Output Lot -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">3D. Merge Multiple Parent Lots into One Output Lot</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-post">POST</span>
+                            <span>/api/v1/events/merge</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Input 1 Parent Lot <span class="field-key">inputs[0].parentLotCode</span></label>
+                            <input type="text" id="mg_parent1Code" class="form-control" value="LOT-SPLIT-A"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Input 1 Mass / Qty (KG) <span class="field-key">inputs[0].inputMassKg</span></label>
+                            <input type="number" step="0.1" id="mg_parent1Mass" class="form-control" value="60.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Input 2 Parent Lot <span class="field-key">inputs[1].parentLotCode</span></label>
+                            <input type="text" id="mg_parent2Code" class="form-control" value="LOT-SPLIT-B"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Input 2 Mass / Qty (KG) <span class="field-key">inputs[1].inputMassKg</span></label>
+                            <input type="number" step="0.1" id="mg_parent2Mass" class="form-control" value="40.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Merged Output Lot Code <span class="field-key">outputLotCode</span></label>
+                            <input type="text" id="mg_outputLotCode" class="form-control" value="LOT-MERGED-001"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Output Lot Type <span class="field-key">outputLotType</span></label>
+                            <select id="mg_outputLotType" class="form-control">
+                                <option value="SEWN_GARMENT" selected>SEWN_GARMENT</option>
+                                <option value="FABRIC">FABRIC</option>
+                                <option value="FINISHED_GARMENT">FINISHED_GARMENT</option>
+                                <option value="SHIPMENT">SHIPMENT</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Output Mass (KG) <span class="field-key">outputMassKg</span></label>
+                            <input type="number" step="0.1" id="mg_outputMassKg" class="form-control" value="100.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Output Piece Count <span class="field-key">outputPieceCount</span></label>
+                            <input type="number" id="mg_outputPieceCount" class="form-control" value="190"/>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeMergeLots()">
+                            ▶ Execute
+                        </button>
+                    </div>
+
+                    <div id="respMerge" class="response-panel">
+                        <div id="respHeaderMerge" class="response-header ok">
+                            <span id="respTitleMerge">Response</span>
+                            <span id="respCodeMerge" class="status-code-badge">201 Created</span>
+                        </div>
+                        <div id="respSummaryMerge" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyMerge" class="response-body-pre"></pre>
+                    </div>
+                </div>
+
+                <!-- 3E. Append Immutable Correction Event & View Lot Event History -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">3E. Append Immutable Correction Event &amp; Inspect Lot Event Log</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-post">POST</span>
+                            <span>/events/correction &amp; GET /lots/{lotCode}/events</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Target Lot Code <span class="field-key">lotCode</span></label>
+                            <input type="text" id="cor_lotCode" class="form-control" value="LOT-GARMENT-001"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Original Event Code <span class="field-key">correctsEventCode</span></label>
+                            <input type="text" id="cor_eventCode" class="form-control" placeholder="Auto-filled from latest event if left blank"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Corrected Input Qty <span class="field-key">correctedInputQuantity</span></label>
+                            <input type="number" step="0.1" id="cor_inputQty" class="form-control" value="100.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Corrected Output Qty <span class="field-key">correctedOutputQuantity</span></label>
+                            <input type="number" step="0.1" id="cor_outputQty" class="form-control" value="95.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Corrected Mass (KG) <span class="field-key">correctedMassKg</span></label>
+                            <input type="number" step="0.1" id="cor_massKg" class="form-control" value="95.0"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Corrected Piece Count <span class="field-key">correctedPieceCount</span></label>
+                            <input type="number" id="cor_pieceCount" class="form-control" value="190"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Unit <span class="field-key">unit</span></label>
+                            <select id="cor_unit" class="form-control">
+                                <option value="PIECES" selected>PIECES</option>
+                                <option value="KG">KG</option>
+                                <option value="CARTONS">CARTONS</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Clear Compliance Flag? <span class="field-key">clearFlag</span></label>
+                            <select id="cor_clearFlag" class="form-control">
+                                <option value="true" selected>true (Clear Flag)</option>
+                                <option value="false">false (Keep Flag)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Audit / Correction Notes <span class="field-key">notes</span></label>
+                            <input type="text" id="cor_notes" class="form-control" value="Post-inspection verified bundle weight and garment piece count"/>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeCorrectionEvent()">
+                            ▶ Execute
+                        </button>
+                        <button type="button" class="btn-outline" onclick="executeViewLotEvents()">
+                            📜 View Lot Immutable Event Log
+                        </button>
+                    </div>
+
+                    <div id="respCorrection" class="response-panel">
+                        <div id="respHeaderCorrection" class="response-header ok">
+                            <span id="respTitleCorrection">Response</span>
+                            <span id="respCodeCorrection" class="status-code-badge">201 Created</span>
+                        </div>
+                        <div id="respSummaryCorrection" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyCorrection" class="response-body-pre"></pre>
                     </div>
                 </div>
 
             </div>
         </section>
 
-        <!-- WORK: GENERATE DIGITAL PRODUCT PASSPORT -->
+        <!-- ================================================================= -->
+        <!-- CARD 4 (FR3): BACKWARD & FORWARD TRACEABILITY -->
+        <!-- ================================================================= -->
+        <section class="step-card" id="work-traceability">
+            <div class="step-card-header">
+                <div class="step-title-group">
+                    <h2>FR3: Recursive Backward &amp; Forward Supply-Chain Traceability</h2>
+                </div>
+                <div class="endpoint-bar">
+                    <span class="method-get">GET</span>
+                    <span>/api/v1/traces/backward &amp; /forward</span>
+                </div>
+            </div>
+            <div class="step-card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Trace Direction &amp; Mode <span class="field-key">direction</span></label>
+                        <select id="tr_mode" class="form-control" onchange="onTraceModeChange()">
+                            <option value="BACKWARD_LOT" selected>Backward Trace by Shipment/Carton Lot Code</option>
+                            <option value="BACKWARD_STYLE">Backward Trace by Garment Style Code</option>
+                            <option value="FORWARD_LOT">Forward Trace from Raw Fiber/Fabric Lot Code</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Lot Code <span class="field-key">lotCode</span></label>
+                        <input type="text" id="tr_lotCode" class="form-control" value="LOT-GARMENT-001"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Garment Style Code <span class="field-key">styleCode</span></label>
+                        <input type="text" id="tr_styleCode" class="form-control" value="HOODIE-2026"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Graph Traversal Depth <span class="field-key">maxDepth</span></label>
+                        <input type="number" min="1" max="20" id="tr_maxDepth" class="form-control" value="12"/>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button type="button" class="btn-execute" onclick="executeTraceability()">
+                        ▶ Execute
+                    </button>
+                    <button type="button" class="btn-outline" onclick="runQuickTrace('BACKWARD_LOT', 'LOT-GARMENT-001')">
+                        ⏪ Backward Trace (LOT-GARMENT-001)
+                    </button>
+                    <button type="button" class="btn-outline" onclick="runQuickTrace('BACKWARD_STYLE', 'HOODIE-2026')">
+                        👕 Backward Trace by Style (HOODIE-2026)
+                    </button>
+                    <button type="button" class="btn-outline" onclick="runQuickTrace('FORWARD_LOT', 'LOT-RAW-001')">
+                        ⏩ Forward Trace (LOT-RAW-001)
+                    </button>
+                </div>
+
+                <div id="respTrace" class="response-panel">
+                    <div id="respHeaderTrace" class="response-header ok">
+                        <span id="respTitleTrace">Response</span>
+                        <span id="respCodeTrace" class="status-code-badge">200 OK</span>
+                    </div>
+                    <div id="respSummaryTrace" class="response-summary-box" style="display:none;"></div>
+                    <pre id="respBodyTrace" class="response-body-pre"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- CARD 5 (FR4 & FR6): MASS-BALANCE CLAIM CHECK & FOOTPRINT ROLL-UP -->
+        <!-- ================================================================= -->
+        <section class="step-card" id="work-claims-footprint">
+            <div class="step-card-header">
+                <div class="step-title-group">
+                    <h2>FR4 &amp; FR6: Mass-Balance Claim Verification &amp; Per-Lot Footprint Roll-up</h2>
+                </div>
+                <div class="endpoint-bar">
+                    <span class="method-get">GET</span>
+                    <span>/compliance/lots/{lotCode}/claims &amp; /footprint/lots/{lotCode}</span>
+                </div>
+            </div>
+            <div class="step-card-body">
+
+                <!-- 5A: FR4 Mass-Balance & Verified Claims -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">5A. FR4 — Evaluate Verified Claims &amp; Mass-Balance Compliance Across Lineage</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-get">GET</span>
+                            <span>/api/v1/compliance/lots/{lotCode}/claims</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Lot Code to Audit <span class="field-key">lotCode</span></label>
+                            <input type="text" id="cl_lotCode" class="form-control" value="LOT-GARMENT-001"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Evaluation Date <span class="field-key">asOfDate</span></label>
+                            <input type="date" id="cl_asOfDate" class="form-control" value="2026-06-01"/>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeEvaluateLotClaims()">
+                            ▶ Execute
+                        </button>
+                        <button type="button" class="btn-outline" onclick="executeSimulatePlantedViolation()">
+                            ⚠️ Simulate Mass-Balance Violation (&gt;12% Cutting Loss)
+                        </button>
+                    </div>
+
+                    <div id="respClaims" class="response-panel">
+                        <div id="respHeaderClaims" class="response-header ok">
+                            <span id="respTitleClaims">Response</span>
+                            <span id="respCodeClaims" class="status-code-badge">200 OK</span>
+                        </div>
+                        <div id="respSummaryClaims" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyClaims" class="response-body-pre"></pre>
+                    </div>
+                </div>
+
+                <!-- 5B: FR6 Water, Energy & CO2e Footprint Roll-up -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">5B. FR6 — Calculate Cumulative &amp; Per-Piece Water, Energy &amp; Carbon Footprint</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-get">GET</span>
+                            <span>/api/v1/footprint/lots/{lotCode}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Lot Code <span class="field-key">lotCode</span></label>
+                            <input type="text" id="fp_lotCode" class="form-control" value="LOT-GARMENT-001"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Allocation Strategy <span class="field-key">allocationMethod</span></label>
+                            <select id="fp_allocationMethod" class="form-control">
+                                <option value="BY_MASS" selected>BY_MASS (Proportional to Consumed Mass KG)</option>
+                                <option value="BY_PIECE_COUNT">BY_PIECE_COUNT (Proportional to Piece Count)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeCalculateFootprint()">
+                            ▶ Execute
+                        </button>
+                    </div>
+
+                    <div id="respFootprint" class="response-panel">
+                        <div id="respHeaderFootprint" class="response-header ok">
+                            <span id="respTitleFootprint">Response</span>
+                            <span id="respCodeFootprint" class="status-code-badge">200 OK</span>
+                        </div>
+                        <div id="respSummaryFootprint" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyFootprint" class="response-body-pre"></pre>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- CARD 6 (FR7 & FR8): DIGITAL PRODUCT PASSPORT, VERSIONS & AUDIENCE VIEWS -->
+        <!-- ================================================================= -->
         <section class="step-card" id="work-passport">
             <div class="step-card-header">
                 <div class="step-title-group">
-                    <h2>Generate Digital Product Passport <span class="en-subtitle">— Digital Product Passports</span></h2>
+                    <h2>FR7 &amp; FR8: Digital Product Passports, Version History &amp; Audience Views</h2>
                 </div>
                 <div class="endpoint-bar">
                     <span class="method-post">POST</span>
@@ -1535,52 +2028,267 @@
                 </div>
             </div>
             <div class="step-card-body">
+
+                <!-- 6A: Generate Passport -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">6A. Generate Digital Product Passport (Publishes New Version v1, v2, ...)</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-post">POST</span>
+                            <span>/api/v1/passports</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Passport Code (Product Code) <span class="field-key">passportCode</span></label>
+                            <input type="text" id="pp_passportCode" class="form-control" value="PP-HOODIE-2026" oninput="onPassportCodeChange()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Shipment Lot Code <span class="field-key">shipmentLotCode</span></label>
+                            <input type="text" id="pp_shipmentLotCode" class="form-control" value="LOT-GARMENT-001" oninput="syncStep5Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Style Code <span class="field-key">styleCode</span></label>
+                            <input type="text" id="pp_styleCode" class="form-control" value="HOODIE-2026" oninput="syncStep5Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Style Name (Product Display Name) <span class="field-key">styleName</span></label>
+                            <input type="text" id="pp_styleName" class="form-control" value="Eco Friendly Winter Hoodie" oninput="syncStep5Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Care &amp; Repair Instructions <span class="field-key">careAndRepair</span></label>
+                            <input type="text" id="pp_careAndRepair" class="form-control" value="Machine wash cold 30C, line dry" oninput="syncStep5Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>End-of-Life Guidance <span class="field-key">endOfLifeGuidance</span></label>
+                            <input type="text" id="pp_endOfLifeGuidance" class="form-control" value="100% Cotton, suitable for textile recycling" oninput="syncStep5Json()"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Allocation Method <span class="field-key">allocationMethod</span></label>
+                            <select id="pp_allocationMethod" class="form-control" onchange="syncStep5Json()">
+                                <option value="BY_MASS" selected>BY_MASS</option>
+                                <option value="BY_PIECE_COUNT">BY_PIECE_COUNT</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" id="btnExecStep5" onclick="executeStep5()">
+                            ▶ Execute
+                        </button>
+                    </div>
+
+                    <div id="respStep5" class="response-panel">
+                        <div id="respHeaderStep5" class="response-header ok">
+                            <span id="respTitleStep5">Response</span>
+                            <span id="respCodeStep5" class="status-code-badge">201 Created</span>
+                        </div>
+                        <div id="respSummaryStep5" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyStep5" class="response-body-pre"></pre>
+                    </div>
+                </div>
+
+                <!-- 6B: FR7 Passport Version History -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">6B. FR7 — List &amp; Retrieve Historical Passport Versions (v1, v2, ...)</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-get">GET</span>
+                            <span>/api/v1/passports/{passportCode}/versions</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Passport Code <span class="field-key">passportCode</span></label>
+                            <input type="text" id="pv_passportCode" class="form-control" value="PP-HOODIE-2026"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Specific Version Number <span class="field-key">version</span></label>
+                            <input type="number" min="1" id="pv_version" class="form-control" value="1"/>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeListPassportVersions()">
+                            ▶ Execute
+                        </button>
+                        <button type="button" class="btn-outline" onclick="executeGetPassportVersion()">
+                            🔍 Retrieve Specific Version (v1 / v2)
+                        </button>
+                    </div>
+
+                    <div id="respVersions" class="response-panel">
+                        <div id="respHeaderVersions" class="response-header ok">
+                            <span id="respTitleVersions">Response</span>
+                            <span id="respCodeVersions" class="status-code-badge">200 OK</span>
+                        </div>
+                        <div id="respSummaryVersions" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyVersions" class="response-body-pre"></pre>
+                    </div>
+                </div>
+
+                <!-- 6C: FR8 Audience-Projected Views (Public vs Brand A vs Brand B vs Auditor) -->
+                <div class="substep-box">
+                    <div class="substep-header">
+                        <h3 class="substep-title">6C. FR8 — Audience-Projected Passport &amp; Party Views (Public vs. Brand vs. Auditor)</h3>
+                        <div class="endpoint-bar">
+                            <span class="method-get">GET</span>
+                            <span>/api/v1/passports/{code} &amp; /api/v1/parties/{code}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Audience Role Perspective <span class="field-key">Audience</span></label>
+                            <select id="aud_perspective" class="form-control">
+                                <option value="AUDITOR" selected>🔍 Auditor (auditor) — Full Confidential Fields Visible</option>
+                                <option value="BRAND_A">🏷️ Brand A (brand_a) — Brand-Scoped View (Confidential Redacted)</option>
+                                <option value="BRAND_B">🚫 Brand B (brand_b) — Cross-Brand Access Refused (403 Forbidden)</option>
+                                <option value="PUBLIC">🌍 Public Consumer — Public Projection (Zero Confidential Data)</option>
+                                <option value="CURRENT">👤 Current Logged-In Session Role</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Resource to Inspect <span class="field-key">resource</span></label>
+                            <select id="aud_resourceType" class="form-control">
+                                <option value="PASSPORT" selected>Digital Product Passport (/passports/{passportCode})</option>
+                                <option value="PARTY">Supplier / Factory Facility (/parties/{code})</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Passport Code <span class="field-key">passportCode</span></label>
+                            <input type="text" id="aud_passportCode" class="form-control" value="PP-HOODIE-2026"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Facility / Party Code <span class="field-key">partyCode</span></label>
+                            <input type="text" id="aud_partyCode" class="form-control" value="MILL-GAZIPUR-1"/>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="btn-execute" onclick="executeAudienceProjectionCheck()">
+                            ▶ Execute
+                        </button>
+                    </div>
+
+                    <div id="respAudience" class="response-panel">
+                        <div id="respHeaderAudience" class="response-header ok">
+                            <span id="respTitleAudience">Response</span>
+                            <span id="respCodeAudience" class="status-code-badge">200 OK</span>
+                        </div>
+                        <div id="respSummaryAudience" class="response-summary-box" style="display:none;"></div>
+                        <pre id="respBodyAudience" class="response-body-pre"></pre>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- CARD 7 (FR9): BULK CSV / EXCEL IMPORT & REJECTED ROWS REPORT -->
+        <!-- ================================================================= -->
+        <section class="step-card" id="work-imports">
+            <div class="step-card-header">
+                <div class="step-title-group">
+                    <h2>FR9: Spring Batch Bulk CSV / Excel Import &amp; Rejected Rows Report</h2>
+                </div>
+                <div class="endpoint-bar">
+                    <span class="method-post">POST</span>
+                    <span>/api/v1/imports &amp; GET /imports/{batchCode}/rejected</span>
+                </div>
+            </div>
+            <div class="step-card-body">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Passport Code (Product Code) <span class="field-key">passportCode</span></label>
-                        <input type="text" id="pp_passportCode" class="form-control" value="PP-HOODIE-2026" oninput="onPassportCodeChange()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Shipment Lot Code <span class="field-key">shipmentLotCode</span></label>
-                        <input type="text" id="pp_shipmentLotCode" class="form-control" value="LOT-GARMENT-001" oninput="syncStep5Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Style Code <span class="field-key">styleCode</span></label>
-                        <input type="text" id="pp_styleCode" class="form-control" value="HOODIE-2026" oninput="syncStep5Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Style Name (Product Display Name) <span class="field-key">styleName</span></label>
-                        <input type="text" id="pp_styleName" class="form-control" value="Eco Friendly Winter Hoodie" oninput="syncStep5Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Care &amp; Repair Instructions <span class="field-key">careAndRepair</span></label>
-                        <input type="text" id="pp_careAndRepair" class="form-control" value="Machine wash cold 30C, line dry" oninput="syncStep5Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>End-of-Life Guidance <span class="field-key">endOfLifeGuidance</span></label>
-                        <input type="text" id="pp_endOfLifeGuidance" class="form-control" value="100% Cotton, suitable for textile recycling" oninput="syncStep5Json()"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Allocation Method <span class="field-key">allocationMethod</span></label>
-                        <select id="pp_allocationMethod" class="form-control" onchange="syncStep5Json()">
-                            <option value="BY_MASS" selected>BY_MASS</option>
-                            <option value="BY_PIECE_COUNT">BY_PIECE_COUNT</option>
+                        <label>Import Report Type <span class="field-key">importType</span></label>
+                        <select id="imp_importType" class="form-control">
+                            <option value="CUTTING_REPORT" selected>CUTTING_REPORT</option>
+                            <option value="PACKING_LIST">PACKING_LIST</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>File Format <span class="field-key">fileFormat</span></label>
+                        <select id="imp_fileFormat" class="form-control">
+                            <option value="CSV" selected>CSV</option>
+                            <option value="EXCEL">EXCEL (.xlsx)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload CSV / Excel File (Optional — Auto-Uses Sample CSV if Empty) <span class="field-key">file</span></label>
+                        <input type="file" id="imp_fileInput" class="form-control" accept=".csv,.xlsx"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Batch Code (Auto-Filled After Import) <span class="field-key">batchCode</span></label>
+                        <input type="text" id="imp_batchCode" class="form-control" placeholder="e.g. IMP-XXXXXXXXXX"/>
                     </div>
                 </div>
 
                 <div class="action-row">
-                    <button type="button" class="btn-execute" id="btnExecStep5" onclick="executeStep5()">
+                    <button type="button" class="btn-execute" onclick="executeBulkImport()">
                         ▶ Execute
+                    </button>
+                    <button type="button" class="btn-outline" onclick="executeGetRejectedRows()">
+                        📋 View Rejected Rows for Batch
+                    </button>
+                    <button type="button" class="btn-outline" onclick="executeListImportBatches()">
+                        🗂️ List All Import Batches
                     </button>
                 </div>
 
-                <div id="respStep5" class="response-panel">
-                    <div id="respHeaderStep5" class="response-header ok">
-                        <span id="respTitleStep5">Response</span>
-                        <span id="respCodeStep5" class="status-code-badge">201 Created</span>
+                <div id="respImport" class="response-panel">
+                    <div id="respHeaderImport" class="response-header ok">
+                        <span id="respTitleImport">Response</span>
+                        <span id="respCodeImport" class="status-code-badge">201 Created</span>
                     </div>
-                    <pre id="respBodyStep5" class="response-body-pre" style="display:none;"></pre>
+                    <div id="respSummaryImport" class="response-summary-box" style="display:none;"></div>
+                    <pre id="respBodyImport" class="response-body-pre"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- CARD 8 (FR10): SHA-256 HASH-CHAIN INTEGRITY VERIFICATION -->
+        <!-- ================================================================= -->
+        <section class="step-card" id="work-integrity">
+            <div class="step-card-header">
+                <div class="step-title-group">
+                    <h2>FR10: Cryptographic SHA-256 Event Hash-Chain Integrity Verification</h2>
+                </div>
+                <div class="endpoint-bar">
+                    <span class="method-get">GET</span>
+                    <span>/api/v1/integrity/passports/{code}/verify &amp; /lots/{code}/verify</span>
+                </div>
+            </div>
+            <div class="step-card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Passport Code to Verify <span class="field-key">passportCode</span></label>
+                        <input type="text" id="int_passportCode" class="form-control" value="PP-HOODIE-2026"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Single Lot Code to Verify <span class="field-key">lotCode</span></label>
+                        <input type="text" id="int_lotCode" class="form-control" value="LOT-GARMENT-001"/>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button type="button" class="btn-execute" onclick="executeVerifyPassportIntegrity()">
+                        ▶ Execute
+                    </button>
+                    <button type="button" class="btn-outline" onclick="executeVerifyLotIntegrity()">
+                        🔗 Verify Single Lot Hash Chain
+                    </button>
+                </div>
+
+                <div id="respIntegrity" class="response-panel">
+                    <div id="respHeaderIntegrity" class="response-header ok">
+                        <span id="respTitleIntegrity">Response</span>
+                        <span id="respCodeIntegrity" class="status-code-badge">200 OK</span>
+                    </div>
+                    <div id="respSummaryIntegrity" class="response-summary-box" style="display:none;"></div>
+                    <pre id="respBodyIntegrity" class="response-body-pre"></pre>
                 </div>
             </div>
         </section>
@@ -1596,7 +2304,10 @@
             <div class="page-toolbar-title">
                 <span>🌐 Generated Digital Product Passport &amp; Live QR Code</span>
             </div>
-            <div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" class="btn-outline" style="padding:7px 14px; font-size:0.82rem;" onclick="navigateToPage('home')">
+                    &larr; Workspace Operations
+                </button>
                 <button type="button" id="passportLogoutBtn" class="btn-outline" style="padding:7px 14px; font-size:0.82rem;" onclick="performLogout()">
                     🔓 Log Out
                 </button>
@@ -1753,7 +2464,26 @@
     let authHeader = null;
     let currentUser = null;
     let currentPage = 'login';
+    let sampleImportCounter = 1;
+    let violationSimCounter = 1;
     const completedSteps = new Set();
+
+    const ROLE_CREDENTIALS = {
+        'OPERATOR': 'Basic ' + btoa('operator:change_me_operator_pw'),
+        'ADMIN': 'Basic ' + btoa('admin:change_me_admin_pw'),
+        'AUDITOR': 'Basic ' + btoa('auditor:change_me_auditor_pw'),
+        'BRAND_A': 'Basic ' + btoa('brand_a:change_me_branda_pw'),
+        'BRAND_B': 'Basic ' + btoa('brand_b:change_me_brandb_pw')
+    };
+
+    function escapeHtml(val) {
+        if (val === null || val === undefined) return '';
+        return String(val)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
 
     function getDisplayLiveBaseUrl() {
         const host = (window.location.hostname || '').toLowerCase();
@@ -1761,6 +2491,13 @@
             return window.location.origin.replace(/\/+$/, '');
         }
         return 'https://threadtrace.onrender.com';
+    }
+
+    function scrollToSection(sectionId) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     function updateActiveStepHighlight() {
@@ -1893,6 +2630,9 @@
         const savedPassportCode = sessionStorage.getItem('tt_passport_code');
         if (savedPassportCode) {
             document.getElementById('pp_passportCode').value = savedPassportCode;
+            document.getElementById('pv_passportCode').value = savedPassportCode;
+            document.getElementById('aud_passportCode').value = savedPassportCode;
+            document.getElementById('int_passportCode').value = savedPassportCode;
             document.getElementById('step6PassportInput').value = savedPassportCode;
         }
 
@@ -1929,8 +2669,36 @@
     function fillCredentials(user, pass, chipEl) {
         document.getElementById('inlineUsername').value = user;
         document.getElementById('inlinePassword').value = pass;
-        document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('#work-login .role-chip').forEach(c => c.classList.remove('active'));
         if (chipEl) chipEl.classList.add('active');
+    }
+
+    function fillPartyPreset(code, name, type, country, region, addr, workers, price, chipEl) {
+        document.getElementById('p_code').value = code;
+        document.getElementById('p_name').value = name;
+        document.getElementById('p_partyType').value = type;
+        document.getElementById('p_country').value = country;
+        document.getElementById('p_region').value = region;
+        document.getElementById('p_exactAddress').value = addr;
+        document.getElementById('p_workerCount').value = workers;
+        document.getElementById('p_unitPriceUsd').value = price;
+        if (type === 'FACTORY') {
+            document.getElementById('pl_factoryCode').value = code;
+        } else {
+            onPartyCodeChange();
+        }
+        if (chipEl && chipEl.parentElement) {
+            chipEl.parentElement.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
+            chipEl.classList.add('active');
+        }
+    }
+
+    function setExpiryDatePreset(dateStr, chipEl) {
+        document.getElementById('exp_asOfDate').value = dateStr;
+        if (chipEl && chipEl.parentElement) {
+            chipEl.parentElement.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
+            chipEl.classList.add('active');
+        }
     }
 
     async function performAuthorize() {
@@ -1955,7 +2723,6 @@
                 sessionStorage.setItem('tt_user', username);
                 sessionStorage.setItem('tt_auth', candidateHeader);
                 setAuthorizedUiState(true, username);
-                // Move from Separate Login Page to Home Page (Steps 2 to 5)
                 navigateToPage('home');
                 return true;
             } else {
@@ -2049,28 +2816,48 @@
         const code = document.getElementById('p_code').value.trim();
         document.getElementById('c_supplierCode').value = code;
         document.getElementById('r_supplierCode').value = code;
+        document.getElementById('aud_partyCode').value = code;
     }
 
     function onRawLotCodeChange() {
         const lotCode = document.getElementById('r_lotCode').value.trim();
         document.getElementById('t_inputLotCode').value = lotCode;
+        document.getElementById('sp_parentLotCode').value = lotCode;
     }
 
     function onStyleCodeChange() {
         const styleCode = document.getElementById('r_styleCode').value.trim();
         document.getElementById('pp_styleCode').value = styleCode;
+        document.getElementById('tr_styleCode').value = styleCode;
     }
 
     function onOutputLotCodeChange() {
         const outLot = document.getElementById('t_outputLotCode').value.trim();
         document.getElementById('pp_shipmentLotCode').value = outLot;
+        document.getElementById('cor_lotCode').value = outLot;
+        document.getElementById('tr_lotCode').value = outLot;
+        document.getElementById('cl_lotCode').value = outLot;
+        document.getElementById('fp_lotCode').value = outLot;
+        document.getElementById('int_lotCode').value = outLot;
     }
 
     function onPassportCodeChange() {
         const ppCode = document.getElementById('pp_passportCode').value.trim();
+        document.getElementById('pv_passportCode').value = ppCode;
+        document.getElementById('aud_passportCode').value = ppCode;
+        document.getElementById('int_passportCode').value = ppCode;
         document.getElementById('step6PassportInput').value = ppCode;
         try { sessionStorage.setItem('tt_passport_code', ppCode); } catch (_) {}
         updateStep6Links();
+    }
+
+    function onTraceModeChange() {
+        const mode = document.getElementById('tr_mode').value;
+        if (mode === 'FORWARD_LOT') {
+            document.getElementById('tr_lotCode').value = document.getElementById('r_lotCode').value.trim() || 'LOT-RAW-001';
+        } else if (mode === 'BACKWARD_LOT') {
+            document.getElementById('tr_lotCode').value = document.getElementById('t_outputLotCode').value.trim() || 'LOT-GARMENT-001';
+        }
     }
 
     // --- Form Payload Builders ---
@@ -2145,18 +2932,21 @@
         };
     }
 
-    // --- API POST Runner ---
+    // --- API Helpers ---
     async function ensureAuthorizedOrAutoLogin() {
         if (authHeader) return true;
         return await performAuthorize();
     }
 
-    function renderResponsePanel(suffix, status, statusText, bodyObj, isDuplicateOk) {
+    function renderResponsePanel(suffix, status, statusText, bodyObj, isDuplicateOk, summaryHtml = null) {
         const panel = document.getElementById('resp' + suffix);
         const header = document.getElementById('respHeader' + suffix);
         const title = document.getElementById('respTitle' + suffix);
         const codeBadge = document.getElementById('respCode' + suffix);
+        const summaryEl = document.getElementById('respSummary' + suffix);
+        const bodyPre = document.getElementById('respBody' + suffix);
 
+        if (!panel) return;
         panel.classList.add('visible');
         header.className = 'response-header';
 
@@ -2170,7 +2960,10 @@
             codeBadge.textContent = '409 Conflict (Ready)';
         } else if (status === 403) {
             header.classList.add('err');
-            title.textContent = '❌ 403 Forbidden — Authorize as Operator (operator) or Admin (admin) to create records';
+            const detail = (bodyObj && typeof bodyObj === 'object' && bodyObj.detail)
+                ? (' — ' + bodyObj.detail)
+                : ' — Role does not have permission for this resource';
+            title.textContent = '❌ 403 Forbidden' + detail;
             codeBadge.textContent = '403 Forbidden';
         } else {
             header.classList.add('err');
@@ -2178,9 +2971,28 @@
             title.textContent = '❌ Request Failed' + detail;
             codeBadge.textContent = status + ' ' + statusText;
         }
+
+        if (summaryEl) {
+            if (summaryHtml) {
+                summaryEl.innerHTML = summaryHtml;
+                summaryEl.style.display = 'block';
+            } else {
+                summaryEl.innerHTML = '';
+                summaryEl.style.display = 'none';
+            }
+        }
+
+        if (bodyPre) {
+            if (bodyObj !== undefined && bodyObj !== null) {
+                bodyPre.textContent = typeof bodyObj === 'string' ? bodyObj : JSON.stringify(bodyObj, null, 2);
+                bodyPre.style.display = 'block';
+            } else {
+                bodyPre.style.display = 'none';
+            }
+        }
     }
 
-    async function postJsonStep(url, payloadObj, suffix, stepNumToMark, silentOn404 = false) {
+    async function postJsonStep(url, payloadObj, suffix, stepNumToMark, silentOn404 = false, summaryBuilder = null) {
         const okAuth = await ensureAuthorizedOrAutoLogin();
         if (!okAuth) {
             renderResponsePanel(suffix, 401, 'Unauthorized', {
@@ -2205,29 +3017,183 @@
             try { data = JSON.parse(text); } catch (_) {}
 
             if (silentOn404 && res.status === 404) {
-                return { ok: false, status: 404 };
+                return { ok: false, status: 404, data };
             }
 
-            const statusLabel = res.status === 201 ? 'Created' : (res.statusText || '');
-            renderResponsePanel(suffix, res.status, statusLabel, data, true);
+            const statusLabel = res.status === 201 ? 'Created' : (res.statusText || 'OK');
+            const summaryHtml = (summaryBuilder && res.ok) ? summaryBuilder(data) : null;
+            renderResponsePanel(suffix, res.status, statusLabel, data, true, summaryHtml);
 
             if ((res.status >= 200 && res.status < 300) || res.status === 409) {
                 if (stepNumToMark) markStepDone(stepNumToMark);
-                return { ok: true, status: res.status };
+                return { ok: true, status: res.status, data };
             }
-            return { ok: false, status: res.status };
+            return { ok: false, status: res.status, data };
         } catch (err) {
             renderResponsePanel(suffix, 500, 'Network Error', { detail: err.message }, false);
             return { ok: false, status: 500 };
         }
     }
 
-    // --- Execution Handlers for Home Page Works ---
+    async function getJsonStep(url, suffix, silentOn404 = false, summaryBuilder = null, customAuthHeader = undefined) {
+        if (customAuthHeader === undefined) {
+            const okAuth = await ensureAuthorizedOrAutoLogin();
+            if (!okAuth) {
+                renderResponsePanel(suffix, 401, 'Unauthorized', {
+                    detail: 'Please authorize on the Login Page first.'
+                }, false);
+                return { ok: false, status: 401 };
+            }
+        }
+
+        const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+        const effectiveAuth = customAuthHeader === undefined ? authHeader : customAuthHeader;
+        if (effectiveAuth) {
+            headers['Authorization'] = effectiveAuth;
+        }
+
+        try {
+            const res = await fetch(url, { method: 'GET', headers });
+            const text = await res.text();
+            let data = text;
+            try { data = JSON.parse(text); } catch (_) {}
+
+            if (silentOn404 && res.status === 404) {
+                return { ok: false, status: 404, data };
+            }
+
+            const summaryHtml = summaryBuilder ? summaryBuilder(data, res.status) : null;
+            renderResponsePanel(suffix, res.status, res.statusText || 'OK', data, false, summaryHtml);
+            return { ok: res.ok, status: res.status, data };
+        } catch (err) {
+            renderResponsePanel(suffix, 500, 'Network Error', { detail: err.message }, false);
+            return { ok: false, status: 500 };
+        }
+    }
+
+    // --- Ensure Default Seed Entities Exist When Needed ---
+    async function ensureFactoryExists(factoryCode) {
+        const res = await fetch('/api/v1/parties/' + encodeURIComponent(factoryCode), {
+            method: 'GET',
+            headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        if (res.ok) return true;
+        await fetch('/api/v1/parties', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                code: factoryCode,
+                name: 'Dhaka Apparel Manufacturing Factory',
+                partyType: 'FACTORY',
+                country: 'Bangladesh',
+                region: 'Dhaka',
+                exactAddress: 'Plot 42, Dhaka EPZ Sector 3',
+                workerCount: 1200,
+                unitPriceUsd: 9.25
+            })
+        });
+        return true;
+    }
+
+    async function ensureCoreSupplyChainSeeded() {
+        await executeStep2();
+        await executeStep3();
+        await executeStep4A();
+        await executeStep4B();
+    }
+
+    // =========================================================================
+    // FR1: PARTIES & PRODUCTION LINES
+    // =========================================================================
     async function executeStep2() {
-        const res = await postJsonStep('/api/v1/parties', syncStep2Json(), 'Step2', 2);
+        const res = await postJsonStep('/api/v1/parties', syncStep2Json(), 'Step2', 2, false, (d) => {
+            if (!d || !d.code) return null;
+            return '<strong>Registered Facility:</strong> <code>' + escapeHtml(d.code) + '</code> — ' +
+                escapeHtml(d.name) + ' (<code>' + escapeHtml(d.partyType) + '</code>, ' +
+                escapeHtml(d.region) + ', ' + escapeHtml(d.country) + ')';
+        });
         return res.ok;
     }
 
+    async function executeListParties() {
+        await getJsonStep('/api/v1/parties', 'Step2', false, (d) => {
+            const list = (d && Array.isArray(d.content)) ? d.content : [];
+            if (list.length === 0) return '<em>No parties registered yet. Click Execute above to register one.</em>';
+            let html = '<strong>Registered Parties (' + list.length + '):</strong><table class="data-table"><thead><tr>' +
+                '<th>Code</th><th>Name</th><th>Type</th><th>Location</th><th>Confidential Fields (Auditor Only)</th></tr></thead><tbody>';
+            list.forEach(p => {
+                const conf = p.exactAddress !== undefined
+                    ? ('Addr: ' + escapeHtml(p.exactAddress) + ' | Workers: ' + escapeHtml(p.workerCount) + ' | $' + escapeHtml(p.unitPriceUsd))
+                    : '<em>Redacted for current role</em>';
+                html += '<tr><td><code>' + escapeHtml(p.code) + '</code></td><td>' + escapeHtml(p.name) +
+                    '</td><td><code>' + escapeHtml(p.partyType) + '</code></td><td>' +
+                    escapeHtml(p.region) + ', ' + escapeHtml(p.country) + '</td><td>' + conf + '</td></tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        });
+    }
+
+    async function executeRegisterProductionLine() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const factoryCode = document.getElementById('pl_factoryCode').value.trim() || 'FAC-DHAKA-1';
+        const payload = {
+            lineCode: document.getElementById('pl_lineCode').value.trim() || 'LINE-CUT-01',
+            name: document.getElementById('pl_name').value.trim() || 'Cutting Line A',
+            processType: document.getElementById('pl_processType').value,
+            locationDetail: document.getElementById('pl_locationDetail').value.trim() || 'Building B, Floor 2'
+        };
+
+        await ensureFactoryExists(factoryCode);
+        const res = await postJsonStep(
+            '/api/v1/parties/' + encodeURIComponent(factoryCode) + '/lines',
+            payload,
+            'ProdLine',
+            2,
+            false,
+            (d) => '<strong>Registered Production Line:</strong> <code>' + escapeHtml(d.lineCode) +
+                '</code> (' + escapeHtml(d.name) + ') inside Factory <code>' + escapeHtml(d.factoryCode) +
+                '</code> &bull; Process: <code>' + escapeHtml(d.processType) + '</code> &bull; Location: ' + escapeHtml(d.locationDetail)
+        );
+        return res.ok;
+    }
+
+    async function executeListProductionLines() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+        const factoryCode = document.getElementById('pl_factoryCode').value.trim() || 'FAC-DHAKA-1';
+        await ensureFactoryExists(factoryCode);
+
+        await getJsonStep(
+            '/api/v1/parties/' + encodeURIComponent(factoryCode) + '/lines',
+            'ProdLine',
+            false,
+            (d) => {
+                const list = (d && Array.isArray(d.content)) ? d.content : [];
+                if (list.length === 0) {
+                    return '<em>No production lines registered under factory <code>' + escapeHtml(factoryCode) + '</code> yet. Click ▶ Execute to register one.</em>';
+                }
+                let html = '<strong>Production Lines in <code>' + escapeHtml(factoryCode) + '</code> (' + list.length + '):</strong>' +
+                    '<table class="data-table"><thead><tr><th>Line Code</th><th>Name</th><th>Process Type</th><th>Location Detail</th></tr></thead><tbody>';
+                list.forEach(l => {
+                    html += '<tr><td><code>' + escapeHtml(l.lineCode) + '</code></td><td>' + escapeHtml(l.name) +
+                        '</td><td><code>' + escapeHtml(l.processType) + '</code></td><td>' + escapeHtml(l.locationDetail) + '</td></tr>';
+                });
+                html += '</tbody></table>';
+                return html;
+            }
+        );
+    }
+
+    // =========================================================================
+    // FR5: CERTIFICATES, MULTIPART FILE UPLOAD/DOWNLOAD, EXPIRY & ALERTS
+    // =========================================================================
     async function executeStep3() {
         let res = await postJsonStep('/api/v1/evidence/certificates', syncStep3Json(), 'Step3', 3, true);
         if (!res.ok && res.status === 404) {
@@ -2237,6 +3203,156 @@
         return res.ok;
     }
 
+    async function executeUploadCertificateMultipart() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+        await executeStep2();
+
+        const meta = syncStep3Json();
+        const fileInput = document.getElementById('c_fileInput');
+        let fileToUpload = (fileInput && fileInput.files && fileInput.files.length > 0) ? fileInput.files[0] : null;
+        if (!fileToUpload) {
+            const pdfContent = '%PDF-1.4\n% ThreadTrace Official Environmental Certificate Evidence\n' +
+                'Certificate Number: ' + meta.certificateNumber + '\n' +
+                'Type: ' + meta.certificateType + '\n' +
+                'Issuer: ' + meta.issuer + '\n' +
+                'Claimed Attribute: ' + meta.claimedAttribute + ' (' + meta.certifiedPct + '%)\n' +
+                'Valid From: ' + meta.validFrom + ' To: ' + meta.validTo + '\n%%EOF';
+            fileToUpload = new File([pdfContent], meta.certificateNumber + '-evidence.pdf', { type: 'application/pdf' });
+        }
+
+        const buildFormData = (certNum) => {
+            const fd = new FormData();
+            const m = Object.assign({}, meta, { certificateNumber: certNum });
+            fd.append('metadata', new Blob([JSON.stringify(m)], { type: 'application/json' }));
+            fd.append('file', fileToUpload);
+            return fd;
+        };
+
+        let targetCertNum = meta.certificateNumber;
+        let res = await fetch('/api/v1/evidence/certificates/upload', {
+            method: 'POST',
+            headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' },
+            body: buildFormData(targetCertNum)
+        });
+
+        if (res.status === 409) {
+            targetCertNum = meta.certificateNumber + '-FILE';
+            document.getElementById('c_certificateNumber').value = targetCertNum;
+            res = await fetch('/api/v1/evidence/certificates/upload', {
+                method: 'POST',
+                headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' },
+                body: buildFormData(targetCertNum)
+            });
+        }
+
+        const text = await res.text();
+        let data = text;
+        try { data = JSON.parse(text); } catch (_) {}
+
+        const summary = (data && data.certificateNumber)
+            ? ('<strong>Uploaded Certificate File:</strong> <code>' + escapeHtml(data.certificateNumber) +
+                '</code> &bull; Filename: <code>' + escapeHtml(data.originalFilename) +
+                '</code> (' + escapeHtml(data.fileSizeBytes) + ' bytes) &bull; Status: <code>' + escapeHtml(data.status) + '</code>')
+            : null;
+        renderResponsePanel('Step3', res.status, res.status === 201 ? 'Created' : res.statusText, data, true, summary);
+        if (res.ok || res.status === 409) markStepDone(3);
+        return res.ok;
+    }
+
+    async function executeDownloadCertificateFile() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const certNum = document.getElementById('c_certificateNumber').value.trim() || 'GOTS-2026-BD-01';
+        let res = await fetch('/api/v1/evidence/certificates/' + encodeURIComponent(certNum) + '/file', {
+            method: 'GET',
+            headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
+        if (res.status === 404) {
+            await executeStep3();
+            res = await fetch('/api/v1/evidence/certificates/' + encodeURIComponent(certNum) + '/file', {
+                method: 'GET',
+                headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
+            });
+        }
+
+        if (!res.ok) {
+            const errText = await res.text();
+            let errObj = errText;
+            try { errObj = JSON.parse(errText); } catch (_) {}
+            renderResponsePanel('Step3', res.status, res.statusText, errObj, false);
+            return false;
+        }
+
+        const blob = await res.blob();
+        const contentDisp = res.headers.get('Content-Disposition') || '';
+        const match = contentDisp.match(/filename="([^"]+)"/);
+        const filename = match ? match[1] : (certNum + '-certificate.pdf');
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+        const summary = '<strong>Downloaded Evidence File:</strong> <code>' + escapeHtml(filename) +
+            '</code> (' + blob.size + ' bytes, <code>' + escapeHtml(blob.type || 'application/octet-stream') + '</code>)';
+        renderResponsePanel('Step3', 200, 'OK', {
+            certificateNumber: certNum,
+            downloadedFilename: filename,
+            fileSizeBytes: blob.size,
+            contentType: blob.type
+        }, false, summary);
+        return true;
+    }
+
+    async function executeEvaluateExpiry() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+        await executeStep3();
+
+        const asOfDate = document.getElementById('exp_asOfDate').value || '2027-12-15';
+        const url = '/api/v1/evidence/certificates/evaluate-expiry?asOfDate=' + encodeURIComponent(asOfDate);
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await res.json();
+        const summary = '<strong>Expiry Evaluation Summary (as of <code>' + escapeHtml(data.asOfDate) + '</code>):</strong> ' +
+            'Expiring Within 30 Days: <strong>' + escapeHtml(data.expiringSoonCount) + '</strong> &bull; ' +
+            'Expired Certificates (Triggers Automatic Passport Claim Recalculation): <strong>' + escapeHtml(data.expiredCount) + '</strong>';
+        renderResponsePanel('Expiry', res.status, 'OK', data, false, summary);
+        return res.ok;
+    }
+
+    async function executeListComplianceAlerts() {
+        const resolved = document.getElementById('exp_alertResolved').value;
+        const url = '/api/v1/compliance/alerts' + (resolved !== '' ? ('?resolved=' + encodeURIComponent(resolved)) : '');
+        await getJsonStep(url, 'Expiry', false, (d) => {
+            const list = (d && Array.isArray(d.content)) ? d.content : [];
+            if (list.length === 0) {
+                return '<em>No compliance alerts recorded yet. Click "▶ Execute" on 30-Day Expiry Evaluation or simulate a Mass-Balance Violation below.</em>';
+            }
+            let html = '<strong>Compliance Alerts (' + list.length + '):</strong><table class="data-table"><thead><tr>' +
+                '<th>ID</th><th>Alert Type</th><th>Severity</th><th>Brand</th><th>Message</th></tr></thead><tbody>';
+            list.forEach(a => {
+                html += '<tr><td>#' + escapeHtml(a.id) + '</td><td><code>' + escapeHtml(a.alertType) +
+                    '</code></td><td><strong>' + escapeHtml(a.severity) + '</strong></td><td>' +
+                    escapeHtml(a.brandCode || '-') + '</td><td>' + escapeHtml(a.message) + '</td></tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        });
+    }
+
+    // =========================================================================
+    // FR2: RECEIVE, TRANSFORM, SPLIT, MERGE, CORRECTION & EVENT LOG
+    // =========================================================================
     async function executeStep4A() {
         let res = await postJsonStep('/api/v1/events/receive', syncStep4AJson(), 'Step4A', null, true);
         if (!res.ok && res.status === 404) {
@@ -2258,13 +3374,342 @@
         return res.ok;
     }
 
-    async function executeStep5() {
-        let res = await postJsonStep('/api/v1/passports', syncStep5Json(), 'Step5', 5, true);
+    async function executeSplitLot() {
+        const parentLotCode = document.getElementById('sp_parentLotCode').value.trim() || 'LOT-RAW-001';
+        const inputQty = Number(document.getElementById('sp_inputQuantity').value) || 100.0;
+        const c1Code = document.getElementById('sp_child1Code').value.trim() || 'LOT-SPLIT-A';
+        const c1Mass = Number(document.getElementById('sp_child1Mass').value) || 60.0;
+        const c2Code = document.getElementById('sp_child2Code').value.trim() || 'LOT-SPLIT-B';
+        const c2Mass = Number(document.getElementById('sp_child2Mass').value) || 40.0;
+        const outType = document.getElementById('sp_outputLotType').value;
+        const unit = document.getElementById('sp_unit').value;
+
+        const payload = {
+            parentLotCode: parentLotCode,
+            processStep: 'split',
+            inputQuantity: inputQty,
+            outputs: [
+                {
+                    outputLotCode: c1Code,
+                    outputLotType: outType,
+                    outputQuantity: c1Mass,
+                    outputMassKg: c1Mass,
+                    outputPieceCount: 0,
+                    unit: unit,
+                    claimedAttribute: 'ORGANIC',
+                    claimedPct: 100.0
+                },
+                {
+                    outputLotCode: c2Code,
+                    outputLotType: outType,
+                    outputQuantity: c2Mass,
+                    outputMassKg: c2Mass,
+                    outputPieceCount: 0,
+                    unit: unit,
+                    claimedAttribute: 'ORGANIC',
+                    claimedPct: 100.0
+                }
+            ]
+        };
+
+        let res = await postJsonStep('/api/v1/events/split', payload, 'Split', 4, true, (d) => {
+            if (!Array.isArray(d)) return null;
+            return '<strong>Split Parent Lot <code>' + escapeHtml(parentLotCode) + '</code> into ' + d.length + ' Child Lots:</strong> ' +
+                d.map(c => '<code>' + escapeHtml(c.lotCode) + '</code> (' + escapeHtml(c.massKg) + ' KG, status: <code>' + escapeHtml(c.status) + '</code>)').join(' + ');
+        });
         if (!res.ok && res.status === 404) {
             await executeStep2();
             await executeStep3();
             await executeStep4A();
-            await executeStep4B();
+            res = await postJsonStep('/api/v1/events/split', payload, 'Split', 4, false, (d) => {
+                if (!Array.isArray(d)) return null;
+                return '<strong>Split Parent Lot <code>' + escapeHtml(parentLotCode) + '</code> into ' + d.length + ' Child Lots:</strong> ' +
+                    d.map(c => '<code>' + escapeHtml(c.lotCode) + '</code> (' + escapeHtml(c.massKg) + ' KG, status: <code>' + escapeHtml(c.status) + '</code>)').join(' + ');
+            });
+        }
+        document.getElementById('mg_parent1Code').value = c1Code;
+        document.getElementById('mg_parent2Code').value = c2Code;
+        return res.ok;
+    }
+
+    async function executeMergeLots() {
+        const p1Code = document.getElementById('mg_parent1Code').value.trim() || 'LOT-SPLIT-A';
+        const p1Mass = Number(document.getElementById('mg_parent1Mass').value) || 60.0;
+        const p2Code = document.getElementById('mg_parent2Code').value.trim() || 'LOT-SPLIT-B';
+        const p2Mass = Number(document.getElementById('mg_parent2Mass').value) || 40.0;
+        const outCode = document.getElementById('mg_outputLotCode').value.trim() || 'LOT-MERGED-001';
+        const outType = document.getElementById('mg_outputLotType').value;
+        const outMass = Number(document.getElementById('mg_outputMassKg').value) || 100.0;
+        const outPieces = Number(document.getElementById('mg_outputPieceCount').value) || 190;
+
+        const payload = {
+            inputs: [
+                { parentLotCode: p1Code, inputQuantity: p1Mass, inputMassKg: p1Mass, inputPieceCount: 0 },
+                { parentLotCode: p2Code, inputQuantity: p2Mass, inputMassKg: p2Mass, inputPieceCount: 0 }
+            ],
+            outputLotCode: outCode,
+            outputLotType: outType,
+            materialType: 'Cotton',
+            styleCode: document.getElementById('r_styleCode').value.trim() || 'HOODIE-2026',
+            processStep: 'merge',
+            outputQuantity: outMass,
+            outputMassKg: outMass,
+            outputPieceCount: outPieces,
+            unit: 'KG',
+            claimedAttribute: 'ORGANIC',
+            claimedPct: 100.0
+        };
+
+        let res = await postJsonStep('/api/v1/events/merge', payload, 'Merge', 4, true, (d) =>
+            '<strong>Merged <code>' + escapeHtml(p1Code) + '</code> + <code>' + escapeHtml(p2Code) +
+            '</code> &rarr; <code>' + escapeHtml(d.lotCode) + '</code></strong> (' + escapeHtml(d.massKg) +
+            ' KG, ' + escapeHtml(d.pieceCount) + ' pcs, status: <code>' + escapeHtml(d.status) + '</code>)'
+        );
+        if (!res.ok && res.status === 404) {
+            await executeSplitLot();
+            res = await postJsonStep('/api/v1/events/merge', payload, 'Merge', 4, false, (d) =>
+                '<strong>Merged <code>' + escapeHtml(p1Code) + '</code> + <code>' + escapeHtml(p2Code) +
+                '</code> &rarr; <code>' + escapeHtml(d.lotCode) + '</code></strong> (' + escapeHtml(d.massKg) +
+                ' KG, ' + escapeHtml(d.pieceCount) + ' pcs, status: <code>' + escapeHtml(d.status) + '</code>)'
+            );
+        }
+        return res.ok;
+    }
+
+    async function executeViewLotEvents() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const lotCode = document.getElementById('cor_lotCode').value.trim() || 'LOT-GARMENT-001';
+        let res = await getJsonStep('/api/v1/lots/' + encodeURIComponent(lotCode) + '/events', 'Correction', true);
+        if (!res.ok && res.status === 404) {
+            await ensureCoreSupplyChainSeeded();
+            res = await getJsonStep('/api/v1/lots/' + encodeURIComponent(lotCode) + '/events', 'Correction', false);
+        }
+
+        if (res.ok && res.data && Array.isArray(res.data.content)) {
+            const events = res.data.content;
+            if (events.length > 0) {
+                document.getElementById('cor_eventCode').value = events[0].eventCode;
+            }
+            let html = '<strong>Immutable Event Log for Lot <code>' + escapeHtml(lotCode) + '</code> (' + events.length + ' events):</strong>' +
+                '<table class="data-table"><thead><tr><th>Seq #</th><th>Event Code</th><th>Type / Step</th><th>In &rarr; Out Qty</th><th>Previous Hash &rarr; Event SHA-256 Hash</th><th>Flagged</th></tr></thead><tbody>';
+            events.forEach(ev => {
+                html += '<tr><td>#' + escapeHtml(ev.sequenceNumber) + '</td><td><code>' + escapeHtml(ev.eventCode) +
+                    '</code></td><td><code>' + escapeHtml(ev.eventType) + '</code> (' + escapeHtml(ev.processStep) +
+                    ')</td><td>' + escapeHtml(ev.inputQuantity) + ' &rarr; ' + escapeHtml(ev.outputQuantity) + ' ' + escapeHtml(ev.unit) +
+                    '</td><td><code style="font-size:0.72rem;">' + escapeHtml((ev.previousHash || '').substring(0, 14)) + '... &rarr; ' +
+                    escapeHtml((ev.eventHash || '').substring(0, 14)) + '...</code></td><td>' +
+                    (ev.flagged ? ('⚠️ ' + escapeHtml(ev.flagReason || 'FLAGGED')) : '✅ Clean') + '</td></tr>';
+            });
+            html += '</tbody></table>';
+            renderResponsePanel('Correction', 200, 'OK', res.data, false, html);
+        }
+        return res.ok;
+    }
+
+    async function executeCorrectionEvent() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const lotCode = document.getElementById('cor_lotCode').value.trim() || 'LOT-GARMENT-001';
+        let eventCode = document.getElementById('cor_eventCode').value.trim();
+
+        if (!eventCode) {
+            let evRes = await fetch('/api/v1/lots/' + encodeURIComponent(lotCode) + '/events', {
+                headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            if (evRes.status === 404) {
+                await ensureCoreSupplyChainSeeded();
+                evRes = await fetch('/api/v1/lots/' + encodeURIComponent(lotCode) + '/events', {
+                    headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+            }
+            if (evRes.ok) {
+                const evData = await evRes.json();
+                if (evData && Array.isArray(evData.content) && evData.content.length > 0) {
+                    eventCode = evData.content[0].eventCode;
+                    document.getElementById('cor_eventCode').value = eventCode;
+                }
+            }
+        }
+
+        const payload = {
+            lotCode: lotCode,
+            correctsEventCode: eventCode,
+            processStep: 'correction',
+            correctedInputQuantity: Number(document.getElementById('cor_inputQty').value) || 100.0,
+            correctedOutputQuantity: Number(document.getElementById('cor_outputQty').value) || 95.0,
+            correctedMassKg: Number(document.getElementById('cor_massKg').value) || 95.0,
+            correctedPieceCount: Number(document.getElementById('cor_pieceCount').value) || 190,
+            unit: document.getElementById('cor_unit').value,
+            clearFlag: document.getElementById('cor_clearFlag').value === 'true',
+            notes: document.getElementById('cor_notes').value.trim() || 'Verified post-inspection count'
+        };
+
+        const res = await postJsonStep('/api/v1/events/correction', payload, 'Correction', 4, false, (d) =>
+            '<strong>Appended Immutable Correction Event:</strong> <code>' + escapeHtml(d.eventCode) +
+            '</code> (Sequence #' + escapeHtml(d.sequenceNumber) + ') referencing original event ID #' +
+            escapeHtml(d.correctsEventId) + ' &bull; New SHA-256 Hash: <code>' + escapeHtml((d.eventHash || '').substring(0, 20)) + '...</code>'
+        );
+        return res.ok;
+    }
+
+    // =========================================================================
+    // FR3: RECURSIVE BACKWARD & FORWARD TRACEABILITY
+    // =========================================================================
+    async function runQuickTrace(mode, targetCode) {
+        document.getElementById('tr_mode').value = mode;
+        if (mode === 'BACKWARD_STYLE') {
+            document.getElementById('tr_styleCode').value = targetCode;
+        } else {
+            document.getElementById('tr_lotCode').value = targetCode;
+        }
+        await executeTraceability();
+    }
+
+    async function executeTraceability() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const mode = document.getElementById('tr_mode').value;
+        const lotCode = document.getElementById('tr_lotCode').value.trim() || 'LOT-GARMENT-001';
+        const styleCode = document.getElementById('tr_styleCode').value.trim() || 'HOODIE-2026';
+        const maxDepth = Number(document.getElementById('tr_maxDepth').value) || 12;
+
+        let url;
+        if (mode === 'BACKWARD_STYLE') {
+            url = '/api/v1/traces/backward/style/' + encodeURIComponent(styleCode) + '?maxDepth=' + maxDepth;
+        } else if (mode === 'FORWARD_LOT') {
+            url = '/api/v1/traces/forward/' + encodeURIComponent(lotCode) + '?maxDepth=' + maxDepth;
+        } else {
+            url = '/api/v1/traces/backward/' + encodeURIComponent(lotCode) + '?maxDepth=' + maxDepth;
+        }
+
+        const buildTraceSummary = (d) => {
+            if (!d || !Array.isArray(d.steps)) return null;
+            let html = '<strong>Trace Direction:</strong> <code>' + escapeHtml(d.direction) +
+                '</code> &bull; <strong>Target:</strong> <code>' + escapeHtml(d.targetLotCode) +
+                '</code> &bull; <strong>Brand:</strong> <code>' + escapeHtml(d.brandCode) +
+                '</code> &bull; <strong>Lineage Steps Found:</strong> <strong>' + escapeHtml(d.stepCount) + '</strong>';
+            if (d.steps.length > 0) {
+                html += '<table class="data-table"><thead><tr><th>Depth</th><th>Parent Lot &rarr; Child Lot</th><th>Event / Step</th><th>Origin Facility</th><th>Allocated Qty / Mass</th><th>Graph Path</th></tr></thead><tbody>';
+                d.steps.forEach(s => {
+                    html += '<tr><td>' + escapeHtml(s.depth) + '</td><td><code>' + escapeHtml(s.parentLotCode) +
+                        '</code> (' + escapeHtml(s.parentLotType) + ') &rarr; <code>' + escapeHtml(s.childLotCode) +
+                        '</code> (' + escapeHtml(s.childLotType) + ')</td><td><code>' + escapeHtml(s.eventType) +
+                        '</code> (' + escapeHtml(s.processStep) + ')</td><td>' +
+                        escapeHtml(s.supplierName || s.supplierCode || '-') + ' (' + escapeHtml(s.supplierRegion || '-') + ', ' + escapeHtml(s.supplierCountry || '-') + ')' +
+                        '</td><td>' + escapeHtml(s.allocatedQuantity) + ' ' + escapeHtml(s.unit) + ' (' + escapeHtml(s.allocatedMassKg) + ' KG)</td>' +
+                        '<td><code>' + escapeHtml(s.path) + '</code></td></tr>';
+                });
+                html += '</tbody></table>';
+            }
+            return html;
+        };
+
+        let res = await getJsonStep(url, 'Trace', true, buildTraceSummary);
+        if (!res.ok && res.status === 404) {
+            await ensureCoreSupplyChainSeeded();
+            res = await getJsonStep(url, 'Trace', false, buildTraceSummary);
+        }
+        return res.ok;
+    }
+
+    // =========================================================================
+    // FR4 & FR6: MASS-BALANCE CLAIM CHECK & FOOTPRINT ROLL-UP
+    // =========================================================================
+    async function executeEvaluateLotClaims() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const lotCode = document.getElementById('cl_lotCode').value.trim() || 'LOT-GARMENT-001';
+        const asOfDate = document.getElementById('cl_asOfDate').value;
+        const url = '/api/v1/compliance/lots/' + encodeURIComponent(lotCode) + '/claims' +
+            (asOfDate ? ('?asOfDate=' + encodeURIComponent(asOfDate)) : '');
+
+        const buildClaimSummary = (d) => {
+            if (!d || !d.lotCode) return null;
+            const claims = d.verifiedClaimPercentages ? Object.entries(d.verifiedClaimPercentages)
+                .map(([k, v]) => '<code>' + escapeHtml(k) + ': ' + escapeHtml(v) + '%</code>').join(', ') : 'None';
+            const certs = Array.isArray(d.validCertificates) && d.validCertificates.length > 0
+                ? d.validCertificates.map(c => '<code>' + escapeHtml(c) + '</code>').join(', ')
+                : 'None';
+            const violations = Array.isArray(d.violations) && d.violations.length > 0
+                ? ('<br/><strong style="color:#b91c1c;">⚠️ Violations:</strong> ' + d.violations.map(v => escapeHtml(v)).join(' | '))
+                : '';
+            return '<strong>Lot <code>' + escapeHtml(d.lotCode) + '</code> Compliance Status:</strong> ' +
+                (d.compliant ? '<span style="color:#085431;font-weight:800;">✅ COMPLIANT</span>' : '<span style="color:#b91c1c;font-weight:800;">❌ NON-COMPLIANT (FLAGGED)</span>') +
+                ' &bull; <strong>Verified Claims:</strong> ' + (claims || '0%') +
+                ' &bull; <strong>Valid Certificates:</strong> ' + certs + violations;
+        };
+
+        let res = await getJsonStep(url, 'Claims', true, buildClaimSummary);
+        if (!res.ok && res.status === 404) {
+            await ensureCoreSupplyChainSeeded();
+            res = await getJsonStep(url, 'Claims', false, buildClaimSummary);
+        }
+        return res.ok;
+    }
+
+    async function executeSimulatePlantedViolation() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+        await ensureCoreSupplyChainSeeded();
+
+        const badLotCode = 'LOT-BAD-LOSS-' + (violationSimCounter++);
+        const payload = {
+            inputLotCode: document.getElementById('r_lotCode').value.trim() || 'LOT-RAW-001',
+            outputLotCode: badLotCode,
+            outputLotType: 'CUT_BUNDLE',
+            eventType: 'CUT',
+            processStep: 'cut',
+            inputQuantity: 40.0,
+            outputQuantity: 100,
+            outputMassKg: 30.0,
+            outputPieceCount: 100,
+            unit: 'PIECES'
+        };
+
+        await postJsonStep('/api/v1/events/transform', payload, 'Claims', null, false, (d) =>
+            '<strong>Simulated Planted Mass-Balance Violation (25% Cutting Loss &gt; 12% Max Allowed):</strong> Lot <code>' +
+            escapeHtml(d.lotCode) + '</code> automatically marked as <strong style="color:#b91c1c;">' +
+            escapeHtml(d.status) + '</strong> and emitted a <code>MASS_BALANCE_LOSS_EXCEEDED</code> compliance alert!'
+        );
+        document.getElementById('cl_lotCode').value = badLotCode;
+    }
+
+    async function executeCalculateFootprint() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const lotCode = document.getElementById('fp_lotCode').value.trim() || 'LOT-GARMENT-001';
+        const method = document.getElementById('fp_allocationMethod').value;
+        const url = '/api/v1/footprint/lots/' + encodeURIComponent(lotCode) + '?allocationMethod=' + encodeURIComponent(method);
+
+        const buildFpSummary = (d) => {
+            if (!d || d.totalWaterLiters === undefined) return null;
+            return '<strong>Footprint Roll-up (Strategy: <code>' + escapeHtml(d.allocationMethod) + '</code>, Pieces: ' + escapeHtml(d.pieceCount) + '):</strong><br/>' +
+                '💧 <strong>Total Water:</strong> ' + escapeHtml(d.totalWaterLiters) + ' L (<strong>' + escapeHtml(d.waterLitersPerPiece) + ' L / piece</strong>) &bull; ' +
+                '⚡ <strong>Total Energy:</strong> ' + escapeHtml(d.totalEnergyKwh) + ' kWh (<strong>' + escapeHtml(d.energyKwhPerPiece) + ' kWh / piece</strong>) &bull; ' +
+                '🌱 <strong>Total Carbon:</strong> ' + escapeHtml(d.totalCo2eKg) + ' kg CO2e (<strong>' + escapeHtml(d.co2eKgPerPiece) + ' kg CO2e / piece</strong>)';
+        };
+
+        let res = await getJsonStep(url, 'Footprint', true, buildFpSummary);
+        if (!res.ok && res.status === 404) {
+            await ensureCoreSupplyChainSeeded();
+            res = await getJsonStep(url, 'Footprint', false, buildFpSummary);
+        }
+        return res.ok;
+    }
+
+    // =========================================================================
+    // FR7 & FR8: PASSPORTS, VERSION HISTORY & AUDIENCE VIEWS
+    // =========================================================================
+    async function executeStep5() {
+        let res = await postJsonStep('/api/v1/passports', syncStep5Json(), 'Step5', 5, true);
+        if (!res.ok && res.status === 404) {
+            await ensureCoreSupplyChainSeeded();
             res = await postJsonStep('/api/v1/passports', syncStep5Json(), 'Step5', 5, false);
         }
         if (res.ok) {
@@ -2275,6 +3720,254 @@
             updateStep6Links();
             await loadStep6Preview();
             navigateToPage('passport');
+        }
+        return res.ok;
+    }
+
+    async function ensurePassportGenerated(passportCode) {
+        const check = await fetch('/api/v1/public/passports/' + encodeURIComponent(passportCode), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        if (check.ok) return true;
+        await ensureCoreSupplyChainSeeded();
+        await postJsonStep('/api/v1/passports', syncStep5Json(), 'Step5', 5, false);
+        return true;
+    }
+
+    async function executeListPassportVersions() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const ppCode = document.getElementById('pv_passportCode').value.trim() || 'PP-HOODIE-2026';
+        await ensurePassportGenerated(ppCode);
+
+        await getJsonStep('/api/v1/passports/' + encodeURIComponent(ppCode) + '/versions', 'Versions', false, (d) => {
+            const list = (d && Array.isArray(d.content)) ? d.content : [];
+            if (list.length === 0) return '<em>No versions found for <code>' + escapeHtml(ppCode) + '</code>.</em>';
+            let html = '<strong>Immutable Version History for Passport <code>' + escapeHtml(ppCode) + '</code> (' + list.length + ' versions):</strong>' +
+                '<table class="data-table"><thead><tr><th>Version</th><th>Latest?</th><th>Status</th><th>Brand</th><th>Content SHA-256 Hash</th><th>Created At</th></tr></thead><tbody>';
+            list.forEach(v => {
+                html += '<tr><td><strong>v' + escapeHtml(v.version) + '</strong></td><td>' + (v.latestVersion ? '✅ Latest' : 'Historical') +
+                    '</td><td><code>' + escapeHtml(v.status) + '</code></td><td>' + escapeHtml(v.brandCode) +
+                    '</td><td><code style="font-size:0.73rem;">' + escapeHtml((v.contentHash || '').substring(0, 22)) + '...</code></td><td>' +
+                    escapeHtml(v.createdAt) + '</td></tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        });
+    }
+
+    async function executeGetPassportVersion() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const ppCode = document.getElementById('pv_passportCode').value.trim() || 'PP-HOODIE-2026';
+        const ver = Number(document.getElementById('pv_version').value) || 1;
+        await ensurePassportGenerated(ppCode);
+
+        await getJsonStep(
+            '/api/v1/passports/' + encodeURIComponent(ppCode) + '/versions/' + ver,
+            'Versions',
+            false,
+            (d) => {
+                if (!d || !d.passportCode) return null;
+                return '<strong>Retrieved Historical Snapshot:</strong> <code>' + escapeHtml(d.passportCode) +
+                    ' (v' + escapeHtml(d.version) + ')</code> &bull; Status: <code>' + escapeHtml(d.status) +
+                    '</code> &bull; Style: ' + escapeHtml(d.styleName);
+            }
+        );
+    }
+
+    async function executeAudienceProjectionCheck() {
+        const perspective = document.getElementById('aud_perspective').value;
+        const resourceType = document.getElementById('aud_resourceType').value;
+        const ppCode = document.getElementById('aud_passportCode').value.trim() || 'PP-HOODIE-2026';
+        const partyCode = document.getElementById('aud_partyCode').value.trim() || 'MILL-GAZIPUR-1';
+
+        await ensureAuthorizedOrAutoLogin();
+        await ensurePassportGenerated(ppCode);
+
+        let url;
+        let customHeader;
+        if (perspective === 'PUBLIC') {
+            customHeader = null;
+            url = '/api/v1/public/passports/' + encodeURIComponent(ppCode);
+        } else {
+            customHeader = perspective === 'CURRENT' ? authHeader : ROLE_CREDENTIALS[perspective];
+            url = resourceType === 'PARTY'
+                ? ('/api/v1/parties/' + encodeURIComponent(partyCode))
+                : ('/api/v1/passports/' + encodeURIComponent(ppCode));
+        }
+
+        await getJsonStep(url, 'Audience', false, (d, status) => {
+            if (status === 403) {
+                return '<strong style="color:#b91c1c;">🔒 Cross-Brand Confidentiality Enforced (HTTP 403 Forbidden):</strong> ' +
+                    'Caller <code>' + escapeHtml(perspective) + '</code> is strictly blocked from accessing <code>BRAND_A</code> data (' +
+                    escapeHtml(d && d.detail ? d.detail : 'Access Denied') + ').';
+            }
+            const rawJson = JSON.stringify(d || {});
+            const hasExactAddr = rawJson.includes('exactAddress');
+            const hasWorkerCount = rawJson.includes('workerCount');
+            const hasUnitPrice = rawJson.includes('unitPriceUsd');
+            return '<strong>Audience Perspective: <code>' + escapeHtml(perspective) + '</code> &bull; Endpoint: <code>' + escapeHtml(url) + '</code></strong><br/>' +
+                'Confidential Field Visibility &rarr; ' +
+                '<code>exactAddress</code>: ' + (hasExactAddr ? '<strong style="color:#085431;">VISIBLE (Auditor)</strong>' : '<em>REDACTED</em>') + ' &bull; ' +
+                '<code>workerCount</code>: ' + (hasWorkerCount ? '<strong style="color:#085431;">VISIBLE (Auditor)</strong>' : '<em>REDACTED</em>') + ' &bull; ' +
+                '<code>unitPriceUsd</code>: ' + (hasUnitPrice ? '<strong style="color:#085431;">VISIBLE (Auditor)</strong>' : '<em>REDACTED</em>');
+        }, customHeader);
+    }
+
+    // =========================================================================
+    // FR9: BULK CSV / EXCEL IMPORT & REJECTED ROWS REPORT
+    // =========================================================================
+    async function executeBulkImport() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+        await ensureCoreSupplyChainSeeded();
+
+        const importType = document.getElementById('imp_importType').value;
+        let fileFormat = document.getElementById('imp_fileFormat').value;
+        const fileInput = document.getElementById('imp_fileInput');
+
+        let uploadFile = (fileInput && fileInput.files && fileInput.files.length > 0) ? fileInput.files[0] : null;
+        if (!uploadFile) {
+            fileFormat = 'CSV';
+            document.getElementById('imp_fileFormat').value = 'CSV';
+            const parentLot = document.getElementById('r_lotCode').value.trim() || 'LOT-RAW-001';
+            const validOutLot = 'LOT-CSV-OK-' + (sampleImportCounter++);
+            const sampleCsv = [
+                'inputLotCode,outputLotCode,outputLotType,styleCode,factoryCode,productionLineCode,inputQuantity,outputQuantity,outputMassKg,outputPieceCount,unit',
+                parentLot + ',' + validOutLot + ',CUT_BUNDLE,HOODIE-2026,,,10.0,20,9.5,20,PIECES',
+                'MISSING-LOT-999,LOT-CSV-BAD-1,CUT_BUNDLE,HOODIE-2026,,,10.0,20,9.5,20,PIECES',
+                parentLot + ',LOT-CSV-BAD-2,CUT_BUNDLE,HOODIE-2026,,,INVALID_DECIMAL,20,9.5,20,PIECES'
+            ].join('\n');
+            uploadFile = new File([sampleCsv], 'factory-batch-sample.csv', { type: 'text/csv' });
+        }
+
+        const fd = new FormData();
+        fd.append('file', uploadFile);
+        const url = '/api/v1/imports?importType=' + encodeURIComponent(importType) + '&fileFormat=' + encodeURIComponent(fileFormat);
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' },
+            body: fd
+        });
+        const data = await res.json();
+
+        if (data && data.batchCode) {
+            document.getElementById('imp_batchCode').value = data.batchCode;
+        }
+
+        const buildImportSummary = (d) => {
+            if (!d || !d.batchCode) return null;
+            let html = '<strong>Batch Import Completed:</strong> <code>' + escapeHtml(d.batchCode) +
+                '</code> &bull; Total Rows: <strong>' + escapeHtml(d.totalRows) +
+                '</strong> &bull; <span style="color:#085431;font-weight:800;">Accepted: ' + escapeHtml(d.acceptedRows) +
+                '</span> &bull; <span style="color:#b91c1c;font-weight:800;">Rejected: ' + escapeHtml(d.rejectedRows) + '</span>';
+            if (Array.isArray(d.rejectedRowDetails) && d.rejectedRowDetails.length > 0) {
+                html += '<table class="data-table"><thead><tr><th>Row #</th><th>Raw CSV/Excel Row</th><th>Rejection Reason</th></tr></thead><tbody>';
+                d.rejectedRowDetails.forEach(r => {
+                    html += '<tr><td>Row ' + escapeHtml(r.rowNumber) + '</td><td><code>' + escapeHtml(r.rawPayload) +
+                        '</code></td><td style="color:#b91c1c;font-weight:700;">' + escapeHtml(r.reason) + '</td></tr>';
+                });
+                html += '</tbody></table>';
+            }
+            return html;
+        };
+
+        renderResponsePanel('Import', res.status, res.status === 201 ? 'Created' : res.statusText, data, false, buildImportSummary(data));
+        return res.ok;
+    }
+
+    async function executeGetRejectedRows() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        let batchCode = document.getElementById('imp_batchCode').value.trim();
+        if (!batchCode) {
+            await executeBulkImport();
+            batchCode = document.getElementById('imp_batchCode').value.trim();
+        }
+        await getJsonStep('/api/v1/imports/' + encodeURIComponent(batchCode) + '/rejected', 'Import', false, (d) => {
+            const list = (d && Array.isArray(d.content)) ? d.content : [];
+            if (list.length === 0) return '<em>No rejected rows for batch <code>' + escapeHtml(batchCode) + '</code>.</em>';
+            let html = '<strong>Rejected Rows for Batch <code>' + escapeHtml(batchCode) + '</code> (' + list.length + '):</strong>' +
+                '<table class="data-table"><thead><tr><th>Row #</th><th>Raw Payload</th><th>Exact Rejection Reason</th></tr></thead><tbody>';
+            list.forEach(r => {
+                html += '<tr><td>Row ' + escapeHtml(r.rowNumber) + '</td><td><code>' + escapeHtml(r.rawPayload) +
+                    '</code></td><td style="color:#b91c1c;font-weight:700;">' + escapeHtml(r.reason) + '</td></tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        });
+    }
+
+    async function executeListImportBatches() {
+        await getJsonStep('/api/v1/imports', 'Import', false, (d) => {
+            const list = (d && Array.isArray(d.content)) ? d.content : [];
+            if (list.length === 0) return '<em>No import batches executed yet. Click ▶ Execute to run an import batch.</em>';
+            let html = '<strong>Executed Import Batches (' + list.length + '):</strong>' +
+                '<table class="data-table"><thead><tr><th>Batch Code</th><th>Type</th><th>Format</th><th>Total</th><th>Accepted</th><th>Rejected</th><th>Status</th></tr></thead><tbody>';
+            list.forEach(b => {
+                html += '<tr><td><code>' + escapeHtml(b.batchCode) + '</code></td><td><code>' + escapeHtml(b.importType) +
+                    '</code></td><td>' + escapeHtml(b.fileFormat) + '</td><td>' + escapeHtml(b.totalRows) +
+                    '</td><td style="color:#085431;font-weight:700;">' + escapeHtml(b.acceptedRows) +
+                    '</td><td style="color:#b91c1c;font-weight:700;">' + escapeHtml(b.rejectedRows) +
+                    '</td><td><code>' + escapeHtml(b.status) + '</code></td></tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        });
+    }
+
+    // =========================================================================
+    // FR10: SHA-256 HASH-CHAIN INTEGRITY VERIFICATION
+    // =========================================================================
+    async function executeVerifyPassportIntegrity() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const ppCode = document.getElementById('int_passportCode').value.trim() || 'PP-HOODIE-2026';
+        await ensurePassportGenerated(ppCode);
+
+        await getJsonStep('/api/v1/integrity/passports/' + encodeURIComponent(ppCode) + '/verify', 'Integrity', false, (d) => {
+            if (!d || !d.passportCode) return null;
+            let html = '<strong>Passport Integrity Verification (<code>' + escapeHtml(d.passportCode) + ' v' + escapeHtml(d.version) + '</code>):</strong> ' +
+                (d.verified
+                    ? '<span style="color:#085431;font-weight:800;">✅ HASH CHAIN VERIFIED — ZERO TAMPERING DETECTED</span>'
+                    : '<span style="color:#b91c1c;font-weight:800;">❌ HASH CHAIN TAMPERING DETECTED</span>') +
+                ' &bull; Lots Checked Across Lineage: <strong>' + escapeHtml(d.lotsChecked) + '</strong>';
+            if (Array.isArray(d.lotResults) && d.lotResults.length > 0) {
+                html += '<table class="data-table"><thead><tr><th>Lot Code</th><th>Verified</th><th>Events Checked</th><th>Latest SHA-256 Event Hash</th></tr></thead><tbody>';
+                d.lotResults.forEach(lr => {
+                    html += '<tr><td><code>' + escapeHtml(lr.lotCode) + '</code></td><td>' +
+                        (lr.verified ? '✅ Verified' : ('❌ Failed: ' + escapeHtml(lr.failureReason))) +
+                        '</td><td>' + escapeHtml(lr.eventCount) + '</td><td><code style="font-size:0.73rem;">' +
+                        escapeHtml(lr.latestHash) + '</code></td></tr>';
+                });
+                html += '</tbody></table>';
+            }
+            return html;
+        });
+    }
+
+    async function executeVerifyLotIntegrity() {
+        const okAuth = await ensureAuthorizedOrAutoLogin();
+        if (!okAuth) return false;
+
+        const lotCode = document.getElementById('int_lotCode').value.trim() || 'LOT-GARMENT-001';
+        let res = await getJsonStep('/api/v1/integrity/lots/' + encodeURIComponent(lotCode) + '/verify', 'Integrity', true);
+        if (!res.ok && res.status === 404) {
+            await ensureCoreSupplyChainSeeded();
+            res = await getJsonStep('/api/v1/integrity/lots/' + encodeURIComponent(lotCode) + '/verify', 'Integrity', false);
+        }
+        if (res.ok && res.data) {
+            const d = res.data;
+            const summary = '<strong>Single Lot SHA-256 Chain Verification (<code>' + escapeHtml(d.lotCode) + '</code>):</strong> ' +
+                (d.verified ? '<span style="color:#085431;font-weight:800;">✅ VERIFIED</span>' : '<span style="color:#b91c1c;font-weight:800;">❌ TAMPERED</span>') +
+                ' &bull; Events in Chain: <strong>' + escapeHtml(d.eventCount) + '</strong> &bull; Latest Hash: <code>' + escapeHtml(d.latestHash) + '</code>';
+            renderResponsePanel('Integrity', 200, 'OK', d, false, summary);
         }
         return res.ok;
     }

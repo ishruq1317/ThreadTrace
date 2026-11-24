@@ -777,6 +777,102 @@ class ThreadTraceEndToEndIntegrationTest {
         mockMvc.perform(get("/api/v1/public/passports/PP-HOODIE-2026/qr"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_PNG));
+
+        // Verify additional FR1-FR10 UI section defaults (Production Line, Split, Merge, Correction, Trace, Claims, Footprint, Integrity as Operator)
+        createParty("FAC-DHAKA-1", "Dhaka Apparel Manufacturing Factory", "FACTORY", "Bangladesh", "Dhaka",
+                "Plot 42, Dhaka EPZ Sector 3", 1200, "9.25");
+        mockMvc.perform(post("/api/v1/parties/FAC-DHAKA-1/lines")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "lineCode": "LINE-CUT-01-UI",
+                                  "name": "Automated Cutting & Sewing Line A",
+                                  "processType": "cut",
+                                  "locationDetail": "Building B, Floor 2"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.factoryCode").value("FAC-DHAKA-1"));
+
+        mockMvc.perform(get("/api/v1/parties/FAC-DHAKA-1/lines")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].lineCode").value("LINE-CUT-01-UI"));
+
+        // Split LOT-RAW-001 -> LOT-SPLIT-A + LOT-SPLIT-B
+        mockMvc.perform(post("/api/v1/events/split")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "parentLotCode": "LOT-RAW-001",
+                                  "processStep": "split",
+                                  "inputQuantity": 100.0,
+                                  "outputs": [
+                                    {
+                                      "outputLotCode": "LOT-SPLIT-A",
+                                      "outputLotType": "FABRIC",
+                                      "outputQuantity": 60.0,
+                                      "outputMassKg": 60.0,
+                                      "outputPieceCount": 0,
+                                      "unit": "KG",
+                                      "claimedAttribute": "ORGANIC",
+                                      "claimedPct": 100.0
+                                    },
+                                    {
+                                      "outputLotCode": "LOT-SPLIT-B",
+                                      "outputLotType": "FABRIC",
+                                      "outputQuantity": 40.0,
+                                      "outputMassKg": 40.0,
+                                      "outputPieceCount": 0,
+                                      "unit": "KG",
+                                      "claimedAttribute": "ORGANIC",
+                                      "claimedPct": 100.0
+                                    }
+                                  ]
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$[0].lotCode").value("LOT-SPLIT-A"))
+                .andExpect(jsonPath("$[1].lotCode").value("LOT-SPLIT-B"));
+
+        // Merge LOT-SPLIT-A + LOT-SPLIT-B -> LOT-MERGED-001
+        mockMvc.perform(post("/api/v1/events/merge")
+                        .with(httpBasic("operator", "test-operator-pass"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "inputs": [
+                                    { "parentLotCode": "LOT-SPLIT-A", "inputQuantity": 60.0, "inputMassKg": 60.0, "inputPieceCount": 0 },
+                                    { "parentLotCode": "LOT-SPLIT-B", "inputQuantity": 40.0, "inputMassKg": 40.0, "inputPieceCount": 0 }
+                                  ],
+                                  "outputLotCode": "LOT-MERGED-001",
+                                  "outputLotType": "SEWN_GARMENT",
+                                  "materialType": "Cotton",
+                                  "styleCode": "HOODIE-2026",
+                                  "processStep": "merge",
+                                  "outputQuantity": 100.0,
+                                  "outputMassKg": 100.0,
+                                  "outputPieceCount": 190,
+                                  "unit": "KG",
+                                  "claimedAttribute": "ORGANIC",
+                                  "claimedPct": 100.0
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.lotCode").value("LOT-MERGED-001"));
+
+        // Verify hash chain as Operator (FR10 UI default)
+        mockMvc.perform(get("/api/v1/integrity/passports/PP-HOODIE-2026/verify")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.verified").value(true));
+
+        mockMvc.perform(get("/api/v1/integrity/lots/LOT-GARMENT-001/verify")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.verified").value(true));
     }
 
     private void createParty(

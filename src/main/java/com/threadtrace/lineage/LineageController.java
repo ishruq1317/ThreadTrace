@@ -133,7 +133,7 @@ public class LineageController {
     }
 
     @GetMapping("/integrity/lots/{lotCode}/verify")
-    @PreAuthorize("hasAnyRole('ADMIN', 'AUDITOR', 'BRAND')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'AUDITOR', 'BRAND')")
     @Operation(summary = "Verify SHA-256 event hash chain for a lot")
     public LineageDtos.LotChainVerificationResult verifyLotChain(@PathVariable String lotCode) {
         Lot lot = lineageService.requireLotByCode(lotCode);

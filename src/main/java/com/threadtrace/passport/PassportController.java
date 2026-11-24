@@ -73,7 +73,7 @@ public class PassportController {
     }
 
     @GetMapping("/integrity/passports/{passportCode}/verify")
-    @PreAuthorize("hasAnyRole('ADMIN', 'AUDITOR', 'BRAND')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'AUDITOR', 'BRAND')")
     @Operation(summary = "Verify hash-chain integrity of all lot events behind a passport")
     public PassportDtos.PassportIntegrityVerificationView verifyPassportIntegrity(
             @PathVariable String passportCode) {
