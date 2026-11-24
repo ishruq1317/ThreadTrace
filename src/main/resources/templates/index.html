@@ -1054,13 +1054,6 @@
             <div class="brand-sub">Garment Supply-Chain Traceability &amp; Digital Product Passports</div>
         </div>
     </a>
-
-    <div class="nav-actions">
-        <button type="button" id="topAuthorizeBtn" class="btn-authorize" onclick="openAuthModal()">
-            <span id="topLockIcon">🔓</span>
-            <span id="topAuthText">Authorize</span>
-        </button>
-    </div>
 </header>
 
 <main class="container">
@@ -1070,8 +1063,8 @@
         <h1>ThreadTrace — Garment Traceability &amp; Digital Product Passport Portal</h1>
     </section>
 
-    <!-- 6-Step Progress Bar at the Beginning -->
-    <nav class="stepper" aria-label="Workflow Progress">
+    <!-- 6-Step Progress Bar (Hidden on Login Page, Shown on Home & Passport Pages) -->
+    <nav class="stepper" id="workflowStepper" aria-label="Workflow Progress" style="display:none;">
         <button type="button" class="step-pill active-step" id="pill-step-1" onclick="onStepPillClick(1)">
             <span class="step-num" id="num-step-1">1</span>
             <div>
@@ -1248,18 +1241,9 @@
                     </div>
                 </div>
 
-                <div class="json-toggle-bar">
-                    <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep2')">
-                        { } View or Edit Request Body (JSON)
-                    </button>
-                </div>
-                <div id="jsonBoxStep2" class="json-box-container">
-                    <textarea id="jsonStep2" class="json-textarea" oninput="applyStep2JsonToForm()"></textarea>
-                </div>
-
                 <div class="action-row">
                     <button type="button" class="btn-execute" id="btnExecStep2" onclick="executeStep2()">
-                        ▶ Execute (POST /api/v1/parties)
+                        ▶ Execute
                     </button>
                 </div>
 
@@ -1268,7 +1252,7 @@
                         <span id="respTitleStep2">Response</span>
                         <span id="respCodeStep2" class="status-code-badge">201 Created</span>
                     </div>
-                    <pre id="respBodyStep2" class="response-body-pre"></pre>
+                    <pre id="respBodyStep2" class="response-body-pre" style="display:none;"></pre>
                 </div>
             </div>
         </section>
@@ -1331,18 +1315,9 @@
                     </div>
                 </div>
 
-                <div class="json-toggle-bar">
-                    <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep3')">
-                        { } View or Edit Request Body (JSON)
-                    </button>
-                </div>
-                <div id="jsonBoxStep3" class="json-box-container">
-                    <textarea id="jsonStep3" class="json-textarea" oninput="applyStep3JsonToForm()"></textarea>
-                </div>
-
                 <div class="action-row">
                     <button type="button" class="btn-execute" id="btnExecStep3" onclick="executeStep3()">
-                        ▶ Execute (POST /api/v1/evidence/certificates)
+                        ▶ Execute
                     </button>
                 </div>
 
@@ -1351,7 +1326,7 @@
                         <span id="respTitleStep3">Response</span>
                         <span id="respCodeStep3" class="status-code-badge">201 Created</span>
                     </div>
-                    <pre id="respBodyStep3" class="response-body-pre"></pre>
+                    <pre id="respBodyStep3" class="response-body-pre" style="display:none;"></pre>
                 </div>
             </div>
         </section>
@@ -1438,18 +1413,9 @@
                         </div>
                     </div>
 
-                    <div class="json-toggle-bar">
-                        <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep4A')">
-                            { } View or Edit Request Body (JSON)
-                        </button>
-                    </div>
-                    <div id="jsonBoxStep4A" class="json-box-container">
-                        <textarea id="jsonStep4A" class="json-textarea" oninput="applyStep4AJsonToForm()"></textarea>
-                    </div>
-
                     <div class="action-row">
                         <button type="button" class="btn-execute" id="btnExecStep4A" onclick="executeStep4A()">
-                            ▶ Execute Receive (POST /api/v1/events/receive)
+                            ▶ Execute
                         </button>
                     </div>
 
@@ -1458,7 +1424,7 @@
                             <span id="respTitleStep4A">Response</span>
                             <span id="respCodeStep4A" class="status-code-badge">201 Created</span>
                         </div>
-                        <pre id="respBodyStep4A" class="response-body-pre"></pre>
+                        <pre id="respBodyStep4A" class="response-body-pre" style="display:none;"></pre>
                     </div>
                 </div>
 
@@ -1539,18 +1505,9 @@
                         </div>
                     </div>
 
-                    <div class="json-toggle-bar">
-                        <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep4B')">
-                            { } View or Edit Request Body (JSON)
-                        </button>
-                    </div>
-                    <div id="jsonBoxStep4B" class="json-box-container">
-                        <textarea id="jsonStep4B" class="json-textarea" oninput="applyStep4BJsonToForm()"></textarea>
-                    </div>
-
                     <div class="action-row">
                         <button type="button" class="btn-execute" id="btnExecStep4B" onclick="executeStep4B()">
-                            ▶ Execute Transform (POST /api/v1/events/transform)
+                            ▶ Execute
                         </button>
                     </div>
 
@@ -1559,7 +1516,7 @@
                             <span id="respTitleStep4B">Response</span>
                             <span id="respCodeStep4B" class="status-code-badge">201 Created</span>
                         </div>
-                        <pre id="respBodyStep4B" class="response-body-pre"></pre>
+                        <pre id="respBodyStep4B" class="response-body-pre" style="display:none;"></pre>
                     </div>
                 </div>
 
@@ -1612,18 +1569,9 @@
                     </div>
                 </div>
 
-                <div class="json-toggle-bar">
-                    <button type="button" class="btn-toggle-json" onclick="toggleJsonBox('jsonBoxStep5')">
-                        { } View or Edit Request Body (JSON)
-                    </button>
-                </div>
-                <div id="jsonBoxStep5" class="json-box-container">
-                    <textarea id="jsonStep5" class="json-textarea" oninput="applyStep5JsonToForm()"></textarea>
-                </div>
-
                 <div class="action-row">
                     <button type="button" class="btn-execute" id="btnExecStep5" onclick="executeStep5()">
-                        ▶ Execute &amp; Open Generated Passport Page (POST /api/v1/passports)
+                        ▶ Execute
                     </button>
                 </div>
 
@@ -1632,7 +1580,7 @@
                         <span id="respTitleStep5">Response</span>
                         <span id="respCodeStep5" class="status-code-badge">201 Created</span>
                     </div>
-                    <pre id="respBodyStep5" class="response-body-pre"></pre>
+                    <pre id="respBodyStep5" class="response-body-pre" style="display:none;"></pre>
                 </div>
             </div>
         </section>
@@ -1649,8 +1597,8 @@
                 <span>🌐 Generated Digital Product Passport &amp; Live QR Code</span>
             </div>
             <div>
-                <button type="button" class="btn-outline" style="padding:7px 14px; font-size:0.82rem;" onclick="navigateToPage('home')">
-                    &larr; Back to Home Page
+                <button type="button" id="passportLogoutBtn" class="btn-outline" style="padding:7px 14px; font-size:0.82rem;" onclick="performLogout()">
+                    🔓 Log Out
                 </button>
             </div>
         </div>
@@ -1782,51 +1730,23 @@
 
 </main>
 
-<!-- Compact Footer with Author & Course Information -->
+<!-- Professional Compact Footer -->
 <footer class="site-footer">
     <div class="site-footer-inner">
         <div>
             <strong>ThreadTrace</strong>
             <span class="footer-sep">&bull;</span>
-            <span>Developed by <strong>Hasin Ishruq</strong></span>
+            <span>Garment Supply-Chain Traceability &amp; Digital Product Passports</span>
         </div>
         <div>
-            <span>CSE 444 (Software Architecture and Design Patterns)</span>
+            <span>Engineered by <strong>Hasin Ishruq</strong></span>
             <span class="footer-sep">&bull;</span>
             <a href="https://github.com/ishruq1317" target="_blank" rel="noopener">GitHub @ishruq1317</a>
             <span class="footer-sep">&bull;</span>
-            <a href="https://github.com/ishruq1317/ThreadTrace" target="_blank" rel="noopener">Repository</a>
+            <a href="https://github.com/ishruq1317/ThreadTrace" target="_blank" rel="noopener">Source Repository</a>
         </div>
     </div>
 </footer>
-
-<!-- Authorize Modal Popup -->
-<div class="modal-backdrop" id="authModalBackdrop">
-    <div class="modal-window" role="dialog" aria-labelledby="authModalTitle">
-        <div class="modal-header">
-            <h3 id="authModalTitle">
-                <span id="modalLockIcon">🔓</span>
-                <span>System Authorization (HTTP Basic Auth)</span>
-            </h3>
-            <button type="button" onclick="closeAuthModal()" style="border:none; background:none; font-size:1.15rem; cursor:pointer; color:var(--text-muted);">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group" style="margin-bottom:12px;">
-                <label for="modalUsername">Username</label>
-                <input type="text" id="modalUsername" class="form-control" value="operator"/>
-            </div>
-            <div class="form-group" style="margin-bottom:16px;">
-                <label for="modalPassword">Password</label>
-                <input type="password" id="modalPassword" class="form-control" value="change_me_operator_pw"/>
-            </div>
-            <div id="modalAuthMessage" style="font-size:0.84rem; font-weight:700; margin-bottom:12px;"></div>
-            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
-                <button type="button" class="btn-green" onclick="performAuthorize(true)">Authorize</button>
-                <button type="button" class="btn-outline" onclick="closeAuthModal()">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
     // --- State ---
@@ -1863,6 +1783,11 @@
         const targetPageEl = document.getElementById('page-' + pageName);
         if (targetPageEl) {
             targetPageEl.classList.add('active-page');
+        }
+
+        const stepperEl = document.getElementById('workflowStepper');
+        if (stepperEl) {
+            stepperEl.style.display = pageName === 'login' ? 'none' : '';
         }
 
         updateActiveStepHighlight();
@@ -1994,7 +1919,6 @@
             currentUser = savedUser;
             authHeader = savedHeader;
             document.getElementById('inlineUsername').value = savedUser;
-            document.getElementById('modalUsername').value = savedUser;
             setAuthorizedUiState(true, savedUser);
         }
 
@@ -2002,35 +1926,18 @@
     });
 
     // --- Authorize & Login Functions ---
-    function openAuthModal() {
-        document.getElementById('modalUsername').value = document.getElementById('inlineUsername').value;
-        document.getElementById('modalPassword').value = document.getElementById('inlinePassword').value;
-        document.getElementById('authModalBackdrop').classList.add('open');
-    }
-
-    function closeAuthModal() {
-        document.getElementById('authModalBackdrop').classList.remove('open');
-    }
-
     function fillCredentials(user, pass, chipEl) {
         document.getElementById('inlineUsername').value = user;
         document.getElementById('inlinePassword').value = pass;
-        document.getElementById('modalUsername').value = user;
-        document.getElementById('modalPassword').value = pass;
         document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
         if (chipEl) chipEl.classList.add('active');
     }
 
-    async function performAuthorize(fromModal) {
-        const userEl = fromModal ? document.getElementById('modalUsername') : document.getElementById('inlineUsername');
-        const passEl = fromModal ? document.getElementById('modalPassword') : document.getElementById('inlinePassword');
+    async function performAuthorize() {
+        const userEl = document.getElementById('inlineUsername');
+        const passEl = document.getElementById('inlinePassword');
         const username = userEl.value.trim();
         const password = passEl.value;
-
-        document.getElementById('inlineUsername').value = username;
-        document.getElementById('inlinePassword').value = password;
-        document.getElementById('modalUsername').value = username;
-        document.getElementById('modalPassword').value = password;
 
         const candidateHeader = 'Basic ' + btoa(username + ':' + password);
         try {
@@ -2048,18 +1955,11 @@
                 sessionStorage.setItem('tt_user', username);
                 sessionStorage.setItem('tt_auth', candidateHeader);
                 setAuthorizedUiState(true, username);
-                document.getElementById('modalAuthMessage').style.color = '#085431';
-                document.getElementById('modalAuthMessage').textContent = '🔒 Authorized as ' + username + '!';
-                if (fromModal) {
-                    setTimeout(() => closeAuthModal(), 400);
-                }
                 // Move from Separate Login Page to Home Page (Steps 2 to 5)
                 navigateToPage('home');
                 return true;
             } else {
                 setAuthorizedUiState(false, null, 'Invalid username or password (HTTP ' + res.status + ')');
-                document.getElementById('modalAuthMessage').style.color = '#b91c1c';
-                document.getElementById('modalAuthMessage').textContent = '❌ Invalid credentials (HTTP ' + res.status + ')';
                 return false;
             }
         } catch (err) {
@@ -2090,20 +1990,12 @@
     }
 
     function setAuthorizedUiState(authorized, username, errorMsg) {
-        const topBtn = document.getElementById('topAuthorizeBtn');
-        const topIcon = document.getElementById('topLockIcon');
-        const topText = document.getElementById('topAuthText');
         const step1Status = document.getElementById('step1LockStatus');
         const feedback = document.getElementById('authFeedbackText');
         const logoutBtn = document.getElementById('inlineLogoutBtn');
         const goHomeBtn = document.getElementById('goHomeFromLoginBtn');
-        const modalIcon = document.getElementById('modalLockIcon');
 
         if (authorized) {
-            topBtn.classList.add('locked');
-            topIcon.textContent = '🔒';
-            topText.textContent = 'Authorized (' + username + ')';
-            modalIcon.textContent = '🔒';
             step1Status.style.background = '#dff3e8';
             step1Status.style.borderColor = '#0d7344';
             step1Status.style.color = '#063720';
@@ -2114,10 +2006,6 @@
             goHomeBtn.style.display = 'inline-flex';
             markStepDone(1);
         } else {
-            topBtn.classList.remove('locked');
-            topIcon.textContent = '🔓';
-            topText.textContent = 'Authorize';
-            modalIcon.textContent = '🔓';
             step1Status.style.background = '#fef3c7';
             step1Status.style.borderColor = '#f59e0b';
             step1Status.style.color = '#92400e';
@@ -2156,53 +2044,38 @@
         updateActiveStepHighlight();
     }
 
-    function toggleJsonBox(id) {
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle('open');
-    }
-
     // --- Auto-Sync Helpers across Fields ---
     function onPartyCodeChange() {
         const code = document.getElementById('p_code').value.trim();
         document.getElementById('c_supplierCode').value = code;
         document.getElementById('r_supplierCode').value = code;
-        syncStep2Json();
-        syncStep3Json();
-        syncStep4AJson();
     }
 
     function onRawLotCodeChange() {
         const lotCode = document.getElementById('r_lotCode').value.trim();
         document.getElementById('t_inputLotCode').value = lotCode;
-        syncStep4AJson();
-        syncStep4BJson();
     }
 
     function onStyleCodeChange() {
         const styleCode = document.getElementById('r_styleCode').value.trim();
         document.getElementById('pp_styleCode').value = styleCode;
-        syncStep4AJson();
-        syncStep5Json();
     }
 
     function onOutputLotCodeChange() {
         const outLot = document.getElementById('t_outputLotCode').value.trim();
         document.getElementById('pp_shipmentLotCode').value = outLot;
-        syncStep4BJson();
-        syncStep5Json();
     }
 
     function onPassportCodeChange() {
         const ppCode = document.getElementById('pp_passportCode').value.trim();
         document.getElementById('step6PassportInput').value = ppCode;
         try { sessionStorage.setItem('tt_passport_code', ppCode); } catch (_) {}
-        syncStep5Json();
         updateStep6Links();
     }
 
-    // --- Two-Way Form <-> JSON Sync ---
+    // --- Form Payload Builders ---
     function syncStep2Json() {
-        const payload = {
+        return {
             code: document.getElementById('p_code').value.trim(),
             name: document.getElementById('p_name').value.trim(),
             partyType: document.getElementById('p_partyType').value,
@@ -2212,26 +2085,10 @@
             workerCount: Number(document.getElementById('p_workerCount').value),
             unitPriceUsd: Number(document.getElementById('p_unitPriceUsd').value)
         };
-        document.getElementById('jsonStep2').value = JSON.stringify(payload, null, 2);
-        return payload;
-    }
-
-    function applyStep2JsonToForm() {
-        try {
-            const d = JSON.parse(document.getElementById('jsonStep2').value);
-            if (d.code !== undefined) document.getElementById('p_code').value = d.code;
-            if (d.name !== undefined) document.getElementById('p_name').value = d.name;
-            if (d.partyType !== undefined) document.getElementById('p_partyType').value = d.partyType;
-            if (d.country !== undefined) document.getElementById('p_country').value = d.country;
-            if (d.region !== undefined) document.getElementById('p_region').value = d.region;
-            if (d.exactAddress !== undefined) document.getElementById('p_exactAddress').value = d.exactAddress;
-            if (d.workerCount !== undefined) document.getElementById('p_workerCount').value = d.workerCount;
-            if (d.unitPriceUsd !== undefined) document.getElementById('p_unitPriceUsd').value = d.unitPriceUsd;
-        } catch (_) {}
     }
 
     function syncStep3Json() {
-        const payload = {
+        return {
             certificateNumber: document.getElementById('c_certificateNumber').value.trim(),
             certificateType: document.getElementById('c_certificateType').value,
             issuer: document.getElementById('c_issuer').value.trim(),
@@ -2242,27 +2099,10 @@
             validFrom: document.getElementById('c_validFrom').value,
             validTo: document.getElementById('c_validTo').value
         };
-        document.getElementById('jsonStep3').value = JSON.stringify(payload, null, 2);
-        return payload;
-    }
-
-    function applyStep3JsonToForm() {
-        try {
-            const d = JSON.parse(document.getElementById('jsonStep3').value);
-            if (d.certificateNumber !== undefined) document.getElementById('c_certificateNumber').value = d.certificateNumber;
-            if (d.certificateType !== undefined) document.getElementById('c_certificateType').value = d.certificateType;
-            if (d.issuer !== undefined) document.getElementById('c_issuer').value = d.issuer;
-            if (d.scope !== undefined) document.getElementById('c_scope').value = d.scope;
-            if (d.claimedAttribute !== undefined) document.getElementById('c_claimedAttribute').value = d.claimedAttribute;
-            if (d.certifiedPct !== undefined) document.getElementById('c_certifiedPct').value = d.certifiedPct;
-            if (d.supplierCode !== undefined) document.getElementById('c_supplierCode').value = d.supplierCode;
-            if (d.validFrom !== undefined) document.getElementById('c_validFrom').value = d.validFrom;
-            if (d.validTo !== undefined) document.getElementById('c_validTo').value = d.validTo;
-        } catch (_) {}
     }
 
     function syncStep4AJson() {
-        const payload = {
+        return {
             lotCode: document.getElementById('r_lotCode').value.trim(),
             lotType: document.getElementById('r_lotType').value,
             materialType: document.getElementById('r_materialType').value.trim(),
@@ -2276,30 +2116,10 @@
             claimedAttribute: document.getElementById('r_claimedAttribute').value.trim(),
             claimedPct: Number(document.getElementById('r_claimedPct').value)
         };
-        document.getElementById('jsonStep4A').value = JSON.stringify(payload, null, 2);
-        return payload;
-    }
-
-    function applyStep4AJsonToForm() {
-        try {
-            const d = JSON.parse(document.getElementById('jsonStep4A').value);
-            if (d.lotCode !== undefined) document.getElementById('r_lotCode').value = d.lotCode;
-            if (d.lotType !== undefined) document.getElementById('r_lotType').value = d.lotType;
-            if (d.materialType !== undefined) document.getElementById('r_materialType').value = d.materialType;
-            if (d.styleCode !== undefined) document.getElementById('r_styleCode').value = d.styleCode;
-            if (d.brandCode !== undefined) document.getElementById('r_brandCode').value = d.brandCode;
-            if (d.supplierCode !== undefined) document.getElementById('r_supplierCode').value = d.supplierCode;
-            if (d.quantity !== undefined) document.getElementById('r_quantity').value = d.quantity;
-            if (d.massKg !== undefined) document.getElementById('r_massKg').value = d.massKg;
-            if (d.pieceCount !== undefined) document.getElementById('r_pieceCount').value = d.pieceCount;
-            if (d.unit !== undefined) document.getElementById('r_unit').value = d.unit;
-            if (d.claimedAttribute !== undefined) document.getElementById('r_claimedAttribute').value = d.claimedAttribute;
-            if (d.claimedPct !== undefined) document.getElementById('r_claimedPct').value = d.claimedPct;
-        } catch (_) {}
     }
 
     function syncStep4BJson() {
-        const payload = {
+        return {
             inputLotCode: document.getElementById('t_inputLotCode').value.trim(),
             outputLotCode: document.getElementById('t_outputLotCode').value.trim(),
             outputLotType: document.getElementById('t_outputLotType').value,
@@ -2311,28 +2131,10 @@
             outputPieceCount: Number(document.getElementById('t_outputPieceCount').value),
             unit: document.getElementById('t_unit').value
         };
-        document.getElementById('jsonStep4B').value = JSON.stringify(payload, null, 2);
-        return payload;
-    }
-
-    function applyStep4BJsonToForm() {
-        try {
-            const d = JSON.parse(document.getElementById('jsonStep4B').value);
-            if (d.inputLotCode !== undefined) document.getElementById('t_inputLotCode').value = d.inputLotCode;
-            if (d.outputLotCode !== undefined) document.getElementById('t_outputLotCode').value = d.outputLotCode;
-            if (d.outputLotType !== undefined) document.getElementById('t_outputLotType').value = d.outputLotType;
-            if (d.eventType !== undefined) document.getElementById('t_eventType').value = d.eventType;
-            if (d.processStep !== undefined) document.getElementById('t_processStep').value = d.processStep;
-            if (d.inputQuantity !== undefined) document.getElementById('t_inputQuantity').value = d.inputQuantity;
-            if (d.outputQuantity !== undefined) document.getElementById('t_outputQuantity').value = d.outputQuantity;
-            if (d.outputMassKg !== undefined) document.getElementById('t_outputMassKg').value = d.outputMassKg;
-            if (d.outputPieceCount !== undefined) document.getElementById('t_outputPieceCount').value = d.outputPieceCount;
-            if (d.unit !== undefined) document.getElementById('t_unit').value = d.unit;
-        } catch (_) {}
     }
 
     function syncStep5Json() {
-        const payload = {
+        return {
             passportCode: document.getElementById('pp_passportCode').value.trim(),
             shipmentLotCode: document.getElementById('pp_shipmentLotCode').value.trim(),
             styleCode: document.getElementById('pp_styleCode').value.trim(),
@@ -2341,27 +2143,12 @@
             endOfLifeGuidance: document.getElementById('pp_endOfLifeGuidance').value.trim(),
             allocationMethod: document.getElementById('pp_allocationMethod').value
         };
-        document.getElementById('jsonStep5').value = JSON.stringify(payload, null, 2);
-        return payload;
-    }
-
-    function applyStep5JsonToForm() {
-        try {
-            const d = JSON.parse(document.getElementById('jsonStep5').value);
-            if (d.passportCode !== undefined) document.getElementById('pp_passportCode').value = d.passportCode;
-            if (d.shipmentLotCode !== undefined) document.getElementById('pp_shipmentLotCode').value = d.shipmentLotCode;
-            if (d.styleCode !== undefined) document.getElementById('pp_styleCode').value = d.styleCode;
-            if (d.styleName !== undefined) document.getElementById('pp_styleName').value = d.styleName;
-            if (d.careAndRepair !== undefined) document.getElementById('pp_careAndRepair').value = d.careAndRepair;
-            if (d.endOfLifeGuidance !== undefined) document.getElementById('pp_endOfLifeGuidance').value = d.endOfLifeGuidance;
-            if (d.allocationMethod !== undefined) document.getElementById('pp_allocationMethod').value = d.allocationMethod;
-        } catch (_) {}
     }
 
     // --- API POST Runner ---
     async function ensureAuthorizedOrAutoLogin() {
         if (authHeader) return true;
-        return await performAuthorize(false);
+        return await performAuthorize();
     }
 
     function renderResponsePanel(suffix, status, statusText, bodyObj, isDuplicateOk) {
@@ -2369,7 +2156,6 @@
         const header = document.getElementById('respHeader' + suffix);
         const title = document.getElementById('respTitle' + suffix);
         const codeBadge = document.getElementById('respCode' + suffix);
-        const pre = document.getElementById('respBody' + suffix);
 
         panel.classList.add('visible');
         header.className = 'response-header';
@@ -2388,28 +2174,19 @@
             codeBadge.textContent = '403 Forbidden';
         } else {
             header.classList.add('err');
-            title.textContent = '❌ Request Failed';
+            const detail = (bodyObj && typeof bodyObj === 'object' && bodyObj.detail) ? (' — ' + bodyObj.detail) : '';
+            title.textContent = '❌ Request Failed' + detail;
             codeBadge.textContent = status + ' ' + statusText;
         }
-
-        pre.textContent = typeof bodyObj === 'string' ? bodyObj : JSON.stringify(bodyObj, null, 2);
     }
 
-    async function postJsonStep(url, rawJsonText, suffix, stepNumToMark, silentOn404 = false) {
+    async function postJsonStep(url, payloadObj, suffix, stepNumToMark, silentOn404 = false) {
         const okAuth = await ensureAuthorizedOrAutoLogin();
         if (!okAuth) {
             renderResponsePanel(suffix, 401, 'Unauthorized', {
-                error: 'Please authorize on the Login Page first.'
+                detail: 'Please authorize on the Login Page first.'
             }, false);
             return { ok: false, status: 401 };
-        }
-
-        let parsedBody;
-        try {
-            parsedBody = JSON.parse(rawJsonText);
-        } catch (e) {
-            renderResponsePanel(suffix, 400, 'Invalid JSON', { error: 'Invalid JSON syntax: ' + e.message }, false);
-            return { ok: false, status: 400 };
         }
 
         try {
@@ -2420,7 +2197,7 @@
                     'Authorization': authHeader,
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify(parsedBody)
+                body: JSON.stringify(payloadObj)
             });
 
             const text = await res.text();
@@ -2440,60 +2217,55 @@
             }
             return { ok: false, status: res.status };
         } catch (err) {
-            renderResponsePanel(suffix, 500, 'Network Error', { error: err.message }, false);
+            renderResponsePanel(suffix, 500, 'Network Error', { detail: err.message }, false);
             return { ok: false, status: 500 };
         }
     }
 
     // --- Execution Handlers for Home Page Works ---
     async function executeStep2() {
-        syncStep2Json();
-        const res = await postJsonStep('/api/v1/parties', document.getElementById('jsonStep2').value, 'Step2', 2);
+        const res = await postJsonStep('/api/v1/parties', syncStep2Json(), 'Step2', 2);
         return res.ok;
     }
 
     async function executeStep3() {
-        syncStep3Json();
-        let res = await postJsonStep('/api/v1/evidence/certificates', document.getElementById('jsonStep3').value, 'Step3', 3, true);
+        let res = await postJsonStep('/api/v1/evidence/certificates', syncStep3Json(), 'Step3', 3, true);
         if (!res.ok && res.status === 404) {
             await executeStep2();
-            res = await postJsonStep('/api/v1/evidence/certificates', document.getElementById('jsonStep3').value, 'Step3', 3, false);
+            res = await postJsonStep('/api/v1/evidence/certificates', syncStep3Json(), 'Step3', 3, false);
         }
         return res.ok;
     }
 
     async function executeStep4A() {
-        syncStep4AJson();
-        let res = await postJsonStep('/api/v1/events/receive', document.getElementById('jsonStep4A').value, 'Step4A', null, true);
+        let res = await postJsonStep('/api/v1/events/receive', syncStep4AJson(), 'Step4A', null, true);
         if (!res.ok && res.status === 404) {
             await executeStep2();
             await executeStep3();
-            res = await postJsonStep('/api/v1/events/receive', document.getElementById('jsonStep4A').value, 'Step4A', null, false);
+            res = await postJsonStep('/api/v1/events/receive', syncStep4AJson(), 'Step4A', null, false);
         }
         return res.ok;
     }
 
     async function executeStep4B() {
-        syncStep4BJson();
-        let res = await postJsonStep('/api/v1/events/transform', document.getElementById('jsonStep4B').value, 'Step4B', 4, true);
+        let res = await postJsonStep('/api/v1/events/transform', syncStep4BJson(), 'Step4B', 4, true);
         if (!res.ok && res.status === 404) {
             await executeStep2();
             await executeStep3();
             await executeStep4A();
-            res = await postJsonStep('/api/v1/events/transform', document.getElementById('jsonStep4B').value, 'Step4B', 4, false);
+            res = await postJsonStep('/api/v1/events/transform', syncStep4BJson(), 'Step4B', 4, false);
         }
         return res.ok;
     }
 
     async function executeStep5() {
-        syncStep5Json();
-        let res = await postJsonStep('/api/v1/passports', document.getElementById('jsonStep5').value, 'Step5', 5, true);
+        let res = await postJsonStep('/api/v1/passports', syncStep5Json(), 'Step5', 5, true);
         if (!res.ok && res.status === 404) {
             await executeStep2();
             await executeStep3();
             await executeStep4A();
             await executeStep4B();
-            res = await postJsonStep('/api/v1/passports', document.getElementById('jsonStep5').value, 'Step5', 5, false);
+            res = await postJsonStep('/api/v1/passports', syncStep5Json(), 'Step5', 5, false);
         }
         if (res.ok) {
             [1, 2, 3, 4, 5].forEach(s => markStepDone(s));
