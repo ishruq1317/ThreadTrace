@@ -67,6 +67,7 @@ threadtrace:
       - ISO_14001
       - ZDHC_MRSL
       - LAB_TEST_REPORT
+      - CUSTOM_MILL_CERT
   footprint:
     default-allocation-method: ${THREADTRACE_ALLOCATION_METHOD:BY_MASS}
   storage:

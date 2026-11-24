@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,5 +57,19 @@ public class ImportController {
             @PathVariable String batchCode,
             @PageableDefault(size = 50) Pageable pageable) {
         return importService.listRejectedRows(batchCode, pageable);
+    }
+
+    @GetMapping("/sample-xlsx")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'AUDITOR')")
+    @Operation(summary = "Generate a 3-row sample Excel (.xlsx) workbook for 1-click UI testing")
+    public ResponseEntity<byte[]> downloadSampleXlsx(
+            @RequestParam(required = false, defaultValue = "LOT-RAW-001") String parentLotCode,
+            @RequestParam(required = false, defaultValue = "LOT-XLSX-OK-1") String outputLotCode,
+            @RequestParam(required = false, defaultValue = "HOODIE-2026") String styleCode) {
+        byte[] bytes = importService.buildSampleWorkbook(parentLotCode, outputLotCode, styleCode);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"factory-batch-sample.xlsx\"")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(bytes);
     }
 }

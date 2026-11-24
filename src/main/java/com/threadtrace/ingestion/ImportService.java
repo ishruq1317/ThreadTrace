@@ -14,12 +14,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Service
 public class ImportService {
@@ -142,6 +147,40 @@ public class ImportService {
                 .orElseThrow(() -> new DomainExceptions.ResourceNotFoundException("Import batch not found: " + batchCode));
         return rejectedRowRepository.findByBatchIdOrderByRowNumberAsc(batch.getId(), pageable)
                 .map(r -> new RejectedRowView(r.getRowNumber(), r.getRawPayload(), r.getReason()));
+    }
+
+    public byte[] buildSampleWorkbook(String parentLotCode, String validOutputLotCode, String styleCode) {
+        String effectiveParent = (parentLotCode != null && !parentLotCode.isBlank()) ? parentLotCode : "LOT-RAW-001";
+        String effectiveOut = (validOutputLotCode != null && !validOutputLotCode.isBlank()) ? validOutputLotCode : "LOT-XLSX-OK-1";
+        String effectiveStyle = (styleCode != null && !styleCode.isBlank()) ? styleCode : "HOODIE-2026";
+        try (XSSFWorkbook wb = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = wb.createSheet("FactoryBatch");
+            Row header = sheet.createRow(0);
+            String[] cols = {"inputLotCode", "outputLotCode", "outputLotType", "styleCode", "factoryCode",
+                    "productionLineCode", "inputQuantity", "outputQuantity", "outputMassKg", "outputPieceCount", "unit"};
+            for (int i = 0; i < cols.length; i++) {
+                header.createCell(i).setCellValue(cols[i]);
+            }
+            Row r1 = sheet.createRow(1);
+            String[] v1 = {effectiveParent, effectiveOut, "CUT_BUNDLE", effectiveStyle, "", "", "10.0", "20", "9.5", "20", "PIECES"};
+            for (int i = 0; i < v1.length; i++) {
+                r1.createCell(i).setCellValue(v1[i]);
+            }
+            Row r2 = sheet.createRow(2);
+            String[] v2 = {"MISSING-LOT-999", "LOT-XLSX-BAD-1", "CUT_BUNDLE", effectiveStyle, "", "", "10.0", "20", "9.5", "20", "PIECES"};
+            for (int i = 0; i < v2.length; i++) {
+                r2.createCell(i).setCellValue(v2[i]);
+            }
+            Row r3 = sheet.createRow(3);
+            String[] v3 = {effectiveParent, "LOT-XLSX-BAD-2", "CUT_BUNDLE", effectiveStyle, "", "", "INVALID_DECIMAL", "20", "9.5", "20", "PIECES"};
+            for (int i = 0; i < v3.length; i++) {
+                r3.createCell(i).setCellValue(v3[i]);
+            }
+            wb.write(out);
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to build sample Excel workbook", e);
+        }
     }
 
     public record RejectedRowView(int rowNumber, String rawPayload, String reason) {

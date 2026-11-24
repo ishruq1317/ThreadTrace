@@ -126,8 +126,15 @@ public class Certificate {
         this.status = status;
     }
 
+    public void attachStoredFile(String storageKey, String originalFilename, String contentType, long fileSizeBytes) {
+        this.storageKey = storageKey;
+        this.originalFilename = originalFilename;
+        this.contentType = contentType;
+        this.fileSizeBytes = fileSizeBytes;
+    }
+
     public boolean isValidOn(LocalDate asOfDate) {
-        if (status == CertificateStatus.EXPIRED || status == CertificateStatus.REVOKED) {
+        if (status == CertificateStatus.REVOKED) {
             return false;
         }
         return !asOfDate.isBefore(validFrom) && !asOfDate.isAfter(validTo);

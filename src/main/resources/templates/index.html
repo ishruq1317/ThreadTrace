@@ -1788,7 +1788,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Target Lot Code <span class="field-key">lotCode</span></label>
-                            <input type="text" id="cor_lotCode" class="form-control" value="LOT-GARMENT-001"/>
+                            <input type="text" id="cor_lotCode" class="form-control" value="LOT-GARMENT-001" oninput="document.getElementById('cor_eventCode').value = ''"/>
                         </div>
                         <div class="form-group">
                             <label>Original Event Code <span class="field-key">correctsEventCode</span></label>
@@ -2216,7 +2216,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Upload CSV / Excel File (Optional — Auto-Uses Sample CSV if Empty) <span class="field-key">file</span></label>
+                        <label>Upload CSV / Excel File (Optional — Auto-Uses Sample CSV / XLSX if Empty) <span class="field-key">file</span></label>
                         <input type="file" id="imp_fileInput" class="form-control" accept=".csv,.xlsx"/>
                     </div>
                     <div class="form-group">
@@ -3071,39 +3071,45 @@
         }
     }
 
-    // --- Ensure Default Seed Entities Exist When Needed ---
+    // --- Ensure Default Seed Entities Exist When Needed (Quietly via Operator Credentials) ---
+    async function seedPostAsOperator(url, payloadObj) {
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': ROLE_CREDENTIALS.OPERATOR,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(payloadObj)
+            });
+        } catch (_) {}
+    }
+
     async function ensureFactoryExists(factoryCode) {
         const res = await fetch('/api/v1/parties/' + encodeURIComponent(factoryCode), {
             method: 'GET',
-            headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
+            headers: { 'Authorization': ROLE_CREDENTIALS.OPERATOR, 'X-Requested-With': 'XMLHttpRequest' }
         });
         if (res.ok) return true;
-        await fetch('/api/v1/parties', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': authHeader,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                code: factoryCode,
-                name: 'Dhaka Apparel Manufacturing Factory',
-                partyType: 'FACTORY',
-                country: 'Bangladesh',
-                region: 'Dhaka',
-                exactAddress: 'Plot 42, Dhaka EPZ Sector 3',
-                workerCount: 1200,
-                unitPriceUsd: 9.25
-            })
+        await seedPostAsOperator('/api/v1/parties', {
+            code: factoryCode,
+            name: 'Dhaka Apparel Manufacturing Factory',
+            partyType: 'FACTORY',
+            country: 'Bangladesh',
+            region: 'Dhaka',
+            exactAddress: 'Plot 42, Dhaka EPZ Sector 3',
+            workerCount: 1200,
+            unitPriceUsd: 9.25
         });
         return true;
     }
 
     async function ensureCoreSupplyChainSeeded() {
-        await executeStep2();
-        await executeStep3();
-        await executeStep4A();
-        await executeStep4B();
+        await seedPostAsOperator('/api/v1/parties', syncStep2Json());
+        await seedPostAsOperator('/api/v1/evidence/certificates', syncStep3Json());
+        await seedPostAsOperator('/api/v1/events/receive', syncStep4AJson());
+        await seedPostAsOperator('/api/v1/events/transform', syncStep4BJson());
     }
 
     // =========================================================================
@@ -3197,7 +3203,7 @@
     async function executeStep3() {
         let res = await postJsonStep('/api/v1/evidence/certificates', syncStep3Json(), 'Step3', 3, true);
         if (!res.ok && res.status === 404) {
-            await executeStep2();
+            await seedPostAsOperator('/api/v1/parties', syncStep2Json());
             res = await postJsonStep('/api/v1/evidence/certificates', syncStep3Json(), 'Step3', 3, false);
         }
         return res.ok;
@@ -3206,7 +3212,7 @@
     async function executeUploadCertificateMultipart() {
         const okAuth = await ensureAuthorizedOrAutoLogin();
         if (!okAuth) return false;
-        await executeStep2();
+        await seedPostAsOperator('/api/v1/parties', syncStep2Json());
 
         const meta = syncStep3Json();
         const fileInput = document.getElementById('c_fileInput');
@@ -3221,30 +3227,15 @@
             fileToUpload = new File([pdfContent], meta.certificateNumber + '-evidence.pdf', { type: 'application/pdf' });
         }
 
-        const buildFormData = (certNum) => {
-            const fd = new FormData();
-            const m = Object.assign({}, meta, { certificateNumber: certNum });
-            fd.append('metadata', new Blob([JSON.stringify(m)], { type: 'application/json' }));
-            fd.append('file', fileToUpload);
-            return fd;
-        };
+        const fd = new FormData();
+        fd.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+        fd.append('file', fileToUpload);
 
-        let targetCertNum = meta.certificateNumber;
-        let res = await fetch('/api/v1/evidence/certificates/upload', {
+        const res = await fetch('/api/v1/evidence/certificates/upload', {
             method: 'POST',
             headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' },
-            body: buildFormData(targetCertNum)
+            body: fd
         });
-
-        if (res.status === 409) {
-            targetCertNum = meta.certificateNumber + '-FILE';
-            document.getElementById('c_certificateNumber').value = targetCertNum;
-            res = await fetch('/api/v1/evidence/certificates/upload', {
-                method: 'POST',
-                headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' },
-                body: buildFormData(targetCertNum)
-            });
-        }
 
         const text = await res.text();
         let data = text;
@@ -3271,7 +3262,8 @@
         });
 
         if (res.status === 404) {
-            await executeStep3();
+            await seedPostAsOperator('/api/v1/parties', syncStep2Json());
+            await seedPostAsOperator('/api/v1/evidence/certificates', syncStep3Json());
             res = await fetch('/api/v1/evidence/certificates/' + encodeURIComponent(certNum) + '/file', {
                 method: 'GET',
                 headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
@@ -3314,9 +3306,16 @@
     async function executeEvaluateExpiry() {
         const okAuth = await ensureAuthorizedOrAutoLogin();
         if (!okAuth) return false;
-        await executeStep3();
+        await seedPostAsOperator('/api/v1/parties', syncStep2Json());
+        await seedPostAsOperator('/api/v1/evidence/certificates', syncStep3Json());
 
         const asOfDate = document.getElementById('exp_asOfDate').value || '2027-12-15';
+        const validTo = document.getElementById('c_validTo').value || '2027-12-31';
+        if (asOfDate > validTo) {
+            const ppCode = document.getElementById('pp_passportCode').value.trim() || 'PP-HOODIE-2026';
+            await ensurePassportGenerated(ppCode);
+        }
+
         const url = '/api/v1/evidence/certificates/evaluate-expiry?asOfDate=' + encodeURIComponent(asOfDate);
         const res = await fetch(url, {
             method: 'POST',
@@ -3356,8 +3355,8 @@
     async function executeStep4A() {
         let res = await postJsonStep('/api/v1/events/receive', syncStep4AJson(), 'Step4A', null, true);
         if (!res.ok && res.status === 404) {
-            await executeStep2();
-            await executeStep3();
+            await seedPostAsOperator('/api/v1/parties', syncStep2Json());
+            await seedPostAsOperator('/api/v1/evidence/certificates', syncStep3Json());
             res = await postJsonStep('/api/v1/events/receive', syncStep4AJson(), 'Step4A', null, false);
         }
         return res.ok;
@@ -3366,9 +3365,7 @@
     async function executeStep4B() {
         let res = await postJsonStep('/api/v1/events/transform', syncStep4BJson(), 'Step4B', 4, true);
         if (!res.ok && res.status === 404) {
-            await executeStep2();
-            await executeStep3();
-            await executeStep4A();
+            await ensureCoreSupplyChainSeeded();
             res = await postJsonStep('/api/v1/events/transform', syncStep4BJson(), 'Step4B', 4, false);
         }
         return res.ok;
@@ -3418,9 +3415,7 @@
                 d.map(c => '<code>' + escapeHtml(c.lotCode) + '</code> (' + escapeHtml(c.massKg) + ' KG, status: <code>' + escapeHtml(c.status) + '</code>)').join(' + ');
         });
         if (!res.ok && res.status === 404) {
-            await executeStep2();
-            await executeStep3();
-            await executeStep4A();
+            await ensureCoreSupplyChainSeeded();
             res = await postJsonStep('/api/v1/events/split', payload, 'Split', 4, false, (d) => {
                 if (!Array.isArray(d)) return null;
                 return '<strong>Split Parent Lot <code>' + escapeHtml(parentLotCode) + '</code> into ' + d.length + ' Child Lots:</strong> ' +
@@ -3508,31 +3503,35 @@
         return res.ok;
     }
 
+    async function resolveEventCodeForLot(lotCode, candidateEventCode) {
+        let evRes = await fetch('/api/v1/lots/' + encodeURIComponent(lotCode) + '/events', {
+            headers: { 'Authorization': ROLE_CREDENTIALS.OPERATOR, 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        if (evRes.status === 404) {
+            await ensureCoreSupplyChainSeeded();
+            evRes = await fetch('/api/v1/lots/' + encodeURIComponent(lotCode) + '/events', {
+                headers: { 'Authorization': ROLE_CREDENTIALS.OPERATOR, 'X-Requested-With': 'XMLHttpRequest' }
+            });
+        }
+        if (evRes.ok) {
+            const evData = await evRes.json();
+            if (evData && Array.isArray(evData.content) && evData.content.length > 0) {
+                const match = candidateEventCode && evData.content.find(e => e.eventCode === candidateEventCode);
+                const resolved = match ? match.eventCode : evData.content[0].eventCode;
+                document.getElementById('cor_eventCode').value = resolved;
+                return resolved;
+            }
+        }
+        return candidateEventCode;
+    }
+
     async function executeCorrectionEvent() {
         const okAuth = await ensureAuthorizedOrAutoLogin();
         if (!okAuth) return false;
 
         const lotCode = document.getElementById('cor_lotCode').value.trim() || 'LOT-GARMENT-001';
         let eventCode = document.getElementById('cor_eventCode').value.trim();
-
-        if (!eventCode) {
-            let evRes = await fetch('/api/v1/lots/' + encodeURIComponent(lotCode) + '/events', {
-                headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
-            });
-            if (evRes.status === 404) {
-                await ensureCoreSupplyChainSeeded();
-                evRes = await fetch('/api/v1/lots/' + encodeURIComponent(lotCode) + '/events', {
-                    headers: { 'Authorization': authHeader, 'X-Requested-With': 'XMLHttpRequest' }
-                });
-            }
-            if (evRes.ok) {
-                const evData = await evRes.json();
-                if (evData && Array.isArray(evData.content) && evData.content.length > 0) {
-                    eventCode = evData.content[0].eventCode;
-                    document.getElementById('cor_eventCode').value = eventCode;
-                }
-            }
-        }
+        eventCode = await resolveEventCodeForLot(lotCode, eventCode);
 
         const payload = {
             lotCode: lotCode,
@@ -3730,7 +3729,8 @@
         });
         if (check.ok) return true;
         await ensureCoreSupplyChainSeeded();
-        await postJsonStep('/api/v1/passports', syncStep5Json(), 'Step5', 5, false);
+        await seedPostAsOperator('/api/v1/passports', syncStep5Json());
+        markStepDone(5);
         return true;
     }
 
@@ -3809,11 +3809,15 @@
             const hasExactAddr = rawJson.includes('exactAddress');
             const hasWorkerCount = rawJson.includes('workerCount');
             const hasUnitPrice = rawJson.includes('unitPriceUsd');
+            const hasViolations = rawJson.includes('complianceViolations');
+            const hasShipmentLot = rawJson.includes('shipmentLotCode');
             return '<strong>Audience Perspective: <code>' + escapeHtml(perspective) + '</code> &bull; Endpoint: <code>' + escapeHtml(url) + '</code></strong><br/>' +
-                'Confidential Field Visibility &rarr; ' +
+                'Confidential &amp; Audience-Scoped Field Visibility &rarr; ' +
                 '<code>exactAddress</code>: ' + (hasExactAddr ? '<strong style="color:#085431;">VISIBLE (Auditor)</strong>' : '<em>REDACTED</em>') + ' &bull; ' +
                 '<code>workerCount</code>: ' + (hasWorkerCount ? '<strong style="color:#085431;">VISIBLE (Auditor)</strong>' : '<em>REDACTED</em>') + ' &bull; ' +
-                '<code>unitPriceUsd</code>: ' + (hasUnitPrice ? '<strong style="color:#085431;">VISIBLE (Auditor)</strong>' : '<em>REDACTED</em>');
+                '<code>unitPriceUsd</code>: ' + (hasUnitPrice ? '<strong style="color:#085431;">VISIBLE (Auditor)</strong>' : '<em>REDACTED</em>') + ' &bull; ' +
+                '<code>complianceViolations</code>: ' + (hasViolations ? '<strong style="color:#085431;">VISIBLE (Auditor/Brand)</strong>' : '<em>REDACTED</em>') + ' &bull; ' +
+                '<code>shipmentLotCode</code>: ' + (hasShipmentLot ? '<strong style="color:#085431;">VISIBLE (Auditor/Brand)</strong>' : '<em>REDACTED</em>');
         }, customHeader);
     }
 
@@ -3828,18 +3832,37 @@
         const importType = document.getElementById('imp_importType').value;
         let fileFormat = document.getElementById('imp_fileFormat').value;
         const fileInput = document.getElementById('imp_fileInput');
+        const parentLot = document.getElementById('r_lotCode').value.trim() || 'LOT-RAW-001';
+        const styleCode = document.getElementById('r_styleCode').value.trim() || 'HOODIE-2026';
 
         let uploadFile = (fileInput && fileInput.files && fileInput.files.length > 0) ? fileInput.files[0] : null;
-        if (!uploadFile) {
-            fileFormat = 'CSV';
-            document.getElementById('imp_fileFormat').value = 'CSV';
-            const parentLot = document.getElementById('r_lotCode').value.trim() || 'LOT-RAW-001';
+        if (uploadFile && uploadFile.name) {
+            if (uploadFile.name.toLowerCase().endsWith('.xlsx')) {
+                fileFormat = 'EXCEL';
+                document.getElementById('imp_fileFormat').value = 'EXCEL';
+            } else if (uploadFile.name.toLowerCase().endsWith('.csv')) {
+                fileFormat = 'CSV';
+                document.getElementById('imp_fileFormat').value = 'CSV';
+            }
+        } else if (fileFormat === 'EXCEL') {
+            const validOutLot = 'LOT-XLSX-OK-' + (sampleImportCounter++);
+            const sampleUrl = '/api/v1/imports/sample-xlsx?parentLotCode=' + encodeURIComponent(parentLot) +
+                '&outputLotCode=' + encodeURIComponent(validOutLot) +
+                '&styleCode=' + encodeURIComponent(styleCode);
+            const sampleRes = await fetch(sampleUrl, {
+                headers: { 'Authorization': ROLE_CREDENTIALS.OPERATOR, 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const xlsxBlob = await sampleRes.blob();
+            uploadFile = new File([xlsxBlob], 'factory-batch-sample.xlsx', {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+        } else {
             const validOutLot = 'LOT-CSV-OK-' + (sampleImportCounter++);
             const sampleCsv = [
                 'inputLotCode,outputLotCode,outputLotType,styleCode,factoryCode,productionLineCode,inputQuantity,outputQuantity,outputMassKg,outputPieceCount,unit',
-                parentLot + ',' + validOutLot + ',CUT_BUNDLE,HOODIE-2026,,,10.0,20,9.5,20,PIECES',
-                'MISSING-LOT-999,LOT-CSV-BAD-1,CUT_BUNDLE,HOODIE-2026,,,10.0,20,9.5,20,PIECES',
-                parentLot + ',LOT-CSV-BAD-2,CUT_BUNDLE,HOODIE-2026,,,INVALID_DECIMAL,20,9.5,20,PIECES'
+                parentLot + ',' + validOutLot + ',CUT_BUNDLE,' + styleCode + ',,,10.0,20,9.5,20,PIECES',
+                'MISSING-LOT-999,LOT-CSV-BAD-1,CUT_BUNDLE,' + styleCode + ',,,10.0,20,9.5,20,PIECES',
+                parentLot + ',LOT-CSV-BAD-2,CUT_BUNDLE,' + styleCode + ',,,INVALID_DECIMAL,20,9.5,20,PIECES'
             ].join('\n');
             uploadFile = new File([sampleCsv], 'factory-batch-sample.csv', { type: 'text/csv' });
         }

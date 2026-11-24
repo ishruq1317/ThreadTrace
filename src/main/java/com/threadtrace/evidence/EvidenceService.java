@@ -62,7 +62,36 @@ public class EvidenceService {
     public EvidenceDtos.CertificateView registerCertificate(
             EvidenceDtos.RegisterCertificateRequest req,
             MultipartFile uploadedFile) {
-        if (certificateRepository.existsByCertificateNumber(req.certificateNumber())) {
+        Certificate existing = certificateRepository.findByCertificateNumber(req.certificateNumber()).orElse(null);
+        if (existing != null) {
+            if (uploadedFile != null && !uploadedFile.isEmpty()) {
+                byte[] uploadedBytes;
+                String uploadedFilename;
+                String uploadedContentType;
+                try {
+                    uploadedBytes = uploadedFile.getBytes();
+                    uploadedFilename = uploadedFile.getOriginalFilename() != null
+                            ? uploadedFile.getOriginalFilename()
+                            : "evidence.bin";
+                    uploadedContentType = uploadedFile.getContentType() != null
+                            ? uploadedFile.getContentType()
+                            : "application/octet-stream";
+                } catch (IOException e) {
+                    throw new UncheckedIOException("Failed to read uploaded certificate file", e);
+                }
+                String updatedKey;
+                try (InputStream is = new ByteArrayInputStream(uploadedBytes)) {
+                    updatedKey = storagePort.store(
+                            existing.getCertificateNumber(), uploadedFilename, uploadedContentType, is, uploadedBytes.length);
+                } catch (IOException e) {
+                    throw new UncheckedIOException("Failed to store evidence file", e);
+                }
+                existing.attachStoredFile(updatedKey, uploadedFilename, uploadedContentType, uploadedBytes.length);
+                Certificate saved = certificateRepository.save(existing);
+                log.info("Attached uploaded file to existing certificate number={} filename={} bytes={}",
+                        saved.getCertificateNumber(), uploadedFilename, uploadedBytes.length);
+                return toView(saved);
+            }
             throw new DomainExceptions.DuplicateResourceException(
                     "Certificate already exists: " + req.certificateNumber());
         }
@@ -167,22 +196,27 @@ public class EvidenceService {
         LocalDate effectiveDate = asOfDate != null ? asOfDate : LocalDate.now();
         int warningDays = properties.getEvidence().getExpiryWarningDays();
         List<Certificate> candidates = certificateRepository.findByStatusIn(
-                List.of(CertificateStatus.ACTIVE, CertificateStatus.EXPIRING_SOON));
+                List.of(CertificateStatus.ACTIVE, CertificateStatus.EXPIRING_SOON, CertificateStatus.EXPIRED));
 
         int expiringSoonCount = 0;
         int expiredCount = 0;
         for (Certificate cert : candidates) {
             CertificateStatus next = cert.evaluateStatus(effectiveDate, warningDays);
-            if (next != cert.getStatus()) {
+            boolean changed = next != cert.getStatus();
+            if (changed) {
                 cert.updateStatus(next);
                 certificateRepository.save(cert);
-                if (next == CertificateStatus.EXPIRING_SOON) {
-                    expiringSoonCount++;
+            }
+            if (next == CertificateStatus.EXPIRING_SOON) {
+                expiringSoonCount++;
+                if (changed) {
                     eventPublisher.publishEvent(new CertificateEvents.CertificateExpiringSoonEvent(
                             cert.getId(), cert.getCertificateNumber(), cert.getCertificateType(),
                             cert.getSupplierId(), cert.getLotId(), cert.getValidTo()));
-                } else if (next == CertificateStatus.EXPIRED) {
-                    expiredCount++;
+                }
+            } else if (next == CertificateStatus.EXPIRED) {
+                expiredCount++;
+                if (changed) {
                     eventPublisher.publishEvent(new CertificateEvents.CertificateExpiredEvent(
                             cert.getId(), cert.getCertificateNumber(), cert.getCertificateType(),
                             cert.getClaimedAttribute(), cert.getSupplierId(), cert.getLotId(), cert.getValidTo(), effectiveDate));

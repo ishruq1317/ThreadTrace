@@ -873,6 +873,72 @@ class ThreadTraceEndToEndIntegrationTest {
                         .with(httpBasic("operator", "test-operator-pass")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.verified").value(true));
+
+        // Verify multipart upload onto existing GOTS-2026-BD-01 certificate updates file without 409 duplicate
+        MockMultipartFile certMetaPart = new MockMultipartFile("metadata", "", MediaType.APPLICATION_JSON_VALUE, """
+                {
+                  "certificateNumber": "GOTS-2026-BD-01",
+                  "certificateType": "GOTS",
+                  "issuer": "Control Union",
+                  "scope": "100% Organic Cotton Fiber",
+                  "claimedAttribute": "ORGANIC",
+                  "certifiedPct": 100.0,
+                  "supplierCode": "MILL-GAZIPUR-1",
+                  "validFrom": "2026-01-01",
+                  "validTo": "2027-12-31"
+                }
+                """.getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile certPdfPart = new MockMultipartFile("file", "GOTS-2026-BD-01-evidence.pdf",
+                MediaType.APPLICATION_PDF_VALUE, "%PDF-1.4 sample evidence%%EOF".getBytes(StandardCharsets.UTF_8));
+        mockMvc.perform(multipart("/api/v1/evidence/certificates/upload")
+                        .file(certMetaPart)
+                        .file(certPdfPart)
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.certificateNumber").value("GOTS-2026-BD-01"))
+                .andExpect(jsonPath("$.originalFilename").value("GOTS-2026-BD-01-evidence.pdf"));
+
+        // Verify repeated expiry evaluation (2027-12-15 -> 2028-01-15 -> 2027-12-15) & historical asOfDate claim check
+        mockMvc.perform(post("/api/v1/evidence/certificates/evaluate-expiry?asOfDate=2027-12-15")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.expiringSoonCount").value(1));
+
+        mockMvc.perform(post("/api/v1/evidence/certificates/evaluate-expiry?asOfDate=2027-12-15")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.expiringSoonCount").value(1));
+
+        mockMvc.perform(post("/api/v1/evidence/certificates/evaluate-expiry?asOfDate=2028-01-15")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.expiredCount").value(1));
+
+        mockMvc.perform(get("/api/v1/compliance/lots/LOT-GARMENT-001/claims?asOfDate=2026-06-01")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.compliant").value(true));
+
+        // Verify 1-click sample Excel (.xlsx) generation and import
+        MvcResult sampleXlsxRes = mockMvc.perform(get("/api/v1/imports/sample-xlsx")
+                        .param("parentLotCode", "LOT-RAW-001")
+                        .param("outputLotCode", "LOT-XLSX-UI-1")
+                        .param("styleCode", "HOODIE-2026")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isOk())
+                .andReturn();
+        MockMultipartFile uiXlsxFile = new MockMultipartFile("file", "factory-batch-sample.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                sampleXlsxRes.getResponse().getContentAsByteArray());
+        mockMvc.perform(multipart("/api/v1/imports")
+                        .file(uiXlsxFile)
+                        .param("importType", "CUTTING_REPORT")
+                        .param("fileFormat", "EXCEL")
+                        .with(httpBasic("operator", "test-operator-pass")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.fileFormat").value("EXCEL"))
+                .andExpect(jsonPath("$.acceptedRows").value(1))
+                .andExpect(jsonPath("$.rejectedRows").value(2));
     }
 
     private void createParty(

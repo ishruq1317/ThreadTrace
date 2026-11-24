@@ -79,7 +79,9 @@ class PublicPassportWebSliceTest {
 
         mockMvc.perform(get("/p/PP-SLICE-1"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Slice Test Jacket")));
+                .andExpect(content().string(containsString("Slice Test Jacket")))
+                .andExpect(content().string(containsString("Hasin Ishruq")))
+                .andExpect(content().string(not(containsString("CSE 444"))));
 
         mockMvc.perform(get("/api/v1/public/passports/PP-SLICE-1/qr"))
                 .andExpect(status().isOk())
