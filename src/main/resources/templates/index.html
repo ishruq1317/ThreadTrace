@@ -600,6 +600,7 @@
         }
 
         .response-body-pre {
+            display: none;
             margin: 0;
             padding: 12px 14px;
             background: var(--code-bg);
@@ -2304,10 +2305,7 @@
             <div class="page-toolbar-title">
                 <span>🌐 Generated Digital Product Passport &amp; Live QR Code</span>
             </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button type="button" class="btn-outline" style="padding:7px 14px; font-size:0.82rem;" onclick="navigateToPage('home')">
-                    &larr; Workspace Operations
-                </button>
+            <div>
                 <button type="button" id="passportLogoutBtn" class="btn-outline" style="padding:7px 14px; font-size:0.82rem;" onclick="performLogout()">
                     🔓 Log Out
                 </button>
